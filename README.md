@@ -32,7 +32,7 @@ git status
 ```
 If your branch is behind, git status will show a message like:
 ```
-Your branch is behind 'origin/main' by X commits, and can be fast-forwarded.
+Your branch is behind 'origin/XXX' by X commits, and can be fast-forwarded.
 ```
 We can then use the following to fast-forward
 ```
@@ -54,7 +54,20 @@ And finally push to the branch by
 git push
 ```
 
-### When we need to merge to main branch
-
+### When we need to merge from the main branch
+Fetch the changes from the main
+```
+git fetch origin
+```
+Then to check how many commits we are behind the main:
+```
+git status
+```
+To merge use the following
+```
+git merge origin/main
+```
+### When you need to merge your branch to the main
+Navigate to your branch on github website, 
 
 
