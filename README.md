@@ -1,5 +1,6 @@
 ## EIE2 Instruction Set Architecture & Compiler (IAC) Group Project Team 12
 
+</center>
 ### Team member:
 *Abraham Lin : Git Master
 *Charlotte Maxwell 
