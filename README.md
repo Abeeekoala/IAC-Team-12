@@ -21,7 +21,7 @@ For Lab 4 information, see [Lab_4](./Specifications//Lab_4.md).
 - Shravan:
     - Control Unit: CU.sv
         - Inputs: op[6:0], funct3[14:12], funct7[30] _(from instr)_, EQ
-        - Outputs: PCsrc, ALUctrl, ALUsrc[2:0], ImmSrc, RegWrite
+        - Outputs: PCsrc, ALUctrl[2:0], ALUsrc, ImmSrc, RegWrite
     - InstrMem:InstrMem.sv
         - Inputs: PC[31:0]
         - Outputs: instr[31:0] 
