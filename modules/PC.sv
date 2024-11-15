@@ -1,7 +1,7 @@
 module  PC #(
     input logic     [31:0]      ImmOp,              //immediate operand to calc branch target
     input logic                 rst,                //rst
-    input logic                 PCsrc,              //control signal to choose between branch and incremented PC
+    input logic                 PCscr,              //control signal to choose between branch and incremented PC
     input logic                 clk,                //synchronous   
     output logic    [31:0]      PC                  //current PC value
 );
