@@ -9,9 +9,9 @@
 For Lab 4 information, see [Lab_4](./Specifications//Lab_4.md).
 
 - Shreeya:
-- - Program Counter: PC.sv
-- - - Inputs: clk, rst, PCsrc, ImmOp[31:0]
-- - - Outputs: PC[31:0]
+    - Program Counter: PC.sv
+        - Inputs: clk, rst, PCsrc, ImmOp[31:0]
+        - Outputs: PC[31:0]
 
 - Charlotte:
     - DataPath: DataPath.sv
