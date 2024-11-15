@@ -4,14 +4,13 @@ module instrMem #(
     output logic [31:0] instr
 );
 
-logic [31:0] mem_array [2**32-1:0];
+logic [7:0] mem_array [2**12-1:0];
 
 initial begin
         $display("Loading.rom");
         $readmemh("instructions.mem", mem_array);
 end;
 
-always_ff @(posedge addr)
-    instr <= mem_array[addr];
+assign instr = {mem_array[addr+3], mem_array[addr+2], mem_array[addr+1], mem_array[addr]};
 
 endmodule
