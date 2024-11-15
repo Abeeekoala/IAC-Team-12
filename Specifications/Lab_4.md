@@ -72,11 +72,11 @@ ___
 
 Your team task for Lab 4 is to design a *__SINGLE CYCLE__* CPU that executes two (or three) RISC-V instructions.  To verify that your design works, the CPU should execute the simple assembly language program below (see [`program.S`](repo/tb/asm/program.S)): <br><br>
 
-<p align="center"> <img src="images/code1.jpg" /> </p> <br>
+<p align="center"> <img src="../images/code1.jpg" /> </p> <br>
 
 This program performs the same function as the simple 8-bit binary counter you designed in Lab 1 (i.e. counter.sv).  Note that this uses ONLY two instructions: "addi" and "bne". It demonstrates how "reduced" the RISC-V ISA is!  However, this also makes the assembly program hard to read and understand. One can translate these instructions to pseudoinstructions, which makes the program much easier to read. (I used the online assembler [here](https://riscvasm.lucasteske.dev/) to do this). The equivalent asssembly code with pseudoinstructions is:
 
-<p align="center"> <img src="images/pseudo.jpg" /> </p><BR>
+<p align="center"> <img src="../images/pseudo.jpg" /> </p><BR>
 
 > Each student should take one addi and one bne instruction, and check you fully understand why the instruction is mapped to this machine code. (See Lecture 6 slide 7.)
 
@@ -98,7 +98,7 @@ To help you progress quickly, here is the top-level block diagram for this CPU. 
 7. The Control Unit is not clocked and decodes the instruction to provide control signals to various modules.
 <br><br>
 
-<p align="center"> <img src="images/microarchitecture.jpg" /> </p><br>
+<p align="center"> <img src="../images/microarchitecture.jpg" /> </p><br>
 
 >Discuss among yourselves why the WRITE port of the Register File must be synchronous to the clock signal.
 
