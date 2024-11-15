@@ -1,4 +1,4 @@
-module controlUnit #(
+module CU #(
 )(
     input logic [31:0] instr,
     input logic EQ,
