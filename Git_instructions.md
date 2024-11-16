@@ -54,19 +54,10 @@ And finally push to the branch by
 git push
 ```
 
-### When we need to merge from the main branch
-Fetch the changes from the main
-```
-git fetch origin
-```
-Then to check how many commits we are behind the main:
-```
-git status
-```
-To merge use the following
-```
-git merge origin/main
-```
+### When we need to update the commits from the main branch
+Go onto Github website and create a pull request on your branch (from main to your banch) then if able to merge, you can get the updates. 
+
+
 ### When you need to merge your branch to the main
 Navigate to your branch on github website, there should be a Compare & pull request button. \n
 Click it, you should see the form to create a pull request by adding title and description of the pull request. \n
