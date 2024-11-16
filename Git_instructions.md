@@ -55,22 +55,9 @@ git push
 ```
 
 ### When we need to update the commits from the main branch
-Switch to your branch XXX
-```
-git checkout XXX
-```
-Then to pull the commit from the main:
-```
-git pull origin main
-```
-If there are merge conflicts, need to open the conflicting files to resolve the conflicts manually.
-After that add the files and commit
-```
-git add resolved-file-name
-```
-```
-git commit
-```
+Go onto Github website and create a pull request on your branch (from main to your banch) then if able to merge, you can get the updates. 
+
+
 ### When you need to merge your branch to the main
 Navigate to your branch on github website, there should be a Compare & pull request button. \n
 Click it, you should see the form to create a pull request by adding title and description of the pull request. \n
