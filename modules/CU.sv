@@ -1,6 +1,8 @@
 module CU #(
 )(
-    input logic [31:0] instr,
+    input logic [2:0] funct3,
+    input logic [6:0] opcode,
+    input logic funct7,
     input logic EQ,
     output logic ImmSrc,
     output logic PCsrc,
@@ -8,12 +10,6 @@ module CU #(
     output logic [2:0] ALUctrl,
     output logic RegWrite
 );
-
-logic [2:0] funct3;
-logic [6:0] opcode;
-
-assign funct3 = instr[14:12];
-assign opcode = instr[6:0];
 
 always_comb begin
     ImmSrc = 1'b0;
