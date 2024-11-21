@@ -11,6 +11,8 @@ initial begin
         $readmemh("instructions.mem", mem_array);
 end;
 
-assign instr = {mem_array[addr+3], mem_array[addr+2], mem_array[addr+1], mem_array[addr]};
+always_comb begin
+    instr = {mem_array[addr+3], mem_array[addr+2], mem_array[addr+1], mem_array[addr]};
+end
 
 endmodule
