@@ -39,7 +39,7 @@ module datapath #(
         .rd2  (regOp2)
     );
 
-    Mux Mux (
+    mux mux (
         .in0 (regOp2),
         .sel (ALUsrc),
         .in1 (ImmOp),
