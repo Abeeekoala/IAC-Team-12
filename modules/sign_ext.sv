@@ -1,8 +1,8 @@
-module sign_ext #(
-    input   [11:0]          inst,
+module sign_ext (
+    input   [11:0]          Imm,
     input                   ImmSrc,
     output  [31:0]          ImmOp
-)
+);
 
 always_comb
     if (ImmSrc)

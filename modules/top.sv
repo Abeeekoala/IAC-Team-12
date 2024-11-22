@@ -9,21 +9,26 @@ logic       PCsrc           = 0;
 logic       InstrAdd[31:0]  = 0;
 logic       instr[31:0]     = 0;
 logic       eq              = 0;
+logic       ALUctrl[2:0]    = 0;
+logic       ALUsrc          = 0;
+logic       ImmSrc          = 0;
+logic       RegWrite        = 0;  
+
 PC PC(
     .clk        (clk),
     .rst        (rst),
     .PCsrc      (PCsrc),
     .ImmOp      (ImmOp),
-    .PC         (InstrAdd)
+    .PC_out     (InstrAdd)
 );
 
 InstrMem InstrMem(
-    .PC         (InstrAdd),
+    .addr       (InstrAdd),
     .instr      (instr)
 );
 
 CU CU(
-    .op         (instr[6:0]),
+    .opcode     (instr[6:0]),
     .funct3     (instr[14:12]),
     .funct7     (instr[30]),
     .EQ         (eq),
@@ -34,13 +39,13 @@ CU CU(
     .RegWrite   (RegWrite)
 );
 
-SignExtend SignExtend(
+sign_ext sign_ext(
     .ImmSrc     (ImmSrc),
     .Imm        ({instr[11:5], instr[4:0]}),
     .ImmOp      (ImmOp)
 );
 
-DataPath DataPath(
+datapath datapath(
     .clk        (clk),
     .rs1        (instr[19:15]),
     .rs2        (instr[24:20]),
@@ -53,5 +58,4 @@ DataPath DataPath(
     .a0         (a0)
 );
 
-    
 endmodule
