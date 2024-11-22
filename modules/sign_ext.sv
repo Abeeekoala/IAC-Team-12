@@ -6,9 +6,9 @@ module sign_ext (
 
 always_comb
     if (ImmSrc)
-        Imm32 = {{16{Imm16[15]}}, Imm16};       //sign extension of 15th bit to upper bits
+        ImmOp = {{20{Imm[11]}}, Imm};       //sign extension of 15th bit to upper bits
     else
-        Imm32 = {16'b0, Imm16};                 //else fill upper bits with 0s
+        ImmOp = {20'b0, Imm};                 //else fill upper bits with 0s
     
 
     

@@ -50,11 +50,11 @@ datapath datapath(
     .rs1        (instr[19:15]),
     .rs2        (instr[24:20]),
     .rd         (instr[11:7]),
-    .RegWrite   (RegWrite),
+    .regWrite   (RegWrite),
     .ALUctrl    (ALUctrl),
     .ALUsrc     (ALUsrc),
     .ImmOp      (ImmOp),
-    .EQ         (eq),
+    .eq         (eq),
     .a0         (a0)
 );
 
