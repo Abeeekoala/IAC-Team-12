@@ -16,7 +16,7 @@ always_comb begin
     3'b010: ALUout = ALUop1 & ALUop2;
     3'b011: ALUout = ALUop1 | ALUop2;
     // 101: ALUout = SLT function 
-    default: ALUout - 32'b0;
+    default: ALUout = 32'b0;
     endcase
 
     eq = (ALUop1 == ALUop2);
