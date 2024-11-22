@@ -4,15 +4,15 @@ module datapath #(
 )(
     input  logic                  clk,
     input  logic                  regWrite,
-    output logic [D_WIDTH-1:0]    a0,
     input  logic [2:0]            ALUctrl,
-    output logic [D_WIDTH-1:0]    ALUout,
-    output logic                  eq,
     input  logic [A_WIDTH-1:0]    rs1,
     input  logic [A_WIDTH-1:0]    rs2,
     input  logic [A_WIDTH-1:0]    rd,
     input  logic                  ALUsrc,
-    input  logic [D_WIDTH-1:0]    ImmOp
+    input  logic [D_WIDTH-1:0]    ImmOp,
+    output logic [D_WIDTH-1:0]    ALUout,
+    output logic                  eq,
+    output logic [D_WIDTH-1:0]    a0
 );
 
     logic [D_WIDTH-1:0] regOp2;
