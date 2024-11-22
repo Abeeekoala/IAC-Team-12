@@ -1,4 +1,4 @@
-module RegFile #(
+module regfile #(
     parameter DATA_WIDTH = 32,
     parameter ADDR_WIDTH = 5,
     parameter REG_DEPTH = 32
@@ -14,7 +14,7 @@ module RegFile #(
     output logic [DATA_WIDTH-1:0]   a0
 );
 
-    logic [DATA_WIDTH-1:0] registers [0:REG_DEPTH-1];
+    logic [DATA_WIDTH-1:0] registers [31:0];
 
     assign rd1 = registers[ad1];
     assign rd2 = registers[ad2];

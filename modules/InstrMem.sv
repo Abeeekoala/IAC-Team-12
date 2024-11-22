@@ -1,4 +1,4 @@
-module instrMem #(
+module InstrMem #(
 )(
     input logic [31:0] addr,
     output logic [31:0] instr
