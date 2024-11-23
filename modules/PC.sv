@@ -9,16 +9,20 @@ module  PC (
 logic [31:0]            next_PC;                    //intermediate signal
 
 countermux countermux(
+    // Inputs
     .PC_in (PC_out),
     .ImmOp (ImmOp),
-    .next_PC (next_PC),
-    .PCsrc (PCsrc)
+    .PCsrc (PCsrc),
+    // Outputs
+    .next_PC (next_PC)
+    
 );
 
 PCreg PCreg(
     .clk        (clk),
     .rst        (rst),
     .next_PC    (next_PC),
+    //Outputs
     .PC         (PC_out)
 );
 
