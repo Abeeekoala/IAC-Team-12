@@ -60,7 +60,7 @@ for file in "${files[@]}"; do
     else
         ((fails++))
     fi
-    j
+
 done
 
 # Exit as a pass or fail (for CI purposes)
@@ -72,3 +72,5 @@ else
     echo "${RED}Failure! Only ${passes} test(s) passed out of ${total}."
     exit 1
 fi
+
+# !/bin/bash
