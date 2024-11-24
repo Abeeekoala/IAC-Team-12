@@ -58,4 +58,15 @@ datapath datapath(
     .a0         (a0)
 );
 
+datamemory data_memory_instance(
+    .clk (clk),
+    .WE (MemWrite),
+    .A (ALUout),
+    .WD ( regOp2),
+    .RD (ReadData)
+);
+
+assign TriggerOutput = TRIGGERSEL ? ReadData : ALUout; //trigger mux
+assign Result = ResultSrc ? TriggerOutput : ALUout; //mux for data memory
+
 endmodule
