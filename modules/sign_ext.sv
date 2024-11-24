@@ -1,15 +1,20 @@
 module sign_ext (
-    input   [11:0]          Imm,
-    input                   ImmSrc,
-    output  [31:0]          ImmOp
+    input   logic [31:0]      Instr,
+    input   logic [1:0]       ImmSrc,
+    output  logic [31:0]      ImmOp
 );
-
-always_comb
-    if (ImmSrc)
-        ImmOp = {{20{Imm[11]}}, Imm};       //sign extension of 15th bit to upper bits
-    else
-        ImmOp = {20'b0, Imm};                 //else fill upper bits with 0s
-    
-
+always_comb begin
+    case (Instr[6:0])
+        7'b0010011: begin
+            ImmOp = {{20{Instr[31]}}, Instr[31:20]};
+        end
+        7'b1100011: begin
+            ImmOp = {{20{Instr[31]}}, Instr[7],Instr[30:25], Instr[11:8], 1'b0};
+        end
+        default: begin
+            ImmOp = 32'b0;
+        end
+    endcase
+end
     
 endmodule

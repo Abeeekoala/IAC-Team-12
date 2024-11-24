@@ -7,8 +7,8 @@ module InstrMem #(
 logic [7:0] mem_array [2**12-1:0];
 
 initial begin
-        $display("Loading.rom");
-        $readmemh("instructions.mem", mem_array);
+        $display("Loading rom.");
+        $readmemh("../modules/program.hex", mem_array);
 end;
 
 always_comb begin

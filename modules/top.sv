@@ -1,18 +1,18 @@
 module top(
     input   logic           clk,
     input   logic           rst,
-    output  logic           a0         
+    output  logic [31:0]    a0         
 );
 
-logic       ImmOp[31:0]     = 0;
-logic       PCsrc           = 0;
-logic       InstrAdd[31:0]  = 0;
-logic       instr[31:0]     = 0;
-logic       eq              = 0;
-logic       ALUctrl[2:0]    = 0;
-logic       ALUsrc          = 0;
-logic       ImmSrc          = 0;
-logic       RegWrite        = 0;  
+logic [31:0]        ImmOp;
+logic               PCsrc ;
+logic [31:0]        InstrAdd;
+logic [31:0]        instr;
+logic               eq;
+logic [2:0]         ALUctrl;
+logic               ALUsrc;
+logic [1:0]         ImmSrc;
+logic               RegWrite;  
 
 PC PC(
     .clk        (clk),
@@ -41,7 +41,7 @@ CU CU(
 
 sign_ext sign_ext(
     .ImmSrc     (ImmSrc),
-    .Imm        ({instr[11:5], instr[4:0]}),
+    .Instr      (instr),
     .ImmOp      (ImmOp)
 );
 
