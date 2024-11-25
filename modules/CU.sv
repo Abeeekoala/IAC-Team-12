@@ -7,7 +7,7 @@ module CU (
     output logic PCSrc,
     output logic ResultSrc,
     output logic ALUSrc,
-    output logic MemWrite
+    output logic MemWrite,
     output logic [2:0] ALUctrl,
     output logic RegWrite
 );
@@ -31,11 +31,11 @@ always_comb begin
                 3'b000: begin
                     case(funct7)
                         // ADD rd = rs1+rs2
-                        7'b0000000: begin
+                        7'h00: begin
                             //
                         end
                         // SUB rd = rs1-rs2
-                        7'b0010100: begin
+                        7'h20: begin
                             //
                         end
                     endcase
