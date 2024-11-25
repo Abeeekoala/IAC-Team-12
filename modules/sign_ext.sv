@@ -3,6 +3,7 @@ module sign_ext (
     input   logic [1:0]       ImmSrc,
     output  logic [31:0]      ImmOp
 );
+
 always_comb begin
     case (ImmSrc)
         2'b00: begin // i-type
