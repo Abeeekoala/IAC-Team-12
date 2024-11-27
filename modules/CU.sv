@@ -3,7 +3,7 @@ module CU (
     input logic [6:0] op,
     input logic [6:0] funct7,
     input logic Zero,
-    output logic [1:0] ImmSrc,
+    output logic [2:0] ImmSrc,
     output logic PCSrc,
     output logic ResultSrc,
     output logic ALUSrc,
@@ -13,7 +13,7 @@ module CU (
 );
 
 always_comb begin
-    ImmSrc = 2'b00;
+    ImmSrc = 3'b000;
     PCSrc = 1'b0;
     ResultSrc = 1'b0;
     ALUSrc = 1'b0;
@@ -41,7 +41,7 @@ always_comb begin
                 
                 // XOR
                 3'b100: begin
-                    ALUctrl = 4'b0100;
+                    ALUctrl = 4'b0010;
                 end
 
                 // OR
@@ -51,7 +51,7 @@ always_comb begin
 
                 // AND
                 3'b111: begin
-                    ALUctrl = 4'b0010;
+                    ALUctrl = 4'b0100;
                 end
 
                 // Logical Shift Left
@@ -63,11 +63,11 @@ always_comb begin
                 3'b101: begin
                     case(funct7)
                         // Logical
-                        7'b0000000: begin
+                        7'h00: begin
                             ALUctrl = 4'b0110;
                         end
                         //Arith
-                        7'b0010100: begin
+                        7'h20: begin
                             ALUctrl = 4'b0111;
                         end
                     endcase
@@ -80,25 +80,26 @@ always_comb begin
 
                 // Set Less Than (U)
                 3'b011: begin
-                    ALUctrl = 4'b1000;
+                    ALUctrl = 4'b1001;
                 end
             endcase
         end
         
         // i-type instructions
         7'b0010011: begin
+
             RegWrite = 1'b1;
             ALUSrc = 1'b1;
 
             case(funct3)
                 // ADDI
                 3'b000: begin
-                    ALUctrl = 3'b000;
+                    ALUctrl = 4'b0000;
                 end
 
                 // XORI
                 3'b100: begin
-                    ALUctrl = 4'b0100;
+                    ALUctrl = 4'b0010;
                 end
 
                 // ORI
@@ -108,19 +109,29 @@ always_comb begin
 
                 // ANDI
                 3'b111: begin
-                    ALUctrl = 4'b0010;
+                    ALUctrl = 4'b0100;
                 end
                 
                 // SLLI
                 3'b001: begin
-                    // to be implemented
+                    case(funct7)
+                        7'h00: begin
+                            ALUctrl = 4'b0101;
+                        end
+                    endcase
                 end
                 
                 // SRLI and SRAI
                 3'b101: begin
                     case(funct7)
                         // SRLI
+                        7'h00: begin
+                            ALUctrl = 4'b0110;
+                        end
                         // SRAI
+                        7'h20: begin
+                            ALUctrl = 4'b0111;
+                        end
                     endcase
                 end
 
@@ -131,7 +142,9 @@ always_comb begin
 
                 // SLTIU
                 3'b011: begin
-                    ALUctrl = 4'b1000;
+                    ImmSrc = 3'b001;
+                    ALUctrl = 4'b1001;
+
                 end
             endcase
         end
@@ -139,27 +152,38 @@ always_comb begin
 
         // load instructions
         7'b0000011: begin
+            ImmSrc = 3'b000;
             ResultSrc = 1'b1;
             RegWrite = 1'b1;
             // need some other component to implement these
         end
 
-        // u-type instructions
+        // u-type: lui
         7'b0110111: begin
+            ImmSrc = 3'b100;
+            // to be implemented
+        end
+        // u-type: auipc
+        7'b0010111: begin
+            ImmSrc = 3'b100;
             // to be implemented
         end
 
-        7'b0010111: begin
+        // J-type instructions
+        7'b110111: begin
+            ImmSrc = 3'b101;
             // to be implemented
         end
 
         // s-type instructions
         7'b0100011: begin
+            ImmSrc = 3'b010;
             // to be implemented
         end
 
         // b-type instructions
         7'b1100011: begin
+            ImmSrc = 3'b011;
             case(funct3)
                 // BEQ
                 3'b000: begin
