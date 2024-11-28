@@ -3,13 +3,15 @@ module CU (
     input logic [6:0] op,
     input logic [6:0] funct7,
     input logic Zero,
-    output logic [2:0] ImmSrc,   //
+    output logic [2:0] ImmSrc,
     output logic PCSrc,
     output logic ResultSrc,
     output logic ALUSrc,
     output logic MemWrite,
     output logic [3:0] ALUctrl,
-    output logic RegWrite
+    output logic RegWrite,
+    output logic [1:0] length,
+    output logic signExt
 );
 
 always_comb begin
@@ -20,6 +22,8 @@ always_comb begin
     ALUctrl = 4'b0000;
     RegWrite = 1'b0;
     MemWrite = 1'b0;
+    length = 2'b00;
+    signExt = 1'b0;
 
     case(op)
         // r-type instructions
@@ -87,7 +91,6 @@ always_comb begin
         
         // i-type instructions
         7'b0010011: begin
-
             RegWrite = 1'b1;
             ALUSrc = 1'b1;
 
@@ -117,6 +120,7 @@ always_comb begin
                     case(funct7)
                         7'h00: begin
                             ALUctrl = 4'b0101;
+                            ImmSrc = 3'b001;
                         end
                     endcase
                 end
@@ -126,11 +130,13 @@ always_comb begin
                     case(funct7)
                         // SRLI
                         7'h00: begin
-                            ALUctrl = 4'b0110;
+                            ALUctrl = 4'b0110; // Abraham needs to implement this and change it
+                            ImmSrc = 3'b001;
                         end
                         // SRAI
                         7'h20: begin
-                            ALUctrl = 4'b0111;
+                            ALUctrl = 4'b0111; // Abraham needs to implement this and change it
+                            ImmSrc = 3'b001;
                         end
                     endcase
                 end
@@ -142,50 +148,89 @@ always_comb begin
 
                 // SLTIU
                 3'b011: begin
-                    ImmSrc = 3'b001;
                     ALUctrl = 4'b1001;
-
+                    ImmSrc = 3'b001;
                 end
             endcase
         end
         
 
-        // load instructions
+        // Load instructions
         7'b0000011: begin
-            ImmSrc = 3'b000;  // Immediate comes from the instruction itself
-            ResultSrc = 1'b1; // Result comes from memory (not ALU)
-            RegWrite = 1'b1;  // Load instructions write data to register (rd)
-            ALUSrc = 1'b1;    // ALU source is the immediate value (rs1 + imm)
-            ALUctrl = 4'b0000; //will compute rs1 + imm in alu and then will handle load instructions in datamem
+            ALUSrc = 1'b1;
+            ResultSrc = 1'b1;
+            RegWrite = 1'b1;
+            case(funct3)
+                // LB
+                3'b000: begin
+                    length = 2'b00;
+                end
+                
+                // LH
+                3'b001: begin
+                    length = 2'b01;
+                end
+                
+                // LW
+                3'b010: begin
+                    length = 2'b10;
+                end
+                
+                // LBU
+                3'b100: begin
+                    length = 2'b00;
+                    signExt = 1'b1;
+                end
+                
+                // LHU
+                3'b101: begin
+                    length = 2'b10;
+                    signExt = 1'b1;
+                end
+            endcase
         end
 
-         // s-type instructions
+        // Store instructions
         7'b0100011: begin
-            ImmSrc = 3'b010;        // S-type immediate
-            ALUSrc = 1'b1;          // Use immediate as ALU operand
-            ALUctrl = 4'b0000;      // ADD operation for address calculation
-            MemWrite = 1'b1;        
-            RegWrite = 1'b0;        
+            MemWrite = 1'b1;
+            ALUSrc = 1'b1;
+            case(funct3)
+                // SB
+                3'b000: begin
+                    length = 2'b00;
+                end
+
+                // SH
+                3'b001: begin
+                    length = 2'b01;
+                end
+
+                // SW
+                3'b010: begin
+                    length = 2'b10;
+                end
+            endcase
         end
 
-        // u-type: lui
+        // U-type: LUI
         7'b0110111: begin
             ImmSrc = 3'b100;
-            // to be implemented
+            
         end
-        // u-type: auipc
+
+        // U-type: AUIPC
         7'b0010111: begin
             ImmSrc = 3'b100;
-            // to be implemented
+            
         end
 
         // J-type instructions
         7'b110111: begin
             ImmSrc = 3'b101;
-            // to be implemented
+            
         end
 
-        // b-type instructions
+        // B-type instructions
         7'b1100011: begin
             ImmSrc = 3'b011;
             case(funct3)
