@@ -3,7 +3,7 @@ module CU (
     input logic [6:0] op,
     input logic [6:0] funct7,
     input logic Zero,
-    output logic [2:0] ImmSrc,
+    output logic [2:0] ImmSrc,   //
     output logic PCSrc,
     output logic ResultSrc,
     output logic ALUSrc,
@@ -152,10 +152,20 @@ always_comb begin
 
         // load instructions
         7'b0000011: begin
-            ImmSrc = 3'b000;
-            ResultSrc = 1'b1;
-            RegWrite = 1'b1;
-            // need some other component to implement these
+            ImmSrc = 3'b000;  // Immediate comes from the instruction itself
+            ResultSrc = 1'b1; // Result comes from memory (not ALU)
+            RegWrite = 1'b1;  // Load instructions write data to register (rd)
+            ALUSrc = 1'b1;    // ALU source is the immediate value (rs1 + imm)
+            ALUctrl = 4'b0000; //will compute rs1 + imm in alu and then will handle load instructions in datamem
+        end
+
+         // s-type instructions
+        7'b0100011: begin
+            ImmSrc = 3'b010;        // S-type immediate
+            ALUSrc = 1'b1;          // Use immediate as ALU operand
+            ALUctrl = 4'b0000;      // ADD operation for address calculation
+            MemWrite = 1'b1;        
+            RegWrite = 1'b0;        
         end
 
         // u-type: lui
@@ -172,12 +182,6 @@ always_comb begin
         // J-type instructions
         7'b110111: begin
             ImmSrc = 3'b101;
-            // to be implemented
-        end
-
-        // s-type instructions
-        7'b0100011: begin
-            ImmSrc = 3'b010;
             // to be implemented
         end
 
