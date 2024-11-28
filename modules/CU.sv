@@ -3,6 +3,7 @@ module CU (
     input logic [6:0] op,
     input logic [6:0] funct7,
     input logic Zero,
+    input logic comparator,
     output logic [2:0] ImmSrc,
     output logic PCSrc,
     output logic ResultSrc,
@@ -84,7 +85,8 @@ always_comb begin
 
                 // Set Less Than (U)
                 3'b011: begin
-                    ALUctrl = 4'b1001;
+                    ALUctrl = 4'b1000;
+                    ImmSrc = 3'b001;
                 end
             endcase
         end
@@ -224,11 +226,18 @@ always_comb begin
             
         end
 
-        // J-type instructions
-        7'b110111: begin
-            ImmSrc = 3'b101;
+        // JAL
+        7'b1101111: begin
             
+            ImmSrc = 3'b101;
+            // to be implemented 
         end
+
+        // JALR
+        7'b1101111: begin
+            ImmSrc = 3'b101;
+            // to be implemented 
+        end     
 
         // B-type instructions
         7'b1100011: begin
@@ -242,27 +251,28 @@ always_comb begin
                 // BNE
                 3'b001:begin
                     PCSrc = ~Zero;
-                    ALUctrl = 3'b001;
                 end
                 
                 // BLT
                 3'b100: begin
-                    // need more info from Zero
+                    PCSrc = comparator;
                 end
                 
                 // BGE
                 3'b101: begin
-                    // need more info from Zero
+                    PCSrc = Zero | ~comparator;
                 end
 
                 // BLTU
                 3'b110: begin
-                    // need more info from Zero
+                    ImmSrc = 3'b001;
+                    PCSrc = comparator;
                 end
 
                 // BGEU
                 3'b111: begin
-                    // need more info from Zero
+                    ImmSrc = 3'b001;
+                    PCSrc = Zero | ~comparator;
                 end
             endcase
         end
