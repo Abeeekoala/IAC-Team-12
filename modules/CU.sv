@@ -85,7 +85,8 @@ always_comb begin
 
                 // Set Less Than (U)
                 3'b011: begin
-                    ALUctrl = 4'b1001;
+                    ALUctrl = 4'b1000;
+                    ImmSrc = 3'b001;
                 end
             endcase
         end
