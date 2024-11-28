@@ -10,7 +10,8 @@ module CU (
     output logic MemWrite,
     output logic [3:0] ALUctrl,
     output logic RegWrite,
-    output logic [1:0] length
+    output logic [1:0] length,
+    output logic signExt
 );
 
 always_comb begin
@@ -22,6 +23,7 @@ always_comb begin
     RegWrite = 1'b0;
     MemWrite = 1'b0;
     length = 2'b00;
+    signExt = 1'b0;
 
     case(op)
         // r-type instructions
@@ -176,56 +178,59 @@ always_comb begin
                 
                 // LBU
                 3'b100: begin
-                    ImmSrc = 3'b001;
                     length = 2'b00;
+                    signExt = 1'b1;
                 end
                 
                 // LHU
                 3'b101: begin
-                    ImmSrc = 3'b001;
                     length = 2'b10;
+                    signExt = 1'b1;
                 end
             endcase
         end
 
         // Store instructions
         7'b0100011: begin
+            MemWrite = 1'b1;
+            ALUSrc = 1'b1;
             case(funct3)
                 // SB
                 3'b000: begin
-                    //
+                    length = 2'b00;
                 end
 
                 // SH
                 3'b001: begin
-                    //
+                    length = 2'b01;
                 end
 
                 // SW
                 3'b010: begin
-                    //
+                    length = 2'b10;
                 end
             endcase
         end
 
-        // u-type: lui
+        // U-type: LUI
         7'b0110111: begin
             ImmSrc = 3'b100;
-            // to be implemented
+            
         end
-        // u-type: auipc
+
+        // U-type: AUIPC
         7'b0010111: begin
             ImmSrc = 3'b100;
-            // to be implemented
+            
         end
 
         // J-type instructions
         7'b110111: begin
             ImmSrc = 3'b101;
-            // to be implemented
+            
         end
 
-        // b-type instructions
+        // B-type instructions
         7'b1100011: begin
             ImmSrc = 3'b011;
             case(funct3)
