@@ -1,11 +1,12 @@
 module ALU #(
     DATA_WIDTH = 32
 ) (
-    input logic [DATA_WIDTH-1:0]    ALUop1,
-    input logic [DATA_WIDTH-1:0]    ALUop2,
-    input logic [3:0]               ALUctrl,
-    output logic [DATA_WIDTH-1:0]   ALUout,
-    output logic    eq
+    input logic     [DATA_WIDTH-1:0]    ALUop1,
+    input logic     [DATA_WIDTH-1:0]    ALUop2,
+    input logic     [3:0]               ALUctrl,
+    output logic    [DATA_WIDTH-1:0]    ALUout,
+    output logic    [1:0]               Zero         //whether ALUop1 and 2 are equal or not
+                                                    // 00 - equal, 01 - op1 > op2, 10 - op1 < op2
 
 );
 
@@ -24,7 +25,13 @@ always_comb begin
     default: ALUout = 32'b0;
     endcase
 
-    eq = (ALUop1 == ALUop2);
+    //determine the comparison result for zero
+    if (ALUop1 == ALUop2)
+        Zero = 2'b00; //equal
+    else if(ALUop1 > ALUop2)
+        Zero = 2'b01;
+    else
+        Zero = 2'b10; //op1 < op2
 end
 
 endmodule
