@@ -9,7 +9,8 @@ module CU (
     output logic ALUSrc,
     output logic MemWrite,
     output logic [3:0] ALUctrl,
-    output logic RegWrite
+    output logic RegWrite,
+    output logic [1:0] length
 );
 
 always_comb begin
@@ -20,6 +21,7 @@ always_comb begin
     ALUctrl = 4'b0000;
     RegWrite = 1'b0;
     MemWrite = 1'b0;
+    length = 2'b00;
 
     case(op)
         // r-type instructions
@@ -87,7 +89,6 @@ always_comb begin
         
         // i-type instructions
         7'b0010011: begin
-
             RegWrite = 1'b1;
             ALUSrc = 1'b1;
 
@@ -117,6 +118,7 @@ always_comb begin
                     case(funct7)
                         7'h00: begin
                             ALUctrl = 4'b0101;
+                            ImmSrc = 3'b001;
                         end
                     endcase
                 end
@@ -126,11 +128,13 @@ always_comb begin
                     case(funct7)
                         // SRLI
                         7'h00: begin
-                            ALUctrl = 4'b0110;
+                            ALUctrl = 4'b0110; // Abraham needs to implement this and change it
+                            ImmSrc = 3'b001;
                         end
                         // SRAI
                         7'h20: begin
-                            ALUctrl = 4'b0111;
+                            ALUctrl = 4'b0111; // Abraham needs to implement this and change it
+                            ImmSrc = 3'b001;
                         end
                     endcase
                 end
@@ -142,20 +146,66 @@ always_comb begin
 
                 // SLTIU
                 3'b011: begin
-                    ImmSrc = 3'b001;
                     ALUctrl = 4'b1001;
-
+                    ImmSrc = 3'b001;
                 end
             endcase
         end
         
 
-        // load instructions
+        // Load instructions
         7'b0000011: begin
-            ImmSrc = 3'b000;
+            ALUSrc = 1'b1;
             ResultSrc = 1'b1;
             RegWrite = 1'b1;
-            // need some other component to implement these
+            case(funct3)
+                // LB
+                3'b000: begin
+                    length = 2'b00;
+                end
+                
+                // LH
+                3'b001: begin
+                    length = 2'b01;
+                end
+                
+                // LW
+                3'b010: begin
+                    length = 2'b10;
+                end
+                
+                // LBU
+                3'b100: begin
+                    ImmSrc = 3'b001;
+                    length = 2'b00;
+                end
+                
+                // LHU
+                3'b101: begin
+                    ImmSrc = 3'b001;
+                    length = 2'b10;
+                end
+            endcase
+        end
+
+        // Store instructions
+        7'b0100011: begin
+            case(funct3)
+                // SB
+                3'b000: begin
+                    //
+                end
+
+                // SH
+                3'b001: begin
+                    //
+                end
+
+                // SW
+                3'b010: begin
+                    //
+                end
+            endcase
         end
 
         // u-type: lui
@@ -172,12 +222,6 @@ always_comb begin
         // J-type instructions
         7'b110111: begin
             ImmSrc = 3'b101;
-            // to be implemented
-        end
-
-        // s-type instructions
-        7'b0100011: begin
-            ImmSrc = 3'b010;
             // to be implemented
         end
 
