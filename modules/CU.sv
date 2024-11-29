@@ -11,8 +11,10 @@ module CU (
     output logic MemWrite,
     output logic [3:0] ALUctrl,
     output logic RegWrite,
-    output logic [1:0] length,
-    output logic signExt
+    output logic [2:0] funct3O,
+    output logic MUXjump,
+    output logic JumpPRT,
+    output logic lastmuxidk
 );
 
 always_comb begin
@@ -23,9 +25,10 @@ always_comb begin
     ALUctrl = 4'b0000;
     RegWrite = 1'b0;
     MemWrite = 1'b0;
-    length = 2'b00;
-    signExt = 1'b0;
-
+    funct3O <= funct3;
+    MUXjump = 1'b0;
+    JumpPRT = 1'b0;
+    
     case(op)
         // r-type instructions
         7'b0110011: begin
@@ -162,81 +165,45 @@ always_comb begin
             ALUSrc = 1'b1;
             ResultSrc = 1'b1;
             RegWrite = 1'b1;
-            case(funct3)
-                // LB
-                3'b000: begin
-                    length = 2'b00;
-                end
-                
-                // LH
-                3'b001: begin
-                    length = 2'b01;
-                end
-                
-                // LW
-                3'b010: begin
-                    length = 2'b10;
-                end
-                
-                // LBU
-                3'b100: begin
-                    length = 2'b00;
-                    signExt = 1'b1;
-                end
-                
-                // LHU
-                3'b101: begin
-                    length = 2'b10;
-                    signExt = 1'b1;
-                end
-            endcase
         end
 
         // Store instructions
         7'b0100011: begin
             MemWrite = 1'b1;
             ALUSrc = 1'b1;
-            case(funct3)
-                // SB
-                3'b000: begin
-                    length = 2'b00;
-                end
-
-                // SH
-                3'b001: begin
-                    length = 2'b01;
-                end
-
-                // SW
-                3'b010: begin
-                    length = 2'b10;
-                end
-            endcase
+            ImmSrc = 3'b010;
         end
 
-        // U-type: LUI
+        // LUI
         7'b0110111: begin
+            ALUctrl = 4'b1001;
+            ALUSrc = 1'b1;
             ImmSrc = 3'b100;
-            
+            RegWrite = 1'b1;
         end
 
-        // U-type: AUIPC
+        // AUIPC
         7'b0010111: begin
+
             ImmSrc = 3'b100;
-            
         end
 
         // JAL
         7'b1101111: begin
-            
+            RegWrite = 1'b1;
+            MUXjump = 1'b1;
+            PCSrc = 1'b1;
             ImmSrc = 3'b101;
-            // to be implemented 
         end
 
         // JALR
         7'b1101111: begin
-            ImmSrc = 3'b101;
-            // to be implemented 
+            RegWrite = 1'b1;
+            ALUSrc = 1'b1;
+            PCSrc = 1'b1;
+            MUXjump = 1'b1;
+            ALUSrc = 1'b1;
+            JumpPRT = 1'b1;
         end     
 
         // B-type instructions
