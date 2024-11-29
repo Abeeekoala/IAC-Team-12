@@ -5,7 +5,7 @@ main:
 
     #turn on light1
     li t1, 0x1                  # state of light1
-    sq t1, 0(t0)                # store data in memory
+    sw t1, 0(t0)                # store data in memory
     jal ra, delay               # delay before next light
 
     # turn on light2
@@ -47,7 +47,7 @@ main:
     # reset sequence (loop back to start)
     j main                      # restart sequence
 
-//delay loop
+# delay loop
 delay:
     li t2, 0xFFF           # adjust delay as needed
 
@@ -57,6 +57,6 @@ delay_loop:
     ret                         # return to main program
 
     .data
-    .org 0x00100000             # start of data memory
+    .org 0x00100             	# start of data memory
 
-    .word 0                     # light stages (default: all of)
+    .word 0                     # light stages (default: all of)
