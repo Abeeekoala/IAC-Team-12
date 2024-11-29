@@ -3,6 +3,7 @@ module datapath #(
               D_WIDTH = 32
 )(
     input  logic                  clk,
+    // Inputs from CU
     input  logic                  MemWrite,
     input  logic                  regWrite,
     input  logic                  muxSelect,
@@ -11,8 +12,12 @@ module datapath #(
     input  logic [A_WIDTH-1:0]    rs2,
     input  logic [A_WIDTH-1:0]    rd,
     input  logic                  ALUsrc,
+    // Input from Extend
     input  logic [D_WIDTH-1:0]    ImmOp,
-    output logic                  eq,
+    //ALU outputs
+    output logic                  Zero,
+    output logic                  Less,
+    output logic                  LessU,  
     output logic [D_WIDTH-1:0]    a0,
     output logic [D_WIDTH-1:0]    result
 );
