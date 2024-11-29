@@ -3,7 +3,7 @@ module datapath #(
               D_WIDTH = 32
 )(
     input  logic                  clk,
-    input  logic                  write_en,
+    input  logic                  MemWrite,
     input  logic                  regWrite,
     input  logic                  muxSelect,
     input  logic [2:0]            ALUctrl,
@@ -64,5 +64,46 @@ module datapath #(
         .in1 (ImmOp),
         .out (ALUop2)
     );
+
+    mux MUXjump (
+        .in1 (PCPlus4),
+        .sel (MUXjump),
+        .out (wd3),
+        .in0 (result)
+    );
+
+    mux JumpPRT (
+        .in0 (PCTarget),
+        .in1 (result),
+        .sel (JumpPRT),
+        .out (PCNext1)
+    );
+
+    mux ALUImmSelect (
+        .in0 (ImmExt),
+        .in1 (ALUout),
+        .sel (ALUImmSelect),
+        .out (PCOp1)
+    );
+
+    mux PCNext (
+        .in0 (PCNext0),
+        .in1 (PCNext1),
+        .sel (PCSrc),
+        .out (PCNext)
+    )
+
+    PCAdder PCPlus4 (
+        .in0 (PC),
+        .in1 (4),
+        .out (PCNext0)
+    );
+
+    PCAdder PCTarget (
+        .in0 (PC),
+        .in1 (PCOp1),
+        .out (PCNext1)
+    );
+
 
 endmodule
