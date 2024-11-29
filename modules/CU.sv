@@ -167,6 +167,7 @@ always_comb begin
             ALUSrc = 1'b1;
             ResultSrc = 1'b1;
             RegWrite = 1'b1;
+            ALUctrl = 4'b1010;
         end
 
         // Store instructions
