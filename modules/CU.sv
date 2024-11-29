@@ -1,20 +1,21 @@
 module CU (
-    input logic [2:0] funct3,
-    input logic [6:0] op,
-    input logic [6:0] funct7,
-    input logic Zero,
-    input logic comparator,
-    output logic [2:0] ImmSrc,
-    output logic PCSrc,
-    output logic ResultSrc,
-    output logic ALUSrc,
-    output logic MemWrite,
-    output logic [3:0] ALUctrl,
-    output logic RegWrite,
-    output logic [2:0] funct3O,
-    output logic MUXjump,
-    output logic JumpPRT,
-    output logic ALUImmSelect
+    input logic [2:0]       funct3,
+    input logic [6:0]       op,
+    input logic [6:0]       funct7,
+    input logic             Zero,
+    input logic             Less,
+    input logic             LessU,
+    output logic [2:0]      ImmSrc,
+    output logic            PCSrc,
+    output logic            ResultSrc,
+    output logic            ALUSrc,
+    output logic            MemWrite,
+    output logic [3:0]      ALUctrl,
+    output logic            RegWrite,
+    output logic [2:0]      funct3O,
+    output logic            MUXjump,
+    output logic            JumpPRT,
+    output logic            lastmuxidk
 );
 
 always_comb begin
@@ -177,7 +178,7 @@ always_comb begin
 
         // LUI
         7'b0110111: begin
-            ALUctrl = 4'b1001;
+            ALUctrl = 4'b1010;
             ALUSrc = 1'b1;
             ImmSrc = 3'b100;
             RegWrite = 1'b1;
@@ -222,29 +223,27 @@ always_comb begin
                 
                 // BNE
                 3'b001:begin
-                    PCSrc = ~Zero;
+                    PCSrc = ~Zero;  // !=
                 end
                 
                 // BLT
                 3'b100: begin
-                    PCSrc = comparator;
+                    PCSrc = Less;   // < (signed)
                 end
                 
                 // BGE
                 3'b101: begin
-                    PCSrc = Zero | ~comparator;
+                    PCSrc = ~Less;  // >= (signed) equivalent of not less than
                 end
 
                 // BLTU
                 3'b110: begin
-                    ImmSrc = 3'b001;
-                    PCSrc = comparator;
+                    PCSrc = LessU;  // < (unsign)
                 end
 
                 // BGEU
                 3'b111: begin
-                    ImmSrc = 3'b001;
-                    PCSrc = Zero | ~comparator;
+                    PCSrc = ~LessU; // >= (unsign) equivalent of not less than
                 end
             endcase
         end
