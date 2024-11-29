@@ -22,7 +22,7 @@ always_comb begin
     4'b0110: ALUout = ALUop1 >> ALUop2; // LSR
     4'b0111: ALUout = ALUop1 >>> ALUop2; // ASR
     4'b1000: ALUout = (ALUop1 < ALUop2) ? 1 : 0; // SLT
-    4'b1001: ALUout = ALUop2; // ALUop2
+    4'b1001: ALUout = ALUop2 << 12; // LUI
     default: ALUout = 32'b0;
     endcase
 
