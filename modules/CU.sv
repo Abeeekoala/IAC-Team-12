@@ -137,12 +137,12 @@ always_comb begin
                     case(funct7)
                         // SRLI
                         7'h00: begin
-                            ALUctrl = 4'b0110; // Abraham needs to implement this and change it
+                            ALUctrl = 4'b0110;
                             ImmSrc = 3'b001;
                         end
                         // SRAI
                         7'h20: begin
-                            ALUctrl = 4'b0111; // Abraham needs to implement this and change it
+                            ALUctrl = 4'b0111;
                             ImmSrc = 3'b001;
                         end
                     endcase
@@ -167,6 +167,7 @@ always_comb begin
             ALUSrc = 1'b1;
             ResultSrc = 1'b1;
             RegWrite = 1'b1;
+            ALUctrl = 4'b1010;
         end
 
         // Store instructions

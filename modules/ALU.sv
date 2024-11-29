@@ -27,6 +27,7 @@ always_comb begin
     4'b1000: ALUout = ($signed(ALUop1) < $signed(ALUop2)) ? 32'd1 : 32'd0; // set less than
     4'b1001: ALUout = (ALUop1 < ALUop2) ? 32'd1 : 32'd0; // set less than (U)
     4'b1010: ALUout = ALUop2;
+    4'b1011: ALUout = ALUop2 << 12;
     default: begin
         ALUout = 32'b0;
     end
