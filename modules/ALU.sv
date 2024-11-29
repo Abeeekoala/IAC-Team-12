@@ -28,7 +28,6 @@ always_comb begin
     4'b1001: ALUout = (ALUop1 < ALUop2) ? 32'd1 : 32'd0; // set less than (U)
     4'b1010: ALUout = ALUop2;
     default: begin
-        Compare = 1'b0;
         ALUout = 32'b0;
     end
     endcase
