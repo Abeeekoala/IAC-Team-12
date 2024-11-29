@@ -15,23 +15,23 @@ module dataMemory #(
 
     // Read logic for load instructions
     always_comb begin
-        if (!WD) begin // Load instructions
+        if (~WE) begin // Load instructions
             case (funct3)
-                3'b000: read_data = {{24{mem[A][7]}}, mem[A][7:0]};  // lb
-                3'b001: read_data = {{16{mem[A][15]}}, mem[A][15:0]}; // lh
-                3'b010: read_data = mem[A];                              // lw
-                3'b100: read_data = {24'b0, mem[A][7:0]};                // lbu
-                3'b101: read_data = {16'b0, mem[A][15:0]};               // lhu
-                default: read_data = 32'b0;                                 // Default case
+                3'b000: RD = {{24{mem[A][7]}}, mem[A][7:0]};  // lb
+                3'b001: RD = {{16{mem[A][15]}}, mem[A][15:0]}; // lh
+                3'b010: RD = mem[A];                              // lw
+                3'b100: RD = {24'b0, mem[A][7:0]};                // lbu
+                3'b101: RD = {16'b0, mem[A][15:0]};               // lhu
+                default: RD = 32'b0;                                 // Default case
             endcase
         end else begin
-            read_data = 32'b0; // No load operation
+            RD = 32'b0; // No load operation
         end
     end
 
     // Write logic for store instructions
     always_ff @(posedge clk) begin
-        if (WD) begin // Store instruction
+        if (WE) begin // Store instruction
             case (funct3)
                 3'b000: mem[A][7:0] <= WD[7:0];    // sb
                 3'b001: mem[A][15:0] <= WD[15:0];  // sh
