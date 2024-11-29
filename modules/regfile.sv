@@ -1,5 +1,5 @@
 module regfile #(
-    parameter ADDR_WIDTH = 16,
+    parameter ADDR_WIDTH = 16,          //a0_width = 5
     DATA_WIDTH = 32
 )(
     input logic                     clk,
