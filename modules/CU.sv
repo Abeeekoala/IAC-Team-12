@@ -26,9 +26,10 @@ always_comb begin
     ALUctrl = 4'b0000;
     RegWrite = 1'b0;
     MemWrite = 1'b0;
-    funct3O <= funct3;
+    funct3O = funct3;
     MUXjump = 1'b0;
     JumpPRT = 1'b0;
+    ALUImmSelect = 1'b0;
     
     case(op)
         // r-type instructions
@@ -185,8 +186,12 @@ always_comb begin
 
         // AUIPC
         7'b0010111: begin
-
+            PCSrc = 1'b1;
+            ALUctrl = 4'b1001;
+            ALUSrc = 1'b1;
             ImmSrc = 3'b100;
+            RegWrite = 1'b1;
+            ALUImmSelect = 1'b1;
         end
 
         // JAL
