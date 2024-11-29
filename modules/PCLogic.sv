@@ -3,7 +3,7 @@ module PCLogic(
     input logic         rst,
     input logic         PCSrc,
     input logic [31:0]  ImmExt,
-    output logic        PC
+    output logic [31:0]       PC
 );
 
 logic [31:0] PCNext, PCPlus4, PCTarget;
