@@ -12,10 +12,9 @@ module CU (
     output logic            MemWrite,
     output logic [3:0]      ALUctrl,
     output logic            RegWrite,
-    output logic [2:0]      funct3O,
+    output logic [2:0]      funct3_o,
     output logic            MUXjump,
-    output logic            JumpPRT,
-    output logic            lastmuxidk
+    output logic            JumpPRT
 );
 
 always_comb begin
@@ -51,7 +50,7 @@ always_comb begin
                 
                 // XOR
                 3'b100: begin
-                    ALUctrl = 4'b0010;
+                    ALUctrl = 4'b0100;
                 end
 
                 // OR
@@ -61,7 +60,7 @@ always_comb begin
 
                 // AND
                 3'b111: begin
-                    ALUctrl = 4'b0100;
+                    ALUctrl = 4'b0010;
                 end
 
                 // Logical Shift Left
@@ -137,12 +136,12 @@ always_comb begin
                     case(funct7)
                         // SRLI
                         7'h00: begin
-                            ALUctrl = 4'b0110; // Abraham needs to implement this and change it
+                            ALUctrl = 4'b0110;
                             ImmSrc = 3'b001;
                         end
                         // SRAI
                         7'h20: begin
-                            ALUctrl = 4'b0111; // Abraham needs to implement this and change it
+                            ALUctrl = 4'b0111;
                             ImmSrc = 3'b001;
                         end
                     endcase
@@ -167,6 +166,7 @@ always_comb begin
             ALUSrc = 1'b1;
             ResultSrc = 1'b1;
             RegWrite = 1'b1;
+            ALUctrl = 4'b1010;
         end
 
         // Store instructions
@@ -184,14 +184,11 @@ always_comb begin
             RegWrite = 1'b1;
         end
 
-        // AUIPC
+        // AUIPC  // need to get PC + Imm
         7'b0010111: begin
-            PCSrc = 1'b1;
-            ALUctrl = 4'b1001;
             ALUSrc = 1'b1;
             ImmSrc = 3'b100;
             RegWrite = 1'b1;
-            ALUImmSelect = 1'b1;
         end
 
         // JAL
