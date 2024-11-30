@@ -64,7 +64,7 @@ always_comb begin
                 // Shift Right
                 3'b101: begin
                     //Arith if (funct7_5) else logical
-                    ALUctrl = funct7_5 ? 4'b0111 : 4'b0110 //logical
+                    ALUctrl = funct7_5 ? 4'b0111 : 4'b0110; //logical
                 end
 
                 // Set Less Than
