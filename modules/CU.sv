@@ -37,7 +37,7 @@ always_comb begin
             case(funct3)
                 3'b000: begin
                     //Add if (funct7_5) else sub
-                    ALUctrl = 4'b0001 ? funct7_5 : 4'b0000
+                    ALUctrl = funct7_5 ? 4'b0001 : 4'b0000
                 end
                 
                 // XOR
@@ -63,17 +63,17 @@ always_comb begin
                 // Shift Right
                 3'b101: begin
                         //Arith if (funct7_5) else logical
-                        ALUctrl = 4'b0111 ? funct7_5 : 4'b0110 //logical
+                        ALUctrl = funct7_5 ? 4'b0111 : 4'b0110 //logical
                 end
 
                 // Set Less Than
                 3'b010: begin
-                    ALUctrl = 4'b1000;
+                    ALUctrl = 4'b1001;
                 end
 
                 // Set Less Than (U)
                 3'b011: begin
-                    ALUctrl = 4'b1000;
+                    ALUctrl = 4'b1010;
                     ImmSrc = 3'b001;
                 end
             endcase
@@ -115,18 +115,18 @@ always_comb begin
                 
                 // SRLI and SRAI
                 3'b101: begin
-                    ALUctrl = 4'b0111 ? funct7_5 : 4'b0110
+                    ALUctrl = funct7_5 ? 4'b1000 : 4'b0110
                     ImmSrc = 3'b001
                 end
 
                 // SLTI
                 3'b010: begin
-                    ALUctrl = 4'b1000;
+                    ALUctrl = 4'b1001;
                 end
 
                 // SLTIU
                 3'b011: begin
-                    ALUctrl = 4'b1001;
+                    ALUctrl = 4'b1010;
                     ImmSrc = 3'b001;
                 end
             endcase
@@ -135,14 +135,15 @@ always_comb begin
 
         // Load instructions
         7'b0000011: begin
+            ALUctrl = 4'b0000;
             ALUSrc = 1'b1;
             ResultSrc = 1'b1;
             RegWrite = 1'b1;
-            ALUctrl = 4'b1010;
         end
 
         // Store instructions
         7'b0100011: begin
+            ALUctrl = 4'b0000;
             MemWrite = 1'b1;
             ALUSrc = 1'b1;
             ImmSrc = 3'b010;
@@ -150,7 +151,7 @@ always_comb begin
 
         // LUI
         7'b0110111: begin
-            ALUctrl = 4'b1010;
+            ALUctrl = 4'b1011;
             ALUSrc = 1'b1;
             ImmSrc = 3'b100;
             RegWrite = 1'b1;
@@ -177,7 +178,6 @@ always_comb begin
             ALUSrc = 1'b1;
             PCSrc = 1'b1;
             MUXjump = 1'b1;
-            ALUSrc = 1'b1;
             JumpPRT = 1'b1;
         end     
 
