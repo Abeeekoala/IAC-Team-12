@@ -38,7 +38,7 @@ always_comb begin
             case(funct3)
                 3'b000: begin
                     //Add if (funct7_5) else sub
-                    ALUctrl = funct7_5 ? 4'b0001 : 4'b0000
+                    ALUctrl = funct7_5 ? 4'b0001 : 4'b0000;
                 end
                 
                 // XOR
