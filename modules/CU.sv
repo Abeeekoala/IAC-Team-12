@@ -14,7 +14,8 @@ module CU (
     output logic            RegWrite,
     output logic [2:0]      funct3_o,
     output logic            MUXjump,
-    output logic            JumpPRT
+    output logic            JumpPRT,
+    output logic            MUXjump_0
 );
 
 always_comb begin
@@ -28,7 +29,7 @@ always_comb begin
     funct3_o = funct3;
     MUXjump = 1'b0;
     JumpPRT = 1'b0;
-    ALUImmSelect = 1'b0;
+    MUXjump_0 = 1'b0;
     
     case(op)
         // r-type instructions
@@ -62,8 +63,8 @@ always_comb begin
 
                 // Shift Right
                 3'b101: begin
-                        //Arith if (funct7_5) else logical
-                        ALUctrl = funct7_5 ? 4'b0111 : 4'b0110 //logical
+                    //Arith if (funct7_5) else logical
+                    ALUctrl = funct7_5 ? 4'b0111 : 4'b0110 //logical
                 end
 
                 // Set Less Than
@@ -92,7 +93,7 @@ always_comb begin
 
                 // XORI
                 3'b100: begin
-                    ALUctrl = 4'b0010;
+                    ALUctrl = 4'b0100;
                 end
 
                 // ORI
@@ -102,7 +103,7 @@ always_comb begin
 
                 // ANDI
                 3'b111: begin
-                    ALUctrl = 4'b0100;
+                    ALUctrl = 4'b0010;
                 end
                 
                 // SLLI
@@ -115,8 +116,8 @@ always_comb begin
                 
                 // SRLI and SRAI
                 3'b101: begin
-                    ALUctrl = funct7_5 ? 4'b1000 : 4'b0110
-                    ImmSrc = 3'b001
+                    ALUctrl = funct7_5 ? 4'b1000 : 4'b0110;
+                    ImmSrc = 3'b001;
                 end
 
                 // SLTI
@@ -143,7 +144,8 @@ always_comb begin
 
         // Store instructions
         7'b0100011: begin
-            ALUctrl = 4'b0000;
+            ALUctrl = 4'b1011;
+            ResultSrc = 1'b1;
             MemWrite = 1'b1;
             ALUSrc = 1'b1;
             ImmSrc = 3'b010;
@@ -162,6 +164,7 @@ always_comb begin
             ALUSrc = 1'b1;
             ImmSrc = 3'b100;
             RegWrite = 1'b1;
+            MUXjump_0 = 1'b1; // mux selecting between result and pctarget to feed that into 0 of muxjump
         end
 
         // JAL
