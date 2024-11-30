@@ -96,7 +96,7 @@ module datapath #(
         .in1 (PCNext1),
         .sel (PCSrc),
         .out (PCNext)
-    )
+    );
 
     PCAdder PCPlus4 (
         .in0 (PC),
