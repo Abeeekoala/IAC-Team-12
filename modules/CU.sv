@@ -137,10 +137,10 @@ always_comb begin
 
         // Store instructions
         7'b0100011: begin
-            ALUctrl = 4'b1011;
+            ALUctrl = 4'b0000;
+            ALUSrc = 1'b1;
             ResultSrc = 2'b01;
             MemWrite = 1'b1;
-            ALUSrc = 1'b1;
             ImmSrc = 3'b010;
         end
 

@@ -1,7 +1,7 @@
 module  PC (
     input logic                 rst,                //rst
     input logic                 clk,                //synchronous   
-    input logic     [31:0]      ImmOp,              //immediate operand to calc branch target
+    input logic     [31:0]      ImmExt,              //immediate operand to calc branch target
     input logic                 PCsrc,              //control signal to choose between branch and incremented PC
     output logic    [31:0]      PC_out,             //current PC value
     output logic    [31:0]      inc_PC,             //going into result mux
@@ -10,15 +10,15 @@ module  PC (
 
 logic [31:0]            next_PC;                    //intermediate signal
 
-PCAdder PCPlus4(
+Adder PCPlus4(
     .in0    (PC_out),
     .in1    (32'h0004),
     .out    (inc_PC)
 );
 
-PCAdder PCTarget(
+Adder PCTarget(
     .in0    (PC_out),
-    .in1    (ImmOp),
+    .in1    (ImmExt),
     .out    (PCTarget)
 );
 
