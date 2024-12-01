@@ -139,7 +139,7 @@ always_comb begin
         7'b0100011: begin
             ALUctrl = 4'b0000;
             ALUSrc = 1'b1;
-            ResultSrc = 2'b01;
+            // ResultSrc = 2'b01;
             MemWrite = 1'b1;
             ImmSrc = 3'b010;
         end

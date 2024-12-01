@@ -15,18 +15,14 @@ module dataMemory #(
 
     // Read logic for load instructions
     always_comb begin
-        if (~WE) begin // Load instructions
-            case (funct3)
-                3'b000: RD = {{24{mem[A][7]}}, mem[A][7:0]};  // lb
-                3'b001: RD = {{16{mem[A][15]}}, mem[A][15:0]}; // lh
-                3'b010: RD = mem[A];                              // lw
-                3'b100: RD = {24'b0, mem[A][7:0]};                // lbu
-                3'b101: RD = {16'b0, mem[A][15:0]};               // lhu
-                default: RD = 32'b0;                                 // Default case
-            endcase
-        end else begin
-            RD = 32'b0; // No load operation
-        end
+        case (funct3)
+            3'b000: RD = {{24{mem[A][7]}}, mem[A][7:0]};    // lb
+            3'b001: RD = {{16{mem[A][15]}}, mem[A][15:0]};  // lh
+            3'b010: RD = mem[A];                            // lw
+            3'b100: RD = {24'b0, mem[A][7:0]};              // lbu
+            3'b101: RD = {16'b0, mem[A][15:0]};             // lhu
+            default: RD = 32'b0;                            // Default case
+        endcase
     end
 
     // Write logic for store instructions
