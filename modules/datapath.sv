@@ -8,18 +8,20 @@ module datapath #(
     input  logic                  regWrite,
     input  logic                  muxSelect,
     input  logic [2:0]            ALUctrl,
+    input  logic                  ALUsrc,
+    input  logic [2:0]            ResultSrc,
+    // Inputs from Instruction 
     input  logic [A_WIDTH-1:0]    rs1,
     input  logic [A_WIDTH-1:0]    rs2,
     input  logic [A_WIDTH-1:0]    rd,
-    input  logic                  ALUsrc,
+
     // Input from Extend
     input  logic [D_WIDTH-1:0]    ImmOp,
     //ALU outputs
     output logic                  Zero,
     output logic                  Less,
     output logic                  LessU,  
-    output logic [D_WIDTH-1:0]    a0,
-    output logic [D_WIDTH-1:0]    result
+    output logic [D_WIDTH-1:0]    a0
 );
 
     logic [D_WIDTH-1:0] regOp2;
