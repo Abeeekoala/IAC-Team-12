@@ -1,12 +1,12 @@
 module dataMemory #(
     parameter DATA_WIDTH = 32,  
-              ADDR_WIDTH = 5   // Address width (e.g., 5 bits -> 32 locations)
+              ADDR_WIDTH = 5            // Address width (e.g., 5 bits -> 32 locations)
 ) (
-    input logic clk,                           // Clock signal
-    input logic WE,                      // Write enable for store instructions
-    input logic [DATA_WIDTH-1:0] A,         // Memory address (calculated by ALU)
-    input logic [DATA_WIDTH-1:0] WD,   // Data to write into memory
-    input logic [2:0] funct3,                  // Instruction's funct3 field
+    input logic clk,                    // Clock signal
+    input logic WE,                     // Write enable for store instructions
+    input logic [DATA_WIDTH-1:0] A,     // Memory address (calculated by ALU)
+    input logic [DATA_WIDTH-1:0] WD,    // Data to write into memory
+    input logic [2:0] funct3,           // Instruction's funct3 field
     output logic [DATA_WIDTH-1:0] RD    // Data read from memory
 );
 
