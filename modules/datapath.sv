@@ -5,9 +5,9 @@ module datapath #(
     input logic                 clk,
     //Inputs from CU
     input logic                 MemWrite,
-    input logic                 regWrite,
+    input logic                 RegWrite,
     input logic [3:0]           ALUctrl,
-    input logic                 ALUsrc,
+    input logic                 ALUSrc,
     input logic [1:0]           ResultSrc,
     input logic [2:0]           funct3_i,   
 
@@ -42,7 +42,7 @@ regfile regfile (
     .ad1        (rs1),
     .ad2        (rs2),
     .ad3        (rd),
-    .we3        (regWrite),
+    .we3        (RegWrite),
     .wd3        (Result),
     .a0         (a0),
     .rd1        (ALUop1),
@@ -52,7 +52,7 @@ regfile regfile (
 mux ALUSrcB (
     .in0        (rd2),
     .in1        (ImmExt),
-    .sel        (ALUsrc),
+    .sel        (ALUSrc),
     .out        (ALUop2)
 );
 
