@@ -7,7 +7,12 @@ module dataMemory #(
     input logic [DATA_WIDTH-1:0] A,         // Memory address (calculated by ALU)
     input logic [DATA_WIDTH-1:0] WD,   // Data to write into memory
     input logic [2:0] funct3,                  // Instruction's funct3 field
-    output logic [DATA_WIDTH-1:0] RD    // Data read from memory
+    output logic [DATA_WIDTH-1:0] RD,    // Data read from memory
+
+    //Cache Signals
+    input logic [DATA_WIDTH-1:0] CD, // Cache Data returned upon hit
+    input logic CH,             // Cache Hit/miss signal
+    input logic CV,             // Cache Valitdity bit Signal
 );
 
     // Memory array: 2^ADDR_WIDTH locations, each DATA_WIDTH bits wide

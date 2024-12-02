@@ -10,7 +10,7 @@ module datapath #(
     input  logic [2:0]            ALUctrl,
     input  logic [A_WIDTH-1:0]    rs1,
     input  logic [A_WIDTH-1:0]    rs2,
-    input  logic [A_WIDTH-1:0]    rd,
+    input  logic [A_WIDTH-1:0]    r
     input  logic                  ALUsrc,
     // Input from Extend
     input  logic [D_WIDTH-1:0]    ImmOp,
