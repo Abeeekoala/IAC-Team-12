@@ -11,8 +11,7 @@ module CU (
     output logic            ALUSrc,
     output logic            MemWrite,
     output logic [3:0]      ALUctrl,
-    output logic            RegWrite,
-    output logic [2:0]      funct3_o
+    output logic            RegWrite
 );
 
 always_comb begin
@@ -23,7 +22,6 @@ always_comb begin
     ALUctrl = 4'b1111; //Not occupied control signal to handle faulty command
     RegWrite = 1'b0;
     MemWrite = 1'b0;
-    funct3_o = funct3;
     
     case(op)
         // r-type instructions
@@ -137,10 +135,10 @@ always_comb begin
 
         // Store instructions
         7'b0100011: begin
-            ALUctrl = 4'b1011;
-            ResultSrc = 2'b01;
-            MemWrite = 1'b1;
+            ALUctrl = 4'b0000;
             ALUSrc = 1'b1;
+            // ResultSrc = 2'b01;
+            MemWrite = 1'b1;
             ImmSrc = 3'b010;
         end
 

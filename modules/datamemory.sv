@@ -1,12 +1,12 @@
 module dataMemory #(
     parameter DATA_WIDTH = 32,  
-              ADDR_WIDTH = 5   // Address width (e.g., 5 bits -> 32 locations)
+              ADDR_WIDTH = 5            // Address width (e.g., 5 bits -> 32 locations)
 ) (
-    input logic clk,                           // Clock signal
-    input logic WE,                      // Write enable for store instructions
-    input logic [DATA_WIDTH-1:0] A,         // Memory address (calculated by ALU)
-    input logic [DATA_WIDTH-1:0] WD,   // Data to write into memory
-    input logic [2:0] funct3,                  // Instruction's funct3 field
+    input logic clk,                    // Clock signal
+    input logic WE,                     // Write enable for store instructions
+    input logic [DATA_WIDTH-1:0] A,     // Memory address (calculated by ALU)
+    input logic [DATA_WIDTH-1:0] WD,    // Data to write into memory
+    input logic [2:0] funct3,           // Instruction's funct3 field
     output logic [DATA_WIDTH-1:0] RD    // Data read from memory
 );
 
@@ -15,18 +15,14 @@ module dataMemory #(
 
     // Read logic for load instructions
     always_comb begin
-        if (~WE) begin // Load instructions
-            case (funct3)
-                3'b000: RD = {{24{mem[A][7]}}, mem[A][7:0]};  // lb
-                3'b001: RD = {{16{mem[A][15]}}, mem[A][15:0]}; // lh
-                3'b010: RD = mem[A];                              // lw
-                3'b100: RD = {24'b0, mem[A][7:0]};                // lbu
-                3'b101: RD = {16'b0, mem[A][15:0]};               // lhu
-                default: RD = 32'b0;                                 // Default case
-            endcase
-        end else begin
-            RD = 32'b0; // No load operation
-        end
+        case (funct3)
+            3'b000: RD = {{24{mem[A][7]}}, mem[A][7:0]};    // lb
+            3'b001: RD = {{16{mem[A][15]}}, mem[A][15:0]};  // lh
+            3'b010: RD = mem[A];                            // lw
+            3'b100: RD = {24'b0, mem[A][7:0]};              // lbu
+            3'b101: RD = {16'b0, mem[A][15:0]};             // lhu
+            default: RD = 32'b0;                            // Default case
+        endcase
     end
 
     // Write logic for store instructions
