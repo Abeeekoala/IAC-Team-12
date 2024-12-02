@@ -7,11 +7,11 @@ module CU (
     input logic             LessU,
     output logic [2:0]      ImmSrc,
     output logic            PCSrc,
-    output logic [1:0]      ResultSrc,
-    output logic            ALUSrc,
     output logic            MemWrite,
+    output logic            RegWrite,
     output logic [3:0]      ALUctrl,
-    output logic            RegWrite
+    output logic            ALUSrc,
+    output logic [1:0]      ResultSrc
 );
 
 always_comb begin
