@@ -8,10 +8,10 @@ module datapath #(
     input logic                 RegWrite,
     input logic [3:0]           ALUctrl,
     input logic                 ALUSrc,
-    input logic [1:0]           ResultSrc,
-    input logic [2:0]           funct3_i,   
+    input logic [1:0]           ResultSrc,   
 
-    //Inputs from Instruction 
+    //Inputs from Instruction
+    input logic [2:0]           funct3_i, 
     input logic [A_WIDTH-1:0]   rs1,
     input logic [A_WIDTH-1:0]   rs2,
     input logic [A_WIDTH-1:0]   rd,

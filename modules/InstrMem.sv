@@ -8,7 +8,7 @@ logic [7:0] mem_array [2**12-1:0];
 
 initial begin
         $display("Loading rom.");
-        $readmemh("../modules/program.hex", mem_array);
+        $readmemh("../modules/program.hex", mem_array); //loading directory need work
 end;
 
 always_comb begin

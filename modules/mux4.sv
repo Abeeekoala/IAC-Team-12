@@ -7,7 +7,7 @@ module  mux4 #(
     input logic [DATA_WIDTH - 1: 0]     in3,
     input logic [1:0]                   sel,
     output logic [DATA_WIDTH - 1: 0]    out 
-)
+);
 
 logic [DATA_WIDTH - 1: 0] mux0_out;
 logic [DATA_WIDTH - 1: 0] mux1_out;
@@ -30,7 +30,7 @@ mux muxMSB(
     .in0    (mux0_out)
     .in1    (mux1_out)
     .sel    (sel[1])
-    .out    (mux1_out)
+    .out    (out)
 );
 
 
