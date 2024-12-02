@@ -12,7 +12,7 @@ module ALU #(
 );
 
 always_comb begin
-    Eq = (ALUop1 == ALUop2);
+    Zero = (ALUop1 == ALUop2);
     Less = ($signed(ALUop1) < $signed(ALUop2));
     LessU = (ALUop1 < ALUop2);
     case(ALUctrl)
