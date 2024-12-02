@@ -10,13 +10,13 @@ module  PC (
 
 logic [31:0]            next_PC;                    //intermediate signal
 
-Adder PCPlus4(
+Adder PCPlus4_Adder(
     .in0    (PC_out),
     .in1    (32'h0004),
     .out    (inc_PC)
 );
 
-Adder PCTarget(
+Adder PCTarget_Adder(
     .in0    (PC_out),
     .in1    (ImmExt),
     .out    (PCTarget)
@@ -29,12 +29,10 @@ mux PCNext_mux(
     .out    (PCNext)
 );
 
-
 PCreg PCreg(
     .clk        (clk),
     .rst        (rst),
     .next_PC    (next_PC),
-    //Outputs
     .PC         (PC_out)
 );
 
