@@ -1,5 +1,5 @@
 module regfile #(
-    parameter ADDR_WIDTH = 16,          //a0_width = 5
+    parameter ADDR_WIDTH = 5,          //a0_width = 5
     DATA_WIDTH = 32
 )(
     input logic                     clk,
@@ -13,13 +13,13 @@ module regfile #(
     output logic [DATA_WIDTH-1:0]   a0
 );
 
-logic [DATA_WIDTH-1:0] regfile_array [2**ADDR_WIDTH-1:0]
+logic [DATA_WIDTH-1:0] regfile_array [2**ADDR_WIDTH-1:0];
 
 //read ports should be asynchronous
-always_ff @ *
-    begin
+always_comb begin
         RD1 = regfile_array[A1];
         RD2 = regfile_array[A2];
+        a0 = regfile_array[{5'b01010}];
     end
 
 always_ff @(posedge clk)
@@ -27,9 +27,6 @@ always_ff @(posedge clk)
         if(WE3 == 1'b1)
             regfile_array[A3] <= WD3;
     end
-
-    //synchronous
-    assign a0 = regfile_array[{16'b01010}];
 
 endmodule
 

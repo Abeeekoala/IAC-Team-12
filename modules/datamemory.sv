@@ -1,6 +1,5 @@
-module dataMemory #(
-    parameter DATA_WIDTH = 32,  
-              ADDR_WIDTH = 5            // Address width (e.g., 5 bits -> 32 locations)
+module datamemory #(
+    parameter DATA_WIDTH = 32
 ) (
     input logic clk,                    // Clock signal
     input logic WE,                     // Write enable for store instructions
@@ -10,8 +9,12 @@ module dataMemory #(
     output logic [DATA_WIDTH-1:0] RD    // Data read from memory
 );
 
-    // Memory array: 2^ADDR_WIDTH locations, each DATA_WIDTH bits wide
-    logic [DATA_WIDTH-1:0] mem [0:31];
+    // Memory array: 2^17 locations 0x00000000 to 0x0001FFFF, each DATA_WIDTH bits wide
+    logic [DATA_WIDTH-1:0] mem [0:131072];
+
+    initial begin
+        $readmemh("../modules/data.hex", mem);
+    end
 
     // Read logic for load instructions
     always_comb begin

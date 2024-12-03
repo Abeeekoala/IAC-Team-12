@@ -39,14 +39,14 @@ logic [D_WIDTH-1:0] Result;
 
 regfile regfile (
     .clk        (clk),
-    .ad1        (rs1),
-    .ad2        (rs2),
-    .ad3        (rd),
-    .we3        (RegWrite),
-    .wd3        (Result),
+    .A1        (rs1),
+    .A2        (rs2),
+    .A3        (rd),
+    .WE3        (RegWrite),
+    .WD3        (Result),
     .a0         (a0),
-    .rd1        (ALUop1),
-    .rd2        (rd2)
+    .RD1        (ALUop1),
+    .RD2        (rd2)
 );
 
 mux ALUSrcB (
