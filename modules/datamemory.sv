@@ -10,10 +10,15 @@ module datamemory #(
 );
 
     // Memory array: 2^17 locations 0x00000000 to 0x0001FFFF, each DATA_WIDTH bits wide
-    logic [DATA_WIDTH-1:0] mem [0:131072];
+    logic [DATA_WIDTH-1:0] mem [0:131071];
 
     initial begin
-        $readmemh("../modules/data.hex", mem);
+        $readmemh("data.hex", mem);
+        $display("Data Memory Contents After Initialization:");
+        $display("mem[0] = %h", mem[0]);
+        $display("mem[1] = %h", mem[1]);
+        $display("mem[2] = %h", mem[2]);
+        $display("mem[3] = %h", mem[3]);
     end
 
     // Read logic for load instructions
