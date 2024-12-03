@@ -1,7 +1,7 @@
 module top(
     input   logic           clk,
     input   logic           rst,
-    input   logic           TRIGGERSEL,
+    input   logic           trigger,
     output  logic [31:0]    a0         
 );
 
@@ -17,12 +17,12 @@ logic [31:0]        instr;
 logic [31:0]        ImmExt;
 
 //Output of CU
-logic               PCsrc;  
+logic               PCSrc;  
 logic [2:0]         ImmSrc;    
 logic               MemWrite;
 logic               RegWrite;
 logic [3:0]         ALUctrl;
-logic               ALUsrc;
+logic               ALUSrc;
 logic [1:0]         ResultSrc;
 
 //Ouputs of Datapath
@@ -33,7 +33,7 @@ logic               LessU;
 PC PC(
     .clk        (clk),
     .rst        (rst),
-    .PCsrc      (PCsrc),
+    .PCSrc      (PCSrc),
     .ImmExt     (ImmExt),
     .PC_out     (InstrAdd),
     .inc_PC     (inc_PC),
@@ -54,8 +54,8 @@ CU CU(
     .LessU      (LessU),
     //Outputs
     .ImmSrc     (ImmSrc),
-    .PCSrc      (PCsrc),
-    .ALUsrc     (ALUsrc),
+    .PCSrc      (PCSrc),
+    .ALUSrc     (ALUSrc),
     .ALUctrl    (ALUctrl),
     .RegWrite   (RegWrite),
     .MemWrite   (MemWrite),
@@ -64,7 +64,7 @@ CU CU(
 
 sign_ext sign_ext(
     .ImmSrc     (ImmSrc),
-    .Instr      (instr),
+    .Instr      (instr[31:7]),
     .ImmExt     (ImmExt)
 );
 
@@ -74,11 +74,12 @@ datapath datapath(
     .RegWrite   (RegWrite),
     .MemWrite   (MemWrite),
     .ALUctrl    (ALUctrl),
-    .ALUsrc     (ALUsrc),
+    .ALUSrc     (ALUSrc),
     .funct3_i   (instr[14:12]),
     .rs1        (instr[19:15]),
     .rs2        (instr[24:20]),
     .rd         (instr[11:7]),
+    .ResultSrc  (ResultSrc),
     //Inputs from sign_ext
     .ImmExt     (ImmExt),
     //Inputs from PC
@@ -92,6 +93,6 @@ datapath datapath(
 );
 
 
-assign TriggerOutput = TRIGGERSEL ? ReadData : ALUout; //trigger mux
+// assign TriggerOutput = TRIGGERSEL ? ReadData : ALUout; //trigger mux
 
 endmodule

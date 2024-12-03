@@ -1,6 +1,6 @@
 module sign_ext (
-    input   logic [31:0]      Instr,
-    input   logic [1:0]       ImmSrc,
+    input   logic [31:7]      Instr,
+    input   logic [2:0]       ImmSrc,
     output  logic [31:0]      ImmExt
 );
 //Memo:
@@ -34,7 +34,7 @@ always_comb begin
         3'b100: ImmExt = {Instr[31:12], {12{1'b0}}};
 
         // J-type
-        3'b101: ImmExt = {{12{Instr[31]}}, Instr[31], Instr[19:12], Instr[20], Instr[30:21], 1'b0};
+        3'b101: ImmExt = {{11{Instr[31]}}, Instr[31], Instr[19:12], Instr[20], Instr[30:21], 1'b0};
 
         default: begin
             ImmExt = 32'b0;

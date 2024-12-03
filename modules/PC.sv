@@ -2,7 +2,7 @@ module  PC (
     input logic                 rst,                //rst
     input logic                 clk,                //synchronous   
     input logic     [31:0]      ImmExt,              //immediate operand to calc branch target
-    input logic                 PCsrc,              //control signal to choose between branch and incremented PC
+    input logic                 PCSrc,              //control signal to choose between branch and incremented PC
     output logic    [31:0]      PC_out,             //current PC value
     output logic    [31:0]      inc_PC,             //going into result mux
     output logic    [31:0]      PCTarget            //going into result mux
@@ -26,7 +26,7 @@ mux PCNext_mux(
     .in0    (inc_PC),
     .in1    (PCTarget),
     .sel    (PCSrc),
-    .out    (PCNext)
+    .out    (next_PC)
 );
 
 PCreg PCreg(
