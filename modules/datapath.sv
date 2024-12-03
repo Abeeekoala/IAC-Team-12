@@ -26,7 +26,8 @@ module datapath #(
     //ALU outputs
     output logic                Zero,
     output logic                Less,
-    output logic                LessU,  
+    output logic                LessU,
+    output logic [D_WIDTH-1:0]  reg1,  
     output logic [D_WIDTH-1:0]  a0
 );
 
@@ -36,6 +37,8 @@ logic [D_WIDTH-1:0] ALUop2;
 logic [D_WIDTH-1:0] ALUout;
 logic [D_WIDTH-1:0] ReadData;
 logic [D_WIDTH-1:0] Result;
+
+assign reg1 = ALUop1;
 
 regfile regfile (
     .clk        (clk),
