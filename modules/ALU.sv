@@ -4,17 +4,10 @@ module ALU #(
     input logic     [DATA_WIDTH-1:0]    ALUop1,
     input logic     [DATA_WIDTH-1:0]    ALUop2,
     input logic     [3:0]               ALUctrl,
-    output logic    [DATA_WIDTH-1:0]    ALUout,  
-    output logic                        Zero,
-    output logic                        Less,
-    output logic                        LessU       
-
+    output logic    [DATA_WIDTH-1:0]    ALUout   
 );
 
 always_comb begin
-    Zero = (ALUop1 == ALUop2);
-    Less = ($signed(ALUop1) < $signed(ALUop2));
-    LessU = (ALUop1 < ALUop2);
     case(ALUctrl)
         4'b0000: ALUout = ALUop1 + ALUop2;          // ADD
         4'b0001: ALUout = ALUop1 - ALUop2;          // SUB
