@@ -7,16 +7,18 @@ module CU (
     input logic             LessU,
     output logic [2:0]      ImmSrc,
     output logic            PCSrc,
-    output logic [1:0]      ResultSrc,
-    output logic            ALUSrc,
+    output logic            PCTarget_sel,
     output logic            MemWrite,
+    output logic            RegWrite,
     output logic [3:0]      ALUctrl,
-    output logic            RegWrite
+    output logic            ALUSrc,
+    output logic [1:0]      ResultSrc
 );
 
 always_comb begin
     ImmSrc = 3'b000;
     PCSrc = 1'b0;
+    PCTarget_sel = 1'b0;
     ResultSrc = 2'b00;
     ALUSrc = 1'b0;
     ALUctrl = 4'b1111; //Not occupied control signal to handle faulty command
@@ -123,8 +125,7 @@ always_comb begin
                 end
             endcase
         end
-        
-
+    
         // Load instructions
         7'b0000011: begin
             ALUctrl = 4'b0000;
@@ -168,9 +169,9 @@ always_comb begin
         end
 
         // JALR
-        7'b1101111: begin
+        7'b1100111: begin
             RegWrite = 1'b1;
-            ALUSrc = 1'b1;
+            PCTarget_sel = 1'b1;
             PCSrc = 1'b1;
             ResultSrc = 2'b10;
         end     
