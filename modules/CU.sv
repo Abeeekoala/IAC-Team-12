@@ -7,21 +7,21 @@ module CU (
     input logic             LessU,
     output logic [2:0]      ImmSrc,
     output logic            PCSrc,
-    output logic            PCTarget_sel,
     output logic            MemWrite,
     output logic            RegWrite,
     output logic [3:0]      ALUctrl,
-    output logic            ALUSrc,
+    output logic            ALUSrcA,
+    output logic            ALUSrcB,
     output logic [1:0]      ResultSrc
 );
 
 always_comb begin
     ImmSrc = 3'b000;
     PCSrc = 1'b0;
-    PCTarget_sel = 1'b0;
     ResultSrc = 2'b00;
-    ALUSrc = 1'b0;
-    ALUctrl = 4'b1111; //Not occupied control signal to handle faulty command
+    ALUSrcA = 1'b0;
+    ALUSrcB = 1'b0;
+    ALUctrl = 4'b0000; //Not occupied control signal to handle faulty command
     RegWrite = 1'b0;
     MemWrite = 1'b0;
     
@@ -77,7 +77,7 @@ always_comb begin
         // i-type instructions
         7'b0010011: begin
             RegWrite = 1'b1;
-            ALUSrc = 1'b1;
+            ALUSrcB = 1'b1;
             case(funct3)
                 // ADDI
                 3'b000: begin
@@ -129,7 +129,7 @@ always_comb begin
         // Load instructions
         7'b0000011: begin
             ALUctrl = 4'b0000;
-            ALUSrc = 1'b1;
+            ALUSrcB = 1'b1;
             ResultSrc = 2'b01;
             RegWrite = 1'b1;
         end
@@ -137,8 +137,8 @@ always_comb begin
         // Store instructions
         7'b0100011: begin
             ALUctrl = 4'b0000;
-            ALUSrc = 1'b1;
-            // ResultSrc = 2'b01;
+            ALUSrcB = 1'b1;
+            ResultSrc = 2'b11;
             MemWrite = 1'b1;
             ImmSrc = 3'b010;
         end
@@ -146,22 +146,24 @@ always_comb begin
         // LUI
         7'b0110111: begin
             ALUctrl = 4'b1011;
-            ALUSrc = 1'b1;
+            ALUSrcB = 1'b1;
             ImmSrc = 3'b100;
             RegWrite = 1'b1;
         end
 
         // AUIPC
         7'b0010111: begin
-            ALUSrc = 1'b1;
+            ALUSrcA = 1'b1;
+            ALUSrcB = 1'b1;
             ImmSrc = 3'b100;
             RegWrite = 1'b1;
             ALUctrl = 4'b1011;
-            ResultSrc = 2'b11;
         end
 
         // JAL
         7'b1101111: begin
+            ALUSrcA = 1'b1;
+            ALUSrcB = 1'b1;
             RegWrite = 1'b1;
             PCSrc = 1'b1;
             ImmSrc = 3'b101;
@@ -170,14 +172,17 @@ always_comb begin
 
         // JALR
         7'b1100111: begin
+            ALUSrcA = 1'b0;
+            ALUSrcB = 1'b1;
             RegWrite = 1'b1;
-            PCTarget_sel = 1'b1;
             PCSrc = 1'b1;
             ResultSrc = 2'b10;
-        end     
+        end
 
         // B-type instructions
         7'b1100011: begin
+            ALUSrcA = 1'b1;
+            ALUSrcB = 1'b1;
             ImmSrc = 3'b011;
             case(funct3)
                 // BEQ

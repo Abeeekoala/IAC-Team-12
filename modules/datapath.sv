@@ -21,24 +21,22 @@ module datapath #(
     
     //Inputs from PC
     input logic [D_WIDTH-1:0]   inc_PC,
-    input logic [D_WIDTH-1:0]   PCTarget,
+    input logic [D_WIDTH-1:0]   PC_out,
 
     //ALU outputs
     output logic                Zero,
     output logic                Less,
-    output logic                LessU,
-    output logic [D_WIDTH-1:0]  reg1,  
-    output logic [D_WIDTH-1:0]  a0
+    output logic                LessU, 
+    output logic [D_WIDTH-1:0]  a0,
+    output logic [D_WIDTH-1:0]  ALUout
 );
 
+logic [D_WIDTH-1:0] rd1;
 logic [D_WIDTH-1:0] rd2;
 logic [D_WIDTH-1:0] ALUop1;
 logic [D_WIDTH-1:0] ALUop2;
-logic [D_WIDTH-1:0] ALUout;
 logic [D_WIDTH-1:0] ReadData;
 logic [D_WIDTH-1:0] Result;
-
-assign reg1 = ALUop1;
 
 regfile regfile (
     .clk        (clk),
@@ -51,6 +49,13 @@ regfile regfile (
     .RD1        (ALUop1),
     .RD2        (rd2)
 );
+
+mux ALUSrcA (
+    .in0        (rd1),
+    .in1        (PC_out),
+    .sel        (ALUSrcA),
+    .out        (ALUop1)
+)
 
 mux ALUSrcB (
     .in0        (rd2),
@@ -82,7 +87,7 @@ mux4 muxResult(
     .in0        (ALUout),
     .in1        (ReadData),
     .in2        (inc_PC),
-    .in3        (PCTarget),
+    .in3        (32'd0),
     .sel        (ResultSrc),
     .out        (Result)
 );
