@@ -17,7 +17,8 @@ logic [31:0]        instr;
 logic [31:0]        ImmExt;
 
 //Output of CU
-logic               PCSrc;  
+logic               PCSrc;
+logic               PCTarget_sel;  
 logic [2:0]         ImmSrc;    
 logic               MemWrite;
 logic               RegWrite;
@@ -26,70 +27,75 @@ logic               ALUSrc;
 logic [1:0]         ResultSrc;
 
 //Ouputs of Datapath
+logic [31:0]        rs1;
 logic               Zero;   
 logic               Less;
 logic               LessU;  
 
 PC PC(
-    .clk        (clk),
-    .rst        (rst),
-    .PCSrc      (PCSrc),
-    .ImmExt     (ImmExt),
-    .PC_out     (InstrAdd),
-    .inc_PC     (inc_PC),
-    .PCTarget   (PCTarget)
+    .clk            (clk),
+    .rst            (rst),
+    .PCSrc          (PCSrc),
+    .PCTarget_sel   (PCTarget_sel),
+    .ImmExt         (ImmExt),
+    .rs1            (rs1),
+    .PC_out         (InstrAdd),
+    .inc_PC         (inc_PC),
+    .PCTarget       (PCTarget)
 );
 
 InstrMem InstrMem(
-    .addr       (InstrAdd),
-    .instr      (instr)
+    .addr           (InstrAdd),
+    .instr          (instr)
 );
 
 CU CU(
-    .funct3     (instr[14:12]),
-    .op         (instr[6:0]),
-    .funct7_5   (instr[30]),
-    .Zero       (Zero),
-    .Less       (Less),
-    .LessU      (LessU),
+    .funct3         (instr[14:12]),
+    .op             (instr[6:0]),
+    .funct7_5       (instr[30]),
+    .Zero           (Zero),
+    .Less           (Less),
+    .LessU          (LessU),
     //Outputs
-    .ImmSrc     (ImmSrc),
-    .PCSrc      (PCSrc),
-    .ALUSrc     (ALUSrc),
-    .ALUctrl    (ALUctrl),
-    .RegWrite   (RegWrite),
-    .MemWrite   (MemWrite),
-    .ResultSrc  (ResultSrc)
+    .ImmSrc         (ImmSrc),
+    .PCSrc          (PCSrc),
+    .PCTarget_sel   (PCTarget_sel),
+    .ALUSrc         (ALUSrc),
+    .ALUctrl        (ALUctrl),
+    .RegWrite       (RegWrite),
+    .MemWrite       (MemWrite),
+    .ResultSrc      (ResultSrc)
 );
 
 sign_ext sign_ext(
-    .ImmSrc     (ImmSrc),
-    .Instr      (instr[31:7]),
-    .ImmExt     (ImmExt)
+    .ImmSrc         (ImmSrc),
+    .Instr          (instr[31:7]),
+    .ImmExt         (ImmExt)
 );
 
 datapath datapath(
-    .clk        (clk),
+    .clk            (clk),
     //Inputs from CU
-    .RegWrite   (RegWrite),
-    .MemWrite   (MemWrite),
-    .ALUctrl    (ALUctrl),
-    .ALUSrc     (ALUSrc),
-    .funct3_i   (instr[14:12]),
-    .rs1        (instr[19:15]),
-    .rs2        (instr[24:20]),
-    .rd         (instr[11:7]),
-    .ResultSrc  (ResultSrc),
+    .RegWrite       (RegWrite),
+    .MemWrite       (MemWrite),
+    .ALUctrl        (ALUctrl),
+    .ALUSrc         (ALUSrc),
+    .funct3_i       (instr[14:12]),
+    .rs1            (instr[19:15]),
+    .rs2            (instr[24:20]),
+    .rd             (instr[11:7]),
+    .ResultSrc      (ResultSrc),
     //Inputs from sign_ext
-    .ImmExt     (ImmExt),
+    .ImmExt         (ImmExt),
     //Inputs from PC
-    .inc_PC     (inc_PC),
-    .PCTarget   (PCTarget),
+    .inc_PC         (inc_PC),
+    .PCTarget       (PCTarget),
     //Ouputs
-    .Zero       (Zero),
-    .Less       (Less),
-    .LessU      (LessU),
-    .a0         (a0)
+    .Zero           (Zero),
+    .Less           (Less),
+    .LessU          (LessU),
+    .reg1           (rs1),
+    .a0             (a0)
 );
 
 
