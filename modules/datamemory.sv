@@ -13,12 +13,12 @@ module datamemory #(
     logic [DATA_WIDTH-1:0] mem [0:131071];
 
     initial begin
-        $readmemh("data.hex", mem);
+        $readmemh("data.hex", mem, 32'h00010000);
         $display("Data Memory Contents After Initialization:");
-        $display("mem[0] = %h", mem[0]);
-        $display("mem[1] = %h", mem[1]);
-        $display("mem[2] = %h", mem[2]);
-        $display("mem[3] = %h", mem[3]);
+        $display("mem[0] = %h", mem[32'h00010000]);
+        $display("mem[1] = %h", mem[32'h00010001]);
+        $display("mem[2] = %h", mem[32'h00010002]);
+        $display("mem[3] = %h", mem[32'h00010003]);
     end
 
     // Read logic for load instructions
