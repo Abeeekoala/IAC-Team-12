@@ -8,10 +8,10 @@ module datapath #(
     input logic                 RegWrite,
     input logic [3:0]           ALUctrl,
     input logic                 ALUSrc,
-    input logic [1:0]           ResultSrc,
-    input logic [2:0]           funct3_i,   
+    input logic [1:0]           ResultSrc,   
 
-    //Inputs from Instruction 
+    //Inputs from Instruction
+    input logic [2:0]           funct3_i, 
     input logic [A_WIDTH-1:0]   rs1,
     input logic [A_WIDTH-1:0]   rs2,
     input logic [A_WIDTH-1:0]   rd,
@@ -26,7 +26,8 @@ module datapath #(
     //ALU outputs
     output logic                Zero,
     output logic                Less,
-    output logic                LessU,  
+    output logic                LessU,
+    output logic [D_WIDTH-1:0]  reg1,  
     output logic [D_WIDTH-1:0]  a0
 );
 
@@ -37,16 +38,18 @@ logic [D_WIDTH-1:0] ALUout;
 logic [D_WIDTH-1:0] ReadData;
 logic [D_WIDTH-1:0] Result;
 
+assign reg1 = ALUop1;
+
 regfile regfile (
     .clk        (clk),
-    .ad1        (rs1),
-    .ad2        (rs2),
-    .ad3        (rd),
-    .we3        (RegWrite),
-    .wd3        (Result),
+    .A1        (rs1),
+    .A2        (rs2),
+    .A3        (rd),
+    .WE3        (RegWrite),
+    .WD3        (Result),
     .a0         (a0),
-    .rd1        (ALUop1),
-    .rd2        (rd2)
+    .RD1        (ALUop1),
+    .RD2        (rd2)
 );
 
 mux ALUSrcB (
