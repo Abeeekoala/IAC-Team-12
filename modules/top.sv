@@ -18,7 +18,6 @@ logic [31:0]        ImmExt;
 
 //Output of CU
 logic               PCSrc;
-logic               PCTarget_sel;  
 logic [2:0]         ImmSrc;    
 logic               MemWrite;
 logic               RegWrite;
@@ -27,7 +26,7 @@ logic               ALUSrc;
 logic [1:0]         ResultSrc;
 
 //Ouputs of Datapath
-logic [31:0]        rs1;
+logic [31:0]        ALUout;
 logic               Zero;   
 logic               Less;
 logic               LessU;  
@@ -38,7 +37,7 @@ PC PC(
     .PCSrc          (PCSrc),
     .PCTarget_sel   (PCTarget_sel),
     .ImmExt         (ImmExt),
-    .rs1            (rs1),
+    .PCTarget       (ALUout),
     .PC_out         (InstrAdd),
     .inc_PC         (inc_PC),
     .PCTarget       (PCTarget)
