@@ -9,8 +9,8 @@ module datamemory #(
     output logic [DATA_WIDTH-1:0] RD    // Data read from memory
 );
 
-    // Memory array: 2^17 locations 0x00000000 to 0x0001FFFF, each DATA_WIDTH bits wide
-    logic [DATA_WIDTH-1:0] mem [0:131071];
+    // Memory array: 2^18 locations 0x00000000 to 0x0001FFFF, each DATA_WIDTH bits wide
+    logic [DATA_WIDTH-1:0] mem [0:2**18-1];
 
     initial begin
         $readmemh("data.hex", mem, 32'h00010000);
