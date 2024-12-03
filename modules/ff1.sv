@@ -1,14 +1,11 @@
-module ff1 #(
-    parameter   ADDR_WIDTH = 32,
-                DATA_WIDTH = 32
-)(
-    input logic                     clk,
-    input logic [DATA_WIDTH-1:0]    RD,
-    input logic [DATA_WIDTH-1:0]    PC,
-    input logic [DATA_WIDTH-1:0]    inc_PC,
-    input logic [DATA_WIDTH-1:0]    InstrMem,
-    output logic [DATA_WIDTH-1:0]   PCD,
-    output logic [DATA_WIDTH-1:0]   PCPlus4D
+module ff1 (
+    input logic             clk,
+    input logic [31:0]      RD,
+    input logic [31:0]      PC,
+    input logic [31:0]      inc_PC,
+    input logic [31:0]      InstrMem,
+    output logic [31:0]     PCD,
+    output logic [31:0]     PCPlus4D
 );
 
 always_ff @ (posedge clk)
