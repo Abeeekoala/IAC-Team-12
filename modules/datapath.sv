@@ -3,6 +3,7 @@ module datapath #(
               D_WIDTH = 32
 )(
     input logic                 clk,
+    input logic                 trigger, 
     //Inputs from CU
     input logic                 MemWrite,
     input logic                 RegWrite,
@@ -32,7 +33,7 @@ module datapath #(
     output logic                Less,
     output logic                LessU, 
     //Regfile output
-    output logic [D_WIDTH-1:0]  a0,
+    output logic [D_WIDTH-1:0]  a0
 );
 
 logic [D_WIDTH-1:0] rd1;
@@ -44,9 +45,9 @@ logic [D_WIDTH-1:0] Result;
 
 regfile regfile (
     .clk        (clk),
-    .A1        (rs1),
-    .A2        (rs2),
-    .A3        (rd),
+    .A1         (rs1),
+    .A2         (rs2),
+    .A3         (rd),
     .WE3        (RegWrite),
     .WD3        (Result),
     .a0         (a0),
@@ -85,6 +86,7 @@ Comparator Comparator(
 
 datamemory dataMem(
     .clk        (clk),
+    .trigger    (trigger),
     .WE         (MemWrite),
     .WD         (rd2),
     .A          (ALUout),
