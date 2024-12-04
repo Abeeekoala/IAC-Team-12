@@ -24,7 +24,7 @@ always_comb begin
 
 always_ff @(posedge clk)
     begin
-        if(WE3 == 1'b1)
+        if(WE3 == 1'b1 && A3 != 5'b00000)
             regfile_array[A3] <= WD3;
     end
 
