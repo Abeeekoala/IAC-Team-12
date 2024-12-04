@@ -73,6 +73,7 @@ public:
         while (cycles < maxCycles) {
             // Check if the output matches the expected value
             if (top_->a0 == expectedNextState) {
+                printf("cycles delayed: %d\n", cycles);
                 return;
             }   
             else if (top_->a0 != currentState) {
