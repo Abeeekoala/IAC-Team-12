@@ -1,26 +1,22 @@
-module ff3 #(
-    parameter   ADDR_WIDTH = 32,
-                DATA_WIDTH = 32
-)(
+module ff3 (
     input logic                     clk,
-    //ctrl inputs
-    input logic                     RegWriteE,
+    input logic [31:0]              PCPlus4E,
+    input logic [5:0]               RdE,
+    input logic [31:0]              WriteDataE, //or is this regOp2
+    input logic [31:0]              ALUout,
     input logic [1:0]               ResultSrcE,
     input logic                     MemWriteE,
-    //other inputs
-    input logic [DATA_WIDTH-1:0]    ALUout,
-    input logic [DATA_WIDTH-1:0]    WriteDataE, //or is this regOp2
-    input logic [4:0]               RdE,
-    input logic [DATA_WIDTH-1:0]    PCPlus4E
-    //other outputs
-    output logic [DATA_WIDTH-1:0]   PCPlus4M,
+    input logic                     RegWriteE,
+    input logic                     funct3E,
+
+    output logic [31:0]             PCPlus4M,
     output logic [5:0]              RdM,
-    output logic [DATA_WIDTH-1:0]   WriteDataM,
-    output logic [DATA_WIDTH-1:0]   ALUResultM,
-    //ctrl outputs
-    output logic                MemWriteM,
-    output logic [1:0]          ResultSrcM,
-    output logic                RegWriteM       
+    output logic [31:0]             WriteDataM,
+    output logic [31:0]             ALUResultM,
+    output logic [1:0]              ResultSrcM,
+    output logic                    MemWriteM,
+    output logic                    RegWriteM,
+    output logic                    funct3M
 );
 
 always_ff @ (posedge clk)
@@ -32,6 +28,7 @@ always_ff @ (posedge clk)
         RdM <= RdE;
         PCPlus4M <= PCPlus4E;
         ALUResultM <= ALUout;
+        funct3M <= funct3E;
     end
 
 endmodule

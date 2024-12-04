@@ -10,35 +10,35 @@ module hazard_unit(
     input logic             RegWriteW,
     output logic [1:0]      ForwardAE,
     output logic [1:0]      ForwardBE,
-    output logic [1:0]      Forward
+    output logic [1:0]      Forward,
     output logic            stall,
     output logic            flush
 );
 
     //data hazard
-    always_comb begin
+always_comb begin
 
-        //initialise signals
+    //initialise signals
 
-        stall = 1'b0;
-        flush = 1'b0;
+    stall = 1'b0;
+    flush = 1'b0;
+    ForwardAE = 2'b00;
+    ForwardBE = 2'b00;
+
+    //read after write hazard -> Forwarding
+    // 00: RD2E: no forwarding
+    // 01: resultW : forwarding from EX/MEM after data mem
+    // 10: ALUResultM: forwarding from MEM/WB (after ALU)
+
+    if (RegWriteM && (RdM != 0) && (RdM == Rs1E)) begin
+        ForwardAE = 2'b10;
+    end
+    else if (RegWriteW && (RdW != 0) && (RdW == Rs1E)) begin
+        ForwardAE = 2'b01;
+    end
+    else begin
         ForwardAE = 2'b00;
-        ForwardBE = 2'b00;
-
-        //read after write hazard -> Forwarding
-        // 00: RD2E: no forwarding
-        // 01: resultW : forwarding from EX/MEM after data mem
-        // 10: ALUResultM: forwarding from MEM/WB (after ALU)
-
-        if (RegWriteM && (RdM != 0) && (RdM == Rs1E)) begin
-            ForwardAE = 2'b10;
-        end
-        else if (RegWriteW && (RdW != 0) && (RdW == Rs1E)) begin
-            ForwardAE = 2'b01;
-        end
-        else begin
-            ForwardAE = 2'b00;    
-        end
+    end
     
 
     //forwardB
@@ -67,7 +67,7 @@ module hazard_unit(
     //is the instruction in the execute stage the same register as the instruction in the ID
     //if both true, then stall the pipeline
 
-    if (MEmReadE && ((RD2E == Rs1D) || (RD2E == Rs2D))) begin
+    if (MEmReadE && ((RD2E == Rs1D) | (RD2E == Rs2D))) begin
         stall = 1'b1;
     end
     else begin
@@ -87,8 +87,7 @@ module hazard_unit(
     if (branch) begin
         flush = 1;
     end
-
-    end
+end
 
 
 endmodule
