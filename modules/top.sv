@@ -5,6 +5,8 @@ module top(
     output  logic [31:0]    a0         
 );
 
+logic               PCSrc;
+
 //Output of PC
 wire [31:0]         InstrAdd;
 wire [31:0]         inc_PC;
@@ -16,7 +18,8 @@ wire [31:0]         instr;
 wire [31:0]         ImmExt;
 
 //Output of CU
-wire                PCSrc;
+wire                Jump;
+wire                Branch;
 wire [2:0]          ImmSrc;    
 wire                MemWrite;
 wire                RegWrite;
@@ -27,9 +30,9 @@ wire [1:0]          ResultSrc;
 
 //Ouputs of Datapath
 wire [31:0]         ALUout;
-wire                Zero;   
-wire                Less;
-wire                LessU;  
+wire                Relation;
+
+assign PCSrc = (Relation & Branch) | Jump;
 
 PC PC(
     .clk            (clk),
@@ -49,12 +52,10 @@ CU CU(
     .funct3         (instr[14:12]),
     .op             (instr[6:0]),
     .funct7_5       (instr[30]),
-    .Zero           (Zero),
-    .Less           (Less),
-    .LessU          (LessU),
     //Outputs
     .ImmSrc         (ImmSrc),
-    .PCSrc          (PCSrc),
+    .Jump           (Jump),
+    .Branch         (Branch),
     .ALUSrcA        (ALUSrcA),
     .ALUSrcB        (ALUSrcB),
     .ALUctrl        (ALUctrl),
@@ -90,9 +91,7 @@ datapath datapath(
     .PC_out         (InstrAdd),
     //Ouputs
     .ALUout         (ALUout),
-    .Zero           (Zero),
-    .Less           (Less),
-    .LessU          (LessU),
+    .Relation       (Relation),
     .a0             (a0)
 );
 
