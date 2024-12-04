@@ -68,6 +68,28 @@ public:
         }
     }
 
+    void waitForOutput(uint8_t currentState, uint8_t expectedNextState, int maxCycles) {
+        int cycles = 0;
+        while (cycles < maxCycles) {
+            // Check if the output matches the expected value
+            if (top_->a0 == expectedNextState) {
+                printf("cycles delayed: %d\n", cycles);
+                return;
+            }   
+            else if (top_->a0 != currentState) {
+                    FAIL() << "Unexpected state transition: Current state 0x" << std::hex << (int)currentState
+                        << ", transitioned to 0x" << (int)top_->a0
+                        << " instead of 0x" << (int)expectedNextState;
+                }
+            runSimulation(1);
+            cycles++;
+        }
+        // Output current state
+        FAIL() << "Timed out waiting for output: Current state 0x" << std::hex << (int)currentState
+            << ", expected transition to state 0x" << (int)expectedNextState
+            << " after " << cycles << " cycles.";
+    }
+
     void TearDown() override
     {
         // End trace and simulation
