@@ -29,9 +29,24 @@ logic [2:0] set;
 always_comb begin
     tag = address[31:5];
     set = address[4:2];
-
+    
+    if(cache[set].ValitdityBit && (cache[set].tag == tag) ) begin
+        hit = 1;
+        CacheData = cache[set].data
+    end
+    else begin
+        hit = 0;
+        CacheData = CacheMissData_RMM;
+    end
 end
 
 //cache write
-    
+always_ff @(posedge clk) begin
+    if(WE && ~hit) begin
+        cache[set].ValidityBit <= 1;
+        cache[set].tag <= tag;
+        cache[set].data <= CacheMissData_RMM;  
+    end
+end
+
 endmodule
