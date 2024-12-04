@@ -7,29 +7,23 @@ module CU (
     input logic             LessU,
     output logic [2:0]      ImmSrc,
     output logic            PCSrc,
-    output logic            ResultSrc,
-    output logic            ALUSrc,
     output logic            MemWrite,
-    output logic [3:0]      ALUctrl,
     output logic            RegWrite,
-    output logic [2:0]      funct3_o,
-    output logic            MUXjump,
-    output logic            JumpPRT,
-    output logic            MUXjump_0
+    output logic [3:0]      ALUctrl,
+    output logic            ALUSrcA,
+    output logic            ALUSrcB,
+    output logic [1:0]      ResultSrc
 );
 
 always_comb begin
     ImmSrc = 3'b000;
     PCSrc = 1'b0;
-    ResultSrc = 1'b0;
-    ALUSrc = 1'b0;
-    ALUctrl = 4'b1111; //Not occupied control signal to handle faulty command
+    ResultSrc = 2'b00;
+    ALUSrcA = 1'b0;
+    ALUSrcB = 1'b0;
+    ALUctrl = 4'b0000; //Not occupied control signal to handle faulty command
     RegWrite = 1'b0;
     MemWrite = 1'b0;
-    funct3_o = funct3;
-    MUXjump = 1'b0;
-    JumpPRT = 1'b0;
-    MUXjump_0 = 1'b0;
     
     case(op)
         // r-type instructions
@@ -83,8 +77,7 @@ always_comb begin
         // i-type instructions
         7'b0010011: begin
             RegWrite = 1'b1;
-            ALUSrc = 1'b1;
-
+            ALUSrcB = 1'b1;
             case(funct3)
                 // ADDI
                 3'b000: begin
@@ -132,60 +125,64 @@ always_comb begin
                 end
             endcase
         end
-        
-
+    
         // Load instructions
         7'b0000011: begin
             ALUctrl = 4'b0000;
-            ALUSrc = 1'b1;
-            ResultSrc = 1'b1;
+            ALUSrcB = 1'b1;
+            ResultSrc = 2'b01;
             RegWrite = 1'b1;
         end
 
         // Store instructions
         7'b0100011: begin
-            ALUctrl = 4'b1011;
-            ResultSrc = 1'b1;
+            ALUctrl = 4'b0000;
+            ALUSrcB = 1'b1;
+            ResultSrc = 2'b11;
             MemWrite = 1'b1;
-            ALUSrc = 1'b1;
             ImmSrc = 3'b010;
         end
 
         // LUI
         7'b0110111: begin
             ALUctrl = 4'b1011;
-            ALUSrc = 1'b1;
+            ALUSrcB = 1'b1;
             ImmSrc = 3'b100;
             RegWrite = 1'b1;
         end
 
-        // AUIPC  // need to get PC + Imm
+        // AUIPC
         7'b0010111: begin
-            ALUSrc = 1'b1;
+            ALUSrcA = 1'b1;
+            ALUSrcB = 1'b1;
             ImmSrc = 3'b100;
             RegWrite = 1'b1;
-            MUXjump_0 = 1'b1; // mux selecting between result and pctarget to feed that into 0 of muxjump
+            ALUctrl = 4'b1011;
         end
 
         // JAL
         7'b1101111: begin
+            ALUSrcA = 1'b1;
+            ALUSrcB = 1'b1;
             RegWrite = 1'b1;
-            MUXjump = 1'b1;
             PCSrc = 1'b1;
             ImmSrc = 3'b101;
+            ResultSrc = 2'b10;
         end
 
         // JALR
-        7'b1101111: begin
+        7'b1100111: begin
+            ALUSrcA = 1'b0;
+            ALUSrcB = 1'b1;
             RegWrite = 1'b1;
-            ALUSrc = 1'b1;
             PCSrc = 1'b1;
-            MUXjump = 1'b1;
-            JumpPRT = 1'b1;
-        end     
+            ResultSrc = 2'b10;
+        end
 
         // B-type instructions
         7'b1100011: begin
+            ALUSrcA = 1'b1;
+            ALUSrcB = 1'b1;
             ImmSrc = 3'b011;
             case(funct3)
                 // BEQ

@@ -2,113 +2,106 @@ module datapath #(
     parameter A_WIDTH = 5,
               D_WIDTH = 32
 )(
-    input  logic                  clk,
-    // Inputs from CU
-    input  logic                  MemWrite,
-    input  logic                  regWrite,
-    input  logic                  muxSelect,
-    input  logic [2:0]            ALUctrl,
-    input  logic [A_WIDTH-1:0]    rs1,
-    input  logic [A_WIDTH-1:0]    rs2,
-    input  logic [A_WIDTH-1:0]    r
-    input  logic                  ALUsrc,
-    // Input from Extend
-    input  logic [D_WIDTH-1:0]    ImmOp,
-    //ALU outputs
-    output logic                  Zero,
-    output logic                  Less,
-    output logic                  LessU,  
-    output logic [D_WIDTH-1:0]    a0,
-    output logic [D_WIDTH-1:0]    result
+    input logic                 clk,
+    input logic                 trigger, 
+    //Inputs from CU
+    input logic                 MemWrite,
+    input logic                 RegWrite,
+    input logic [3:0]           ALUctrl,
+    input logic                 ALUSrcA,
+    input logic                 ALUSrcB,
+    input logic [1:0]           ResultSrc,   
+
+    //Inputs from Instruction
+    input logic [2:0]           funct3_i, 
+    input logic [A_WIDTH-1:0]   rs1,
+    input logic [A_WIDTH-1:0]   rs2,
+    input logic [A_WIDTH-1:0]   rd,
+
+    //Input from Extend
+    input logic [D_WIDTH-1:0]   ImmExt,
+    
+    //Inputs from PC
+    input logic [D_WIDTH-1:0]   inc_PC,
+    input logic [D_WIDTH-1:0]   PC_out,
+
+    //ALU output
+    output logic [D_WIDTH-1:0]  ALUout,
+
+    //Comparator outputs
+    output logic                Zero,
+    output logic                Less,
+    output logic                LessU, 
+    //Regfile output
+    output logic [D_WIDTH-1:0]  a0
 );
 
-    logic [D_WIDTH-1:0] regOp2;
-    logic [D_WIDTH-1:0] ALUop1;
-    logic [D_WIDTH-1:0] ALUop2;
-    logic [D_WIDTH-1:0] ALUout;
-    logic [D_WIDTH-1:0] ReadData;
+logic [D_WIDTH-1:0] rd1;
+logic [D_WIDTH-1:0] rd2;
+logic [D_WIDTH-1:0] ALUop1;
+logic [D_WIDTH-1:0] ALUop2;
+logic [D_WIDTH-1:0] ReadData;
+logic [D_WIDTH-1:0] Result;
 
-    dataMem dataMem(
-        .clk    (clk),
-        .write_en   (write_en),
-        .write_data (rd2),
-        .a      (ALUout), 
-        .read_data  (ReadData),
-    );
+regfile regfile (
+    .clk        (clk),
+    .A1         (rs1),
+    .A2         (rs2),
+    .A3         (rd),
+    .WE3        (RegWrite),
+    .WD3        (Result),
+    .a0         (a0),
+    .RD1        (rd1),
+    .RD2        (rd2)
+);
 
-    ALU ALU (
-        .ALUop1  (ALUop1),
-        .ALUop2  (ALUop2),
-        .ALUctrl (ALUctrl),
-        .eq      (eq),
-        .ALUout  (ALUout)
-    );
+mux ALUSrcA_mux (
+    .in0        (rd1),
+    .in1        (PC_out),
+    .sel        (ALUSrcA),
+    .out        (ALUop1)
+);
 
-    regfile regfile (
-        .clk  (clk),
-        .ad1  (rs1),
-        .ad2  (rs2),
-        .ad3  (rd),
-        .we3  (regWrite),
-        .wd3  (ALUout),
-        .a0   (a0),
-        .rd1  (ALUop1),
-        .rd2  (regOp2)
-    );
+mux ALUSrcB_mux (
+    .in0        (rd2),
+    .in1        (ImmExt),
+    .sel        (ALUSrcB),
+    .out        (ALUop2)
+);
 
-    mux muxMem(
-        .in0 (ALUout),
-        .in1 (ReadData),
-        .sel (muxSelect),
-        .out (result)
-    );
+ALU ALU (
+    .ALUop1     (ALUop1),
+    .ALUop2     (ALUop2),
+    .ALUctrl    (ALUctrl),  
+    .ALUout     (ALUout)
+);
 
-    mux muxALU (
-        .in0 (regOp2),
-        .sel (ALUsrc),
-        .in1 (ImmOp),
-        .out (ALUop2)
-    );
+Comparator Comparator(
+    .rs1        (rd1),
+    .rs2        (rd2),
+    .Zero       (Zero),
+    .Less       (Less),
+    .LessU      (LessU) 
+);
 
-    mux MUXjump (
-        .in1 (PCPlus4),
-        .sel (MUXjump),
-        .out (wd3),
-        .in0 (result)
-    );
+datamemory dataMem(
+    .clk        (clk),
+    .trigger    (trigger),
+    .WE         (MemWrite),
+    .WD         (rd2),
+    .A          (ALUout),
+    .funct3     (funct3_i), 
+    .RD         (ReadData)
+);
 
-    mux JumpPRT (
-        .in0 (PCTarget),
-        .in1 (result),
-        .sel (JumpPRT),
-        .out (PCNext1)
-    );
-
-    mux ALUImmSelect (
-        .in0 (ImmExt),
-        .in1 (ALUout),
-        .sel (ALUImmSelect),
-        .out (PCOp1)
-    );
-
-    mux PCNext (
-        .in0 (PCNext0),
-        .in1 (PCNext1),
-        .sel (PCSrc),
-        .out (PCNext)
-    );
-
-    PCAdder PCPlus4 (
-        .in0 (PC),
-        .in1 (4),
-        .out (PCNext0)
-    );
-
-    PCAdder PCTarget (
-        .in0 (PC),
-        .in1 (PCOp1),
-        .out (PCNext1)
-    );
+mux4 muxResult(
+    .in0        (ALUout),
+    .in1        (ReadData),
+    .in2        (inc_PC),
+    .in3        (32'd0),
+    .sel        (ResultSrc),
+    .out        (Result)
+);
 
 
 endmodule
