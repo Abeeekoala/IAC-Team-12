@@ -7,7 +7,7 @@ module  PC (
     output logic    [31:0]      inc_PC             //going into result mux
 );
 
-logic [31:0]            next_PC;                    //intermediate signal
+wire [31:0]            next_PC;                    //intermediate signal
 
 Adder PCPlus4_Adder(
     .in0    (PC_out),

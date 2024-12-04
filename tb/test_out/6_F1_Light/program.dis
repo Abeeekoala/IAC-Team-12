@@ -32,7 +32,7 @@ bfc00048:	07f00513          	li	a0,127
 bfc0004c:	010000ef          	jal	ra,bfc0005c <delay>
 bfc00050:	0ff00513          	li	a0,255
 bfc00054:	008000ef          	jal	ra,bfc0005c <delay>
-bfc00058:	fa9ff06f          	j	bfc00000 <main>
+bfc00058:	fadff06f          	j	bfc00004 <trigger_wait>
 
 bfc0005c <delay>:
 bfc0005c:	00041463          	bnez	s0,bfc00064 <lfsr_continue>

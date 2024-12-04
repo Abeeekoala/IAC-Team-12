@@ -48,7 +48,7 @@ trigger_wait:
     jal ra, delay
 
     # Loop back to wait for the next trigger
-    j main                    # Jump back to start
+    j trigger_wait   
 
 # delay loop
 delay:
