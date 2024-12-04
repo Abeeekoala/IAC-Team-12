@@ -6,30 +6,30 @@ module top(
 );
 
 //Output of PC
-logic [31:0]        InstrAdd;
-logic [31:0]        inc_PC;
+wire [31:0]         InstrAdd;
+wire [31:0]         inc_PC;
 
 //Output of Instr mem  
-logic [31:0]        instr;
+wire [31:0]         instr;
 
 //Output of sign_ext     
-logic [31:0]        ImmExt;
+wire [31:0]         ImmExt;
 
 //Output of CU
-logic               PCSrc;
-logic [2:0]         ImmSrc;    
-logic               MemWrite;
-logic               RegWrite;
-logic [3:0]         ALUctrl;
-logic               ALUSrcA;
-logic               ALUSrcB;
-logic [1:0]         ResultSrc;
+wire                PCSrc;
+wire [2:0]          ImmSrc;    
+wire                MemWrite;
+wire                RegWrite;
+wire [3:0]          ALUctrl;
+wire                ALUSrcA;
+wire                ALUSrcB;
+wire [1:0]          ResultSrc;
 
 //Ouputs of Datapath
-logic [31:0]        ALUout;
-logic               Zero;   
-logic               Less;
-logic               LessU;  
+wire [31:0]         ALUout;
+wire                Zero;   
+wire                Less;
+wire                LessU;  
 
 PC PC(
     .clk            (clk),
@@ -95,8 +95,5 @@ datapath datapath(
     .LessU          (LessU),
     .a0             (a0)
 );
-
-
-// assign TriggerOutput = TRIGGERSEL ? ReadData : ALUout; //trigger mux
 
 endmodule

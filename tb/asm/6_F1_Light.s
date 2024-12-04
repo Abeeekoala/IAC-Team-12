@@ -8,7 +8,7 @@ main:
 trigger_wait:
     li t0, 0x00000FC            # MMIO address of trigger input
     lw x11, 0(t0)               # Load trigger value into x11 (a1)
-    beq x11, zero, trigger_wait 
+    beq x11, zero, lfsr_continue 
 
     # Start light sequence
     # State S0: All lights off
@@ -36,7 +36,7 @@ trigger_wait:
     jal ra, delay
 
     # State S6: Turn on lights 1 to 6
-    li a0, 0x43
+    li a0, 0x3F
     jal ra, delay
 
     # State S7: Turn on lights 1 to 7
@@ -44,12 +44,11 @@ trigger_wait:
     jal ra, delay
 
     # State S8: Turn on lights 1 to 8
-    li t1, 0xFF
-    sw t1, 0(t0)
+    li a0, 0xFF
     jal ra, delay
 
     # Loop back to wait for the next trigger
-    j main                    # Jump back to start
+    j trigger_wait   
 
 # delay loop
 delay:
@@ -68,8 +67,10 @@ lfsr_continue:
     # Update LFSR value
     slli s0, s0, 1            # s0 = s0 << 1
     or   s0, s0, t6           # Insert feedback bit into s0
+    andi s0, s0, 0x7F         # make sure it's 7 bit
 
     # Ensure delay value is not zero
+    beq x11, zero, trigger_wait
     bnez s0, delay_not_zero
     li s0, 1                  # Reset to 1 if zero
 
