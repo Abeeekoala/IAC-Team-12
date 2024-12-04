@@ -3,11 +3,13 @@ module datapath #(
               D_WIDTH = 32
 )(
     input logic                 clk,
+    input logic                 trigger, 
     //Inputs from CU
     input logic                 MemWrite,
     input logic                 RegWrite,
     input logic [3:0]           ALUctrl,
-    input logic                 ALUSrc,
+    input logic                 ALUSrcA,
+    input logic                 ALUSrcB,
     input logic [1:0]           ResultSrc,   
 
     //Inputs from Instruction
@@ -21,56 +23,70 @@ module datapath #(
     
     //Inputs from PC
     input logic [D_WIDTH-1:0]   inc_PC,
-    input logic [D_WIDTH-1:0]   PCTarget,
+    input logic [D_WIDTH-1:0]   PC_out,
 
-    //ALU outputs
+    //ALU output
+    output logic [D_WIDTH-1:0]  ALUout,
+
+    //Comparator outputs
     output logic                Zero,
     output logic                Less,
-    output logic                LessU,
-    output logic [D_WIDTH-1:0]  reg1,  
+    output logic                LessU, 
+    //Regfile output
     output logic [D_WIDTH-1:0]  a0
 );
 
+logic [D_WIDTH-1:0] rd1;
 logic [D_WIDTH-1:0] rd2;
 logic [D_WIDTH-1:0] ALUop1;
 logic [D_WIDTH-1:0] ALUop2;
-logic [D_WIDTH-1:0] ALUout;
 logic [D_WIDTH-1:0] ReadData;
 logic [D_WIDTH-1:0] Result;
 
-assign reg1 = ALUop1;
-
 regfile regfile (
     .clk        (clk),
-    .A1        (rs1),
-    .A2        (rs2),
-    .A3        (rd),
+    .A1         (rs1),
+    .A2         (rs2),
+    .A3         (rd),
     .WE3        (RegWrite),
     .WD3        (Result),
     .a0         (a0),
-    .RD1        (ALUop1),
+    .RD1        (rd1),
     .RD2        (rd2)
 );
 
-mux ALUSrcB (
+mux ALUSrcA_mux (
+    .in0        (rd1),
+    .in1        (PC_out),
+    .sel        (ALUSrcA),
+    .out        (ALUop1)
+);
+
+mux ALUSrcB_mux (
     .in0        (rd2),
     .in1        (ImmExt),
-    .sel        (ALUSrc),
+    .sel        (ALUSrcB),
     .out        (ALUop2)
 );
 
 ALU ALU (
     .ALUop1     (ALUop1),
     .ALUop2     (ALUop2),
-    .ALUctrl    (ALUctrl),
+    .ALUctrl    (ALUctrl),  
+    .ALUout     (ALUout)
+);
+
+Comparator Comparator(
+    .rs1        (rd1),
+    .rs2        (rd2),
     .Zero       (Zero),
     .Less       (Less),
-    .LessU      (LessU),   
-    .ALUout     (ALUout)
+    .LessU      (LessU) 
 );
 
 datamemory dataMem(
     .clk        (clk),
+    .trigger    (trigger),
     .WE         (MemWrite),
     .WD         (rd2),
     .A          (ALUout),
@@ -82,7 +98,7 @@ mux4 muxResult(
     .in0        (ALUout),
     .in1        (ReadData),
     .in2        (inc_PC),
-    .in3        (PCTarget),
+    .in3        (32'd0),
     .sel        (ResultSrc),
     .out        (Result)
 );

@@ -8,7 +8,6 @@ module top(
 //Output of PC
 logic [31:0]        InstrAdd;
 logic [31:0]        inc_PC;
-logic [31:0]        PCTarget;
 
 //Output of Instr mem  
 logic [31:0]        instr;
@@ -18,16 +17,16 @@ logic [31:0]        ImmExt;
 
 //Output of CU
 logic               PCSrc;
-logic               PCTarget_sel;  
 logic [2:0]         ImmSrc;    
 logic               MemWrite;
 logic               RegWrite;
 logic [3:0]         ALUctrl;
-logic               ALUSrc;
+logic               ALUSrcA;
+logic               ALUSrcB;
 logic [1:0]         ResultSrc;
 
 //Ouputs of Datapath
-logic [31:0]        rs1;
+logic [31:0]        ALUout;
 logic               Zero;   
 logic               Less;
 logic               LessU;  
@@ -36,12 +35,9 @@ PC PC(
     .clk            (clk),
     .rst            (rst),
     .PCSrc          (PCSrc),
-    .PCTarget_sel   (PCTarget_sel),
-    .ImmExt         (ImmExt),
-    .rs1            (rs1),
+    .PCTarget       (ALUout),
     .PC_out         (InstrAdd),
-    .inc_PC         (inc_PC),
-    .PCTarget       (PCTarget)
+    .inc_PC         (inc_PC)
 );
 
 InstrMem InstrMem(
@@ -59,8 +55,8 @@ CU CU(
     //Outputs
     .ImmSrc         (ImmSrc),
     .PCSrc          (PCSrc),
-    .PCTarget_sel   (PCTarget_sel),
-    .ALUSrc         (ALUSrc),
+    .ALUSrcA        (ALUSrcA),
+    .ALUSrcB        (ALUSrcB),
     .ALUctrl        (ALUctrl),
     .RegWrite       (RegWrite),
     .MemWrite       (MemWrite),
@@ -75,11 +71,13 @@ sign_ext sign_ext(
 
 datapath datapath(
     .clk            (clk),
+    .trigger        (trigger),
     //Inputs from CU
     .RegWrite       (RegWrite),
     .MemWrite       (MemWrite),
     .ALUctrl        (ALUctrl),
-    .ALUSrc         (ALUSrc),
+    .ALUSrcA        (ALUSrcA),
+    .ALUSrcB        (ALUSrcB),
     .funct3_i       (instr[14:12]),
     .rs1            (instr[19:15]),
     .rs2            (instr[24:20]),
@@ -89,12 +87,12 @@ datapath datapath(
     .ImmExt         (ImmExt),
     //Inputs from PC
     .inc_PC         (inc_PC),
-    .PCTarget       (PCTarget),
+    .PC_out         (InstrAdd),
     //Ouputs
+    .ALUout         (ALUout),
     .Zero           (Zero),
     .Less           (Less),
     .LessU          (LessU),
-    .reg1           (rs1),
     .a0             (a0)
 );
 
