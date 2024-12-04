@@ -36,7 +36,7 @@ trigger_wait:
     jal ra, delay
 
     # State S6: Turn on lights 1 to 6
-    li a0, 0x43
+    li a0, 0x3F
     jal ra, delay
 
     # State S7: Turn on lights 1 to 7
@@ -44,8 +44,7 @@ trigger_wait:
     jal ra, delay
 
     # State S8: Turn on lights 1 to 8
-    li t1, 0xFF
-    sw t1, 0(t0)
+    li a0, 0xFF
     jal ra, delay
 
     # Loop back to wait for the next trigger
