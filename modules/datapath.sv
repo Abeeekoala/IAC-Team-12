@@ -36,12 +36,12 @@ module datapath #(
     output logic [D_WIDTH-1:0]  a0
 );
 
-logic [D_WIDTH-1:0] rd1;
-logic [D_WIDTH-1:0] rd2;
-logic [D_WIDTH-1:0] ALUop1;
-logic [D_WIDTH-1:0] ALUop2;
-logic [D_WIDTH-1:0] ReadData;
-logic [D_WIDTH-1:0] Result;
+wire [D_WIDTH-1:0] rd1;
+wire [D_WIDTH-1:0] rd2;
+wire [D_WIDTH-1:0] ALUop1;
+wire [D_WIDTH-1:0] ALUop2;
+wire [D_WIDTH-1:0] ReadData;
+wire [D_WIDTH-1:0] Result;
 
 regfile regfile (
     .clk        (clk),
