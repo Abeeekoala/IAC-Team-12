@@ -35,7 +35,6 @@ PC PC(
     .clk            (clk),
     .rst            (rst),
     .PCSrc          (PCSrc),
-    .ImmExt         (ImmExt),
     .PCTarget       (ALUout),
     .PC_out         (InstrAdd),
     .inc_PC         (inc_PC)
@@ -72,6 +71,7 @@ sign_ext sign_ext(
 
 datapath datapath(
     .clk            (clk),
+    .trigger        (trigger),
     //Inputs from CU
     .RegWrite       (RegWrite),
     .MemWrite       (MemWrite),
