@@ -5,6 +5,10 @@
 - Charlotte Maxwell 
 - Shravan Kumar Murki 
 - Shreeya Agarwal 
+For pipeline design see the following diagram
+![alt text](images/RISCV_pipelined.png?raw=true)
+
+
 
 For Lab 4 information, see [Lab_4](./Specifications//Lab_4.md).
 
