@@ -7,12 +7,11 @@ module dataMemory #(
     input logic [DATA_WIDTH-1:0] A,         // Memory address (calculated by ALU)
     input logic [DATA_WIDTH-1:0] WD,   // Data to write into memory
     input logic [2:0] funct3,                  // Instruction's funct3 field
+    input logic CH,                     //Cache Hit
+    input logic [DATA_WIDTH-1:0] CD,    //Data returned from Cache
+    output logic CE,            //Cache Enable
+    output logic [DATA_WIDTH-1:0] CW, //Cache Write Data
     output logic [DATA_WIDTH-1:0] RD,    // Data read from memory
-
-    //Cache Signals
-    input logic [DATA_WIDTH-1:0] CD, // Cache Data returned upon hit
-    input logic CH,             // Cache Hit/miss signal
-    input logic CV,             // Cache Valitdity bit Signal
 );
 
     // Memory array: 2^18 locations 0x00000000 to 0x0001FFFF, each DATA_WIDTH bits wide
@@ -34,15 +33,30 @@ module dataMemory #(
             RD = {31'b0, trigger};  // Return trigger in LSB
         end 
         else begin
-            // Regular memory read 
-            case (funct3)
-                3'b000: RD = {{24{mem[A][7]}}, mem[A][7:0]};    // lb
-                3'b001: RD = {{16{mem[A][15]}}, mem[A][15:0]};  // lh
-                3'b010: RD = mem[A];                            // lw
-                3'b100: RD = {24'b0, mem[A][7:0]};              // lbu
-                3'b101: RD = {16'b0, mem[A][15:0]};             // lhu
-                default: RD = 32'b0;                            // Default case
-            endcase
+            // Regular memory read
+            if (CH) begin
+                case (funct3)
+                    3'b000: RD = {{24{CD[7]}}, CD[7:0]};    // lb
+                    3'b001: RD = {{16{CD[15]}}, CD[15:0]};  // lh
+                    3'b010: RD = CD;                            // lw
+                    3'b100: RD = {24'b0, CD[7:0]};              // lbu
+                    3'b101: RD = {16'b0, CD[15:0]};             // lhu
+                    default: RD = 32'b0;                            // Default case
+                endcase
+                CE = 0;
+            end
+            else begin
+                case (funct3)
+                    3'b000: RD = {{24{mem[A][7]}}, mem[A][7:0]};    // lb
+                    3'b001: RD = {{16{mem[A][15]}}, mem[A][15:0]};  // lh
+                    3'b010: RD = mem[A];                            // lw
+                    3'b100: RD = {24'b0, mem[A][7:0]};              // lbu
+                    3'b101: RD = {16'b0, mem[A][15:0]};             // lhu
+                    default: RD = 32'b0;                            // Default case
+                endcase
+                CW = RD;
+                CE = 1;
+            end
         end
     end
 
@@ -56,5 +70,14 @@ module dataMemory #(
             endcase
         end
     end
+
+setascache Cache (
+    .clk (clk),
+    .WE  (CE),
+    .WD  (CW),
+    .A   (A),
+    .hit (CH),
+    .DATA_OUT (CD)
+);
 
 endmodule

@@ -1,14 +1,12 @@
-module DirectCache #(
+module setascache #(
     parameter DATA_WIDTH = 32
 ) (
     input logic clk,
-    input logic WE, // Data to be written to cache
-    input logic  [DATA_WIDTH-1:0] CacheMissData_RMM, // Cache Misses so is returned data from main memory
-    input logic [DATA_WIDTH-1:0 ]address, 
-
-
-    output logic [DATA_WIDTH-1:0] CacheData, // Cache Data
+    input logic WE,//Write Enable
+    input logic [DATA_WIDTH-1:0] WD,//Write Data
+    input logic [DATA_WIDTH-1:0] A, //Address
     output logic hit, //Cache Hit/Miss signal 
+    output logic [DATA_WIDTH-1:0] DATA_OUT; // read data
 );
 
 typedef struct packed {
@@ -25,29 +23,27 @@ typedef struct packed {
 
 CacheType cache [4]; // define 4 set 2 way associative cache
 
-//cache read
-
-logic [DATA_WIDTH-1:0] RD;
+//vars
 logic [27:0] tag;
 logic [1:0] set;
 
 always_comb begin
-    tag = address[31:5];
-    set = address[4:3];
+    tag = A[31:5];
+    set = A[4:3];
 
     if(cache[set].ValitdityBit1 && (cache[set].tag1 == tag) ) begin
         hit = 1;
-        CacheData = cache[set].data1;
+        DATA_OUT = cache[set].data1;
         cache[set].U = 1;
     end
     else if(cache[set].ValitdityBit2 && (cache[set].tag2 == tag) ) begin
         hit = 1;
-        CacheData = cache[set].data2;
+        DATA_OUT = cache[set].data2;
         cache[set].U = 1;
     end
     else begin
         hit = 0;
-        CacheData = CacheMissData_RMM;
+        DATA_OUT = 32b'0; //placeholder as won't be used due to hit = 0
     end
 
 end
@@ -58,12 +54,12 @@ always_ff @(posedge clk) begin
             if (cache[set].U == 0) begin
                 cache[set].ValidityBit1 <= 1;
                 cache[set].tag1 <= tag;
-                cache[set].data1 <= CacheMissData_RMM;
+                cache[set].data1 <= RD;
                 cache[set].U <= 1;                   
             end else begin
                 cache[set].ValidityBit2 <= 1;
                 cache[set].tag2 <= tag;
-                cache[set].data2 <= CacheMissData_RMM;
+                cache[set].data2 <= RD;
                 cache[set].U <= 0;                   
             end
         end
