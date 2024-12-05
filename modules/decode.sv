@@ -99,7 +99,7 @@ ff2 DE_FF(
     .rs2E           (rs2E),
     .ImmExtE        (ImmExtE),
     .PCE            (PCE),
-    funct3E         (funct3E),
+    .funct3E         (funct3E),
     .RdE            (RdE),
     .inc_PCE        (inc_PCE)
 );

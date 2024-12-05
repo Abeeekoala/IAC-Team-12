@@ -29,7 +29,7 @@ datamemory DataMem(
     .RD                         (ReadDataM)
 );
 
-ff4 MW_fF(
+ff4 MW_FF(
     .clk                        (clk),
     .RegWriteM                  (RegWriteM),
     .ResultSrcM                 (ResultSrcM),
