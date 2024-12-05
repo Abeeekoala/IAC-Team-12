@@ -1,18 +1,19 @@
 module ff1 (
     input logic             clk,
-    input logic [31:0]      RD,
+    input logic [31:0]      InstF,
     input logic [31:0]      PCF,
-    input logic [31:0]      inc_PC,
-    output logic [31:0]      Instr,
+    input logic [31:0]      inc_PCF,
+    
+    output logic [31:0]     InstrD,
     output logic [31:0]     PCD,
-    output logic [31:0]     PCPlus4D
+    output logic [31:0]     inc_PCD
 );
 
 always_ff @ (posedge clk)
     begin
-        Instr <= RD;
+        InstrD <= InstF;
         PCD <= PCF;
-        PCPlus4D <= inc_PC;
+        inc_PCD <= inc_PCF;
     end
 
 endmodule

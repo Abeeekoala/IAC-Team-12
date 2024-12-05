@@ -1,22 +1,20 @@
 module ff3 (
-    input logic                     clk,
-    input logic [31:0]              PCPlus4E,
-    input logic [5:0]               RdE,
-    input logic [31:0]              WriteDataE, //or is this regOp2
-    input logic [31:0]              ALUout,
-    input logic [1:0]               ResultSrcE,
-    input logic                     MemWriteE,
-    input logic                     RegWriteE,
-    input logic                     funct3E,
+    input logic             clk,
+    input logic             RegWriteE,
+    input logic [1:0]       ResultSrcE,
+    input logic             MemWriteE,
+    input logic [31:0]      ALUoutE,
+    input logic [2:0]       funct3E,
+    input logic [31:0]      RdE,
+    input logic [31:0]      inc_PCE,
 
-    output logic [31:0]             PCPlus4M,
-    output logic [5:0]              RdM,
-    output logic [31:0]             WriteDataM,
-    output logic [31:0]             ALUResultM,
-    output logic [1:0]              ResultSrcM,
-    output logic                    MemWriteM,
-    output logic                    RegWriteM,
-    output logic                    funct3M
+    output logic            RegWriteM,
+    output logic [1:0]      ResultSrcM,
+    output logic            MemWriteM,
+    output logic [31:0]     ALUoutM,
+    output logic [2:0]      funct3M,
+    output logic [31:0]     RdM,
+    output logic [31:0]     inc_PCM
 );
 
 always_ff @ (posedge clk)
@@ -24,11 +22,10 @@ always_ff @ (posedge clk)
         RegWriteM <= RegWriteE;
         ResultSrcM <= ResultSrcE;
         MemWriteM <= MemWriteE;
-        WriteDataM <= WriteDataE;
-        RdM <= RdE;
-        PCPlus4M <= PCPlus4E;
-        ALUResultM <= ALUout;
+        ALUoutM <= ALUoutE;
         funct3M <= funct3E;
+        RdM <= RdE;
+        inc_PCM <= inc_PCE;
     end
 
 endmodule
