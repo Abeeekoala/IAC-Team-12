@@ -1,6 +1,6 @@
 module ff1 (
     input logic             clk,
-    input logic [31:0]      InstF,
+    input logic [31:0]      InstrF,
     input logic [31:0]      PCF,
     input logic [31:0]      inc_PCF,
     
@@ -11,7 +11,7 @@ module ff1 (
 
 always_ff @ (posedge clk)
     begin
-        InstrD <= InstF;
+        InstrD <= InstrF;
         PCD <= PCF;
         inc_PCD <= inc_PCF;
     end

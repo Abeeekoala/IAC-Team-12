@@ -41,7 +41,7 @@ always_ff @(posedge clk) begin
     MemWriteE <= MemWriteD;
     ALUCtrlE <= ALUCtrlD;
     ALUSrcAE <= ALUSrcAD;
-    ALUSrcBE <= ALUSrcBE;
+    ALUSrcBE <= ALUSrcBD;
     rs1E <= rs1D;
     rs2E <= rs2D;
     ImmExtE <= ImmExtD;
