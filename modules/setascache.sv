@@ -54,12 +54,12 @@ always_ff @(posedge clk) begin
             if (cache[set].U == 0) begin
                 cache[set].ValidityBit1 <= 1;
                 cache[set].tag1 <= tag;
-                cache[set].data1 <= RD;
+                cache[set].data1 <= WD;
                 cache[set].U <= 1;                   
             end else begin
                 cache[set].ValidityBit2 <= 1;
                 cache[set].tag2 <= tag;
-                cache[set].data2 <= RD;
+                cache[set].data2 <= WD;
                 cache[set].U <= 0;                   
             end
         end
