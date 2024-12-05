@@ -2,28 +2,27 @@ module CU (
     input logic [2:0]       funct3,
     input logic [6:0]       op,
     input logic             funct7_5,
-    input logic             Zero,
-    input logic             Less,
-    input logic             LessU,
     output logic [2:0]      ImmSrc,
-    output logic            PCSrc,
     output logic            MemWrite,
     output logic            RegWrite,
     output logic [3:0]      ALUctrl,
     output logic            ALUSrcA,
     output logic            ALUSrcB,
-    output logic [1:0]      ResultSrc
+    output logic [1:0]      ResultSrc,
+    output logic            Branch,
+    output logic            Jump
 );
 
 always_comb begin
     ImmSrc = 3'b000;
-    PCSrc = 1'b0;
     ResultSrc = 2'b00;
     ALUSrcA = 1'b0;
     ALUSrcB = 1'b0;
     ALUctrl = 4'b0000; //Not occupied control signal to handle faulty command
     RegWrite = 1'b0;
     MemWrite = 1'b0;
+    Branch = 1'b0;
+    Jump = 1'b0;
     
     case(op)
         // r-type instructions
@@ -165,9 +164,9 @@ always_comb begin
             ALUSrcA = 1'b1;
             ALUSrcB = 1'b1;
             RegWrite = 1'b1;
-            PCSrc = 1'b1;
             ImmSrc = 3'b101;
             ResultSrc = 2'b10;
+            Jump = 1'b1;
         end
 
         // JALR
@@ -175,8 +174,8 @@ always_comb begin
             ALUSrcA = 1'b0;
             ALUSrcB = 1'b1;
             RegWrite = 1'b1;
-            PCSrc = 1'b1;
             ResultSrc = 2'b10;
+            Jump = 1'b1;
         end
 
         // B-type instructions
@@ -184,37 +183,7 @@ always_comb begin
             ALUSrcA = 1'b1;
             ALUSrcB = 1'b1;
             ImmSrc = 3'b011;
-            case(funct3)
-                // BEQ
-                3'b000: begin
-                    PCSrc = Zero;
-                end
-                
-                // BNE
-                3'b001:begin
-                    PCSrc = ~Zero;  // !=
-                end
-                
-                // BLT
-                3'b100: begin
-                    PCSrc = Less;   // < (signed)
-                end
-                
-                // BGE
-                3'b101: begin
-                    PCSrc = ~Less;  // >= (signed) equivalent of not less than
-                end
-
-                // BLTU
-                3'b110: begin
-                    PCSrc = LessU;  // < (unsign)
-                end
-
-                // BGEU
-                3'b111: begin
-                    PCSrc = ~LessU; // >= (unsign) equivalent of not less than
-                end
-            endcase
+            Branch = 1'b1;
         end
     
     endcase

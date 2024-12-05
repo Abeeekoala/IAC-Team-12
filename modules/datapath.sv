@@ -29,9 +29,7 @@ module datapath #(
     output logic [D_WIDTH-1:0]  ALUout,
 
     //Comparator outputs
-    output logic                Zero,
-    output logic                Less,
-    output logic                LessU, 
+    output logic                Relation, 
     //Regfile output
     output logic [D_WIDTH-1:0]  a0
 );
@@ -79,9 +77,8 @@ ALU ALU (
 Comparator Comparator(
     .rs1        (rd1),
     .rs2        (rd2),
-    .Zero       (Zero),
-    .Less       (Less),
-    .LessU      (LessU) 
+    .funct3     (funct3_i),
+    .Relation   (Relation)
 );
 
 datamemory dataMem(
