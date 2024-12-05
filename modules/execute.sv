@@ -19,10 +19,11 @@ module execute (
     output logic            RegWriteM,
     output logic [1:0]      ResultSrcM,
     output logic            MemWriteM,
+    output logic [31:0]     rs2M,
     output logic [31:0]     ALUoutM,
     output logic [2:0]      funct3M,
     output logic [4:0]      RdM,
-    output logic [31:0]     inc_PCM
+    output logic [31:0]     inc_PCM,
 );
 
 logic                   Relation;
@@ -67,15 +68,18 @@ ff3 EM_FF(
     .funct3E            (funct3E),
     .RdE                (RdE),
     .inc_PCE            (inc_PCE),
+    .rs2E               (rs2E),
     .RegWriteM          (RegWriteM),
     .ResultSrcM         (ResultSrcM),
     .MemWriteM          (MemWriteM),
     .ALUoutM            (ALUoutM),
     .funct3M            (funct3M),
     .RdM                (RdM),
-    .inc_PCM            (inc_PCM)
+    .inc_PCM            (inc_PCM),
+    .rs2M               (rs2M)
 );
 
 assign PCSrc = (BranchE & Relation) | JumpE;
+assign PCTarget = ALUoutE;
 
 endmodule
