@@ -1,4 +1,4 @@
-module pipelinedtop(
+module top(
     input   logic           clk,
     input   logic           rst,
     input   logic           trigger,
@@ -63,6 +63,7 @@ fetch fetch(
 decode decode(
     .clk                    (clk),
     .InstrD                 (InstrD),
+    .PCD                    (PCD),
     .inc_PCD                (inc_PCD),
     .RegWriteW              (RegWriteW),
     .RdW                    (RdW),
@@ -79,7 +80,7 @@ decode decode(
     .rs2E                   (rs2E),
     .ImmExtE                (ImmExtE),
     .PCE                    (PCE),
-    funct3E                 (funct3E),
+    .funct3E                 (funct3E),
     .RdE                    (RdE),
     .inc_PCE                (inc_PCE),
     .a0                     (a0)
@@ -104,6 +105,7 @@ execute exectue(
     .PCTarget               (PCTarget),
     .PCSrc                  (PCSrc),
     .RegWriteM              (RegWriteM),
+    .ResultSrcM             (ResultSrcM),
     .MemWriteM              (MemWriteM),
     .rs2M                   (rs2M),
     .ALUoutM                (ALUoutM),

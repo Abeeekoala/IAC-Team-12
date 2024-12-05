@@ -11,7 +11,7 @@ mux4 Result_mux(
     .in1                            (ReadDataW),
     .in2                            (inc_PCW),
     .in3                            (32'h0000),
-    .sel                            (ResultSrcM),
+    .sel                            (ResultSrcW),
     .out                            (ResultW)
 );
 

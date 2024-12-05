@@ -25,11 +25,11 @@ datamemory DataMem(
     .WE                         (MemWriteM),
     .A                          (ALUoutM),
     .WD                         (rs2M),
-    .funct3                     (functM),
+    .funct3                     (funct3M),
     .RD                         (ReadDataM)
 );
 
-ff3 MW_FF(
+ff4 MW_fF(
     .clk                        (clk),
     .RegWriteM                  (RegWriteM),
     .ResultSrcM                 (ResultSrcM),

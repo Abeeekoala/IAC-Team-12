@@ -60,7 +60,7 @@ regfile RegFile(
     .WE3            (RegWriteW),
     .WD3            (ResultW),
     .RD1            (rs1D),
-    .RD1            (rs2D),
+    .RD2            (rs2D),
     .a0             (a0)
 );
 
