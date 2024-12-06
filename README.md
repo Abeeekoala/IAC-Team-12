@@ -20,7 +20,7 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 | Component               | Shreeya Agarwal | Shravan Kumar | Charlotte Maxwell | Abraham Lin |
 |-------------------------|-----------------|---------------|-------------------|-------------|
 | **PC**                  | *               | *             | *                 | *           |
-| **ALU**                 |                 | *             |                   | *           |
+| **ALU**                 |                 |               |                   | *           |
 | **Register File**       | *               |               |                   |             |
 | **Instruction Memory**  |                 | *             |                   |             |
 | **Control Unit**        |                 | *             |                   |             |
