@@ -26,7 +26,8 @@ Following the project brief after lab 4, the main requirements we had were:
  ### Data Memory
 
  ![alt text](images/image-1.png)
- The memory map shows that the data memory goes from 0x01000 to 0x1FFFF, so we needed 17 addresses leading to the initialisation of our data memory.
+
+The memory map shows that the data memory goes from 0x01000 to 0x1FFFF, so we needed 17 addresses leading to the initialisation of our data memory.
 
  ### Control Unit
 
