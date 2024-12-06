@@ -1,5 +1,6 @@
 module execute (
     input logic             clk,
+    input logic             Stall,
     input logic             JumpE,
     input logic             BranchE,
     input logic             RegWriteE,
@@ -27,6 +28,7 @@ module execute (
     output logic [31:0]     ALUoutM_o,
     output logic [2:0]      funct3M,
     output logic [4:0]      RdM,
+    output logic [4:0]      Rd2M,
     output logic [31:0]     inc_PCM
 );
 
@@ -91,6 +93,7 @@ ff3 EM_FF(
     .ALUoutE                (ALUoutE),
     .funct3E                (funct3E),
     .RdE                    (RdE),
+    .Rd2E                   (Rd2),
     .inc_PCE                (inc_PCE),
     .Stall                  (Stall),
 
@@ -100,6 +103,7 @@ ff3 EM_FF(
     .ALUoutM                (ALUoutM_o),
     .funct3M                (funct3M),
     .RdM                    (RdM),
+    .Rd2M                   (Rd2M),
     .inc_PCM                (inc_PCM)
 );
 

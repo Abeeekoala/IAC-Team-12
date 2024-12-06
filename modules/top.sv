@@ -167,7 +167,7 @@ hazard_unit hazard_unit(
     .RegWriteW              (RegWriteW),
     .LoadM                  (ResultSrcM[0]),
     .PCSrc                  (PCSrc),
-    .ForwardA               (FordwardA),
+    .ForwardA               (ForwardA),
     .ForwardB               (ForwardB),
     .Stall                  (Stall),
     .Flush                  (Flush)
