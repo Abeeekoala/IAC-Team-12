@@ -34,11 +34,11 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 | | top level assembly  | *     | *            |     *              |        *   |
 | | unit testing/testbenches  |      |             |                   |        *   |
 | | F1.s  | *     |             |                   |        *   |
-|**Pipelining** |ff1  |  *    |             |                   |           |
-| |ff2  | *     |             |                   |           |
-| |ff3  | *     |             |                   |           |
-| |ff4  | *     |             |                   |           |
-| |hazard unit  | *     |             |                   |           |
+|**Pipelining** |ff1  |  *    | *            |                   |           |
+| |ff2  | *     |            * |                   |           |
+| |ff3  | *     |             *|                   |           |
+| |ff4  | *     |            * |                   |           |
+| |hazard unit  | *     |             |                   |   *        |
 | | fetch assembly  |      |  *           |                   |   *        |
 | | execute assembly  |      |  *           |                   |    *       |
 | | decode assembly  |      |  *           |                   |      *     |
