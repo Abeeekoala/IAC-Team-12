@@ -13,6 +13,7 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 | Shravan Kumar     |add link |
 | Shreeya Agarwal   |add link |
 
+The overall CPU (single-cycle / pipelined) was designed by Abraham.
 
 ### Team Contributions
 
