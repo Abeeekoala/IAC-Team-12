@@ -64,7 +64,6 @@ module setascache #(
             hit = 0;
             stall = 1;  // Stall the pipeline for a miss
             fetch = 1;  // Fetch data from main memory
-
             // Check if eviction is needed
             if (cache[set].U == 0) begin
                 // Evict way 1 if dirty
@@ -81,8 +80,8 @@ module setascache #(
             end
         end
 
-        // Output data (load instructions)
-        if (~WE) begin
+        // Output data (load instructions) given hit as otherwise data hasn't loaded
+        if (~WE && hit) begin
             case (funct3)
                 3'b000: DATA_OUT = {{24{Data[7]}}, Data[7:0]};    // lb
                 3'b001: DATA_OUT = {{16{Data[15]}}, Data[15:0]};  // lh
@@ -116,7 +115,7 @@ module setascache #(
             end
         end
 
-        if (~hit) begin // Cache miss: fetch from memory
+        if (~hit && fetch) begin // Cache miss: fetch from memory
             if (cache[set].U == 0) begin
                 // Evict way 1 if dirty
                 if (cache[set].DB1) begin
@@ -136,6 +135,8 @@ module setascache #(
                 cache[set].data2 <= RD; // New data from memory
                 cache[set].U <= 0;      // Update LRU
             end
+            stall = 0;
+            fetch = 0;
         end
     end
 
