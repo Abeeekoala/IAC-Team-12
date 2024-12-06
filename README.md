@@ -1,16 +1,83 @@
-## EIE2 Instruction Set Architecture & Compiler (IAC) Group Project Team 12
+# RISC-V RV32I Processor
 
-### Team member:
-- Abraham Lin : Git Master
-- Charlotte Maxwell 
-- Shravan Kumar Murki 
-- Shreeya Agarwal 
-For pipeline design see the following diagram
-![alt text](images/RISCV_pipelined.png?raw=true)
+## Introduction
+This repo contains our RISC-V CPU, for single cycle implementation, pipelined, and pipelined with cache. The CPU passes the test cases.
 
+
+### Team 12 members:
+
+| Name   | Personal Statements |    
+|------------|-----------------|
+| Abraham Lin - Git Master | add link |      
+| Charlotte Maxwell | add link|
+| Shravan Kumar     |add link |
+| Shreeya Agarwal   |add link |
+
+
+### Team Contributions
+|          |                 | Shreeya Agarwal | Shravan Kumar | Charlotte Maxwell | Abraham Lin| 
+|----------|----------------|-----------------|---------------|-------------------|------------|
+| **Lab 4**| Program Counter| * |               |                  |            |
+|          | ALU            |    |               |                   |           |
+|          | Register File  |           |               |                   |           |
+|          | Instruction Memory  |      | *              |                   |           |
+|          | Control Unit  |      |*               |                   |           |
+|          | Sign Extend  |   *   |               |                   |           |
+|          | Data Path  |     |               |   *                |           |
+|          | Testbench  |      |               |                   |        *   |
+|          | top level assembly  |      |               |                   |   *        |
+| **Single Cycle**| Data Memory  |      |               |   *                |           |
+| | Control Unit  |      |  *             |                   |           |
+| | Register File | *     |             |                   |           |
+| | PC Counter fixes (extra muxes and logic)  |*      |             |     *              |           |
+| | datapath  |      | *            |     *              |        *   |
+| | top level assembly  | *     | *            |     *              |        *   |
+| | unit testing/testbenches  |      |             |                   |        *   |
+| | F1.s  | *     |             |                   |        *   |
+|**Pipelining** |ff1  |  *    |             |                   |           |
+| |ff2  | *     |             |                   |           |
+| |ff3  | *     |             |                   |           |
+| |ff4  | *     |             |                   |           |
+| |hazard unit  | *     |             |                   |           |
+| | fetch assembly  |      |  *           |                   |   *        |
+| | execute assembly  |      |  *           |                   |    *       |
+| | decode assembly  |      |  *           |                   |      *     |
+| | unit testing/testbench  |      |             |                   |      *     |
+| **Pipelining with Cache** | Direct Mapped Cache  |      |             |        *           |          |
+|  | 2-way set associative cache  |      |             |        *           |           |
+
+Note that as team members all frequently met up together, the above table and commits do not accurately represent the individual contribution of team members as:
+
+ - When working together, pushes were often committed from one laptop to avoid issues with git, and to have tests and diagrams open on others. As such, some commits are a combined effort of 2 or more members
+- Some commits may be small mistakes which have taken hours to debug, as a combined effort of 2 or more team members, especially when it came to implementation
+- Certain commits were overwritten by members having to upload a new file in its place due to issues with Git
 
 
 For Lab 4 information, see [Lab_4](./Specifications//Lab_4.md).
+
+### Evidence of a Working Processor
+
+See the following videos, for the F1 program, and the 4 waveform PDF programs.
+
+| Dataset        | Gaussian |  Triangle |  Sine | Noisy | 
+|--------|------------|------------|------------|--------------|
+| **Graphs**|  pic1         | pic2          | pic3          |pic4
+| 
+
+### Video Evidence
+
+**F1 Lights**
+
+**Gaussian**
+
+**Sine**
+
+**Triangle**
+
+**Noisy**
+
+
+
 
 - Shreeya:
     - Program Counter: PC.sv
