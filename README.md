@@ -107,7 +107,7 @@ The textbook and lecture slides recommended to use the following diagram:
 
 We adapted this to the following diagram. The main changes made was the addition of a comparator, and the inputs to the following modules (insert) to implement (insert the following changes)
 
-![alt text](images/pipelinedesign.jpg)
+![alt text](images/RISCVsingle_cycle.png)
 
 Following the project brief after lab 4, the main requirements we had were:
 
