@@ -10,11 +10,11 @@ Building up on lab 4, we implemented the single cycle version. The main challeng
 
 The textbook and lecture slides recommended to use the following diagram: 
 
-![alt text](image.png)
+![alt text](images/image.png)
 
 We adapted this to the following diagram. The main changes made was the addition of a comparator, and the inputs to the following modules (insert) to implement (insert the following changes)
 
-![alt text](images/<WhatsApp Image 2024-12-04 at 17.27.29_6be3d6e2.jpg>)
+![alt text](images/WhatsApp Image 2024-12-04 at 17.27.29_6be3d6e2.jpg)
 
 Following the project brief after lab 4, the main requirements we had were:
 
