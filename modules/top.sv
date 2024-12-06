@@ -44,8 +44,8 @@ logic [31:0]                inc_PCE;
 logic                       RegWriteM;
 logic [1:0]                 ResultSrcM;
 logic                       MemWriteM;
-logic [31:0]                rs2M;
 logic [31:0]                ALUoutM;
+logic [31:0]                Rd2M;
 logic [2:0]                 funct3M;
 logic [4:0]                 RdM;
 logic [31:0]                inc_PCM;
@@ -100,6 +100,7 @@ decode decode(
 
 execute exectue(
     .clk                    (clk),
+    .Stall                  (Stall),
     .JumpE                  (JumpE),
     .BranchE                (BranchE),
     .RegWriteE              (RegWriteE),
@@ -124,9 +125,9 @@ execute exectue(
     .RegWriteM              (RegWriteM),
     .ResultSrcM             (ResultSrcM),
     .MemWriteM              (MemWriteM),
-    .rs2M                   (rs2M),
     .ALUoutM_o              (ALUoutM),
     .funct3M                (funct3M),
+    .Rd2M                   (Rd2M),
     .RdM                    (RdM),
     .inc_PCM                (inc_PCM)
 );
@@ -137,7 +138,7 @@ memory memory(
     .ResultSrcM             (ResultSrcM),
     .MemWriteM              (MemWriteM),
     .ALUoutM_i              (ALUoutM),
-    .rs2M                   (rs2M),
+    .Rd2M                   (Rd2M),
     .funct3M                (funct3M),
     .RdM                    (RdM),
     .inc_PCM                (inc_PCM),
