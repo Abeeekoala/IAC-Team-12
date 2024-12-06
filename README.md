@@ -48,7 +48,7 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 | **Execute Implementation**    |                 | *             |                   |             |
 | **Memory Implementation**     |                 | *             |                   |             |
 | **WriteBack Implementation**  |                 | *             |                   |             |
-| **Top Implementation**        |                 | *             |                   |             |
+| **Top Implementation**        |                 | *             |                   | *           |
 | **Testbench**                 |                 |               |                   | *           |
 
 ---
