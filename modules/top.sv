@@ -6,7 +6,7 @@ module top(
 );
 
 // transcending multiple regions signals
-logic [31:0]                PCSrc;
+logic                       PCSrc;
 logic [4:0]                 RdW;
 logic                       RegWriteW;
 logic [31:0]                ResultW;
@@ -87,6 +87,7 @@ decode decode(
 );
 
 execute exectue(
+    .clk                    (clk),
     .JumpE                  (JumpE),
     .BranchE                (BranchE),
     .RegWriteE              (RegWriteE),

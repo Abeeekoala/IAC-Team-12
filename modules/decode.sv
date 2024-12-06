@@ -4,7 +4,7 @@ module decode (
     input logic [31:0]          PCD,
     input logic [31:0]          inc_PCD,
     input logic                 RegWriteW,
-    input logic [5:0]           RdW,
+    input logic [4:0]           RdW,
     input logic [31:0]          ResultW,
     output logic                JumpE,
     output logic                BranchE,
@@ -44,7 +44,7 @@ CU control_unit(
     .ImmSrc         (ImmSrc),
     .MemWrite       (MemWriteD),
     .RegWrite       (RegWriteD),
-    .ALUctrl        (ALUctrlD),
+    .ALUctrl        (ALUCtrlD),
     .ALUSrcA        (ALUSrcAD),
     .ALUSrcB        (ALUSrcBD),
     .ResultSrc      (ResultSrcD),
@@ -87,6 +87,7 @@ ff2 DE_FF(
     .funct3D        (InstrD[14:12]),
     .RdD            (InstrD[11:7]),
     .inc_PCD        (inc_PCD),
+    
     .JumpE          (JumpE),
     .BranchE        (BranchE),
     .RegWriteE      (RegWriteE),
@@ -99,7 +100,7 @@ ff2 DE_FF(
     .rs2E           (rs2E),
     .ImmExtE        (ImmExtE),
     .PCE            (PCE),
-    .funct3E         (funct3E),
+    .funct3E        (funct3E),
     .RdE            (RdE),
     .inc_PCE        (inc_PCE)
 );

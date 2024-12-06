@@ -1,4 +1,5 @@
 module execute (
+    input logic             clk,
     input logic             JumpE,
     input logic             BranchE,
     input logic             RegWriteE,
@@ -23,7 +24,7 @@ module execute (
     output logic [31:0]     ALUoutM,
     output logic [2:0]      funct3M,
     output logic [4:0]      RdM,
-    output logic [31:0]     inc_PCM,
+    output logic [31:0]     inc_PCM
 );
 
 logic                   Relation;

@@ -13,7 +13,7 @@ module ff2 (
     input logic [31:0]      ImmExtD,
     input logic [31:0]      PCD,
     input logic [2:0]       funct3D,
-    input logic [5:0]       RdD,
+    input logic [4:0]       RdD,
     input logic [31:0]      inc_PCD,
 
     output logic             JumpE,
@@ -29,7 +29,7 @@ module ff2 (
     output logic [31:0]      ImmExtE,
     output logic [31:0]      PCE,
     output logic [2:0]       funct3E,
-    output logic [5:0]       RdE,
+    output logic [4:0]       RdE,
     output logic [31:0]      inc_PCE
 );
 
