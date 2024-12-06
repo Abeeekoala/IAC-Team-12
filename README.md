@@ -15,36 +15,48 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 
 
 ### Team Contributions
-|          |                 | Shreeya Agarwal | Shravan Kumar | Charlotte Maxwell | Abraham Lin| 
-|----------|----------------|-----------------|---------------|-------------------|------------|
-| **Lab 4**| Program Counter| * |               |                  |            |
-|          | ALU            |    |               |                   |           |
-|          | Register File  |           |               |                   |           |
-|          | Instruction Memory  |      | *              |                   |           |
-|          | Control Unit  |      |*               |                   |           |
-|          | Sign Extend  |   *   |               |                   |           |
-|          | Data Path  |     |               |   *                |           |
-|          | Testbench  |      |               |                   |        *   |
-|          | top level assembly  |      |               |                   |   *        |
-| **Single Cycle**| Data Memory  |      |               |   *                |           |
-| | Control Unit  |      |  *             |                   |           |
-| | Register File | *     |             |                   |           |
-| | PC Counter fixes (extra muxes and logic)  |*      |             |     *              |           |
-| | datapath  |      | *            |     *              |        *   |
-| | top level assembly  | *     | *            |     *              |        *   |
-| | unit testing/testbenches  |      |             |                   |        *   |
-| | F1.s  | *     |             |                   |        *   |
-|**Pipelining** |ff1  |  *    | *            |                   |           |
-| |ff2  | *     |            * |                   |           |
-| |ff3  | *     |             *|                   |           |
-| |ff4  | *     |            * |                   |           |
-| |hazard unit  | *     |             |                   |   *        |
-| | fetch assembly  |      |  *           |                   |   *        |
-| | execute assembly  |      |  *           |                   |    *       |
-| | decode assembly  |      |  *           |                   |      *     |
-| | unit testing/testbench  |      |             |                   |      *     |
-| **Pipelining with Cache** | Direct Mapped Cache  |      |             |        *           |          |
-|  | 2-way set associative cache  |      |             |        *           |           |
+
+#### Single Cycle
+| Component               | Shreeya Agarwal | Shravan Kumar | Charlotte Maxwell | Abraham Lin |
+|-------------------------|-----------------|---------------|-------------------|-------------|
+| **PC**                  | *               | *             | *                 | *           |
+| **ALU**                 |                 | *             |                   | *           |
+| **Register File**       | *               |               |                   |             |
+| **Instruction Memory**  |                 | *             |                   |             |
+| **Control Unit**        |                 | *             |                   | *           |
+| **Sign Extend**         | *               |               |                   | *           |
+| **Data Path**           |                 | *             | *                 | *           |
+| **Data Memory**         |                 |               | *                 |             |
+| **Datapath**            |                 | *             | *                 | *           |
+| **Top Level Assembly**  | *               | *             | *                 | *           |
+| **Testbenches**         |                 |               |                   | *           |
+| **F1.s**                | *               |               |                   | *           |
+
+---
+
+#### Pipelining
+| Component               | Shreeya Agarwal | Shravan Kumar | Charlotte Maxwell | Abraham Lin |
+|-------------------------|-----------------|---------------|-------------------|-------------|
+| **FF1**                 | *               | *             |                   | *           |
+| **FF2**                 | *               | *             |                   | *           |
+| **FF3**                 | *               | *             |                   | *           |
+| **FF4**                 | *               | *             |                   |             |
+| **Hazard Unit**         | *               |               |                   | *           |
+| **Fetch Assembly**      |                 | *             |                   | *           |
+| **Decode Assembly**     |                 | *             |                   | *           |
+| **Execute Assembly**    |                 | *             |                   | *           |
+| **Memopry Assembly**    |                 | *             |                   | *           |
+| **WriteBack Assembly**  |                 | *             |                   | *           |
+| **top Assembly**        |                 | *             |                   |             |
+| **Testbench**           |                 |               |                   | *           |
+
+---
+
+#### Pipelining with Cache
+| Component                       | Shreeya Agarwal | Shravan Kumar | Charlotte Maxwell | Abraham Lin |
+|---------------------------------|-----------------|---------------|-------------------|-------------|
+| **Direct Mapped Cache**         |                 |               | *                 |             |
+| **2-Way Set Associative Cache** |                 |               | *                 |             |
 
 Note that as team members all frequently met up together, the above table and commits do not accurately represent the individual contribution of team members as:
 
