@@ -2,97 +2,145 @@ module top(
     input   logic           clk,
     input   logic           rst,
     input   logic           trigger,
-    output  logic [31:0]    a0         
+    output  logic [31:0]    a0
 );
 
-logic               PCSrc;
+// transcending multiple regions signals
+logic                       PCSrc;
+logic [4:0]                 RdW;
+logic                       RegWriteW;
+logic [31:0]                ResultW;
+logic [31:0]                PCTarget;
 
-//Output of PC
-wire [31:0]         InstrAdd;
-wire [31:0]         inc_PC;
+//  fetch to decode signals
+logic [31:0]                InstrD;
+logic [31:0]                PCD;
+logic [31:0]                inc_PCD;
 
-//Output of Instr mem  
-wire [31:0]         instr;
+// decode to execute signals
+logic                       JumpE;
+logic                       BranchE;
+logic                       RegWriteE;
+logic [1:0]                 ResultSrcE;
+logic                       MemWriteE;
+logic [3:0]                 ALUCtrlE;
+logic                       ALUSrcAE;
+logic                       ALUSrcBE;
+logic [31:0]                rs1E;
+logic [31:0]                rs2E;
+logic [31:0]                ImmExtE;
+logic [31:0]                PCE;
+logic [2:0]                 funct3E;
+logic [4:0]                 RdE;
+logic [31:0]                inc_PCE;
 
-//Output of sign_ext     
-wire [31:0]         ImmExt;
+// execute to memory signals
+logic                       RegWriteM;
+logic [1:0]                 ResultSrcM;
+logic                       MemWriteM;
+logic [31:0]                rs2M;
+logic [31:0]                ALUoutM;
+logic [2:0]                 funct3M;
+logic [4:0]                 RdM;
+logic [31:0]                inc_PCM;
 
-//Output of CU
-wire                Jump;
-wire                Branch;
-wire [2:0]          ImmSrc;    
-wire                MemWrite;
-wire                RegWrite;
-wire [3:0]          ALUctrl;
-wire                ALUSrcA;
-wire                ALUSrcB;
-wire [1:0]          ResultSrc;
+// memory to writeback signals
+logic [1:0]                 ResultSrcW;
+logic [31:0]                ALUoutW;
+logic [31:0]                ReadDataW;
+logic [31:0]                inc_PCW;
 
-//Ouputs of Datapath
-wire [31:0]         ALUout;
-wire                Relation;
-
-assign PCSrc = (Relation & Branch) | Jump;
-
-PC PC(
-    .clk            (clk),
-    .rst            (rst),
-    .PCSrc          (PCSrc),
-    .PCTarget       (ALUout),
-    .PC_out         (InstrAdd),
-    .inc_PC         (inc_PC)
+fetch fetch(
+    .clk                    (clk),
+    .rst                    (rst),
+    .PCSrc                  (PCSrc),
+    .PCTarget               (PCTarget),
+    .InstrD                 (InstrD),
+    .PCD                    (PCD),
+    .inc_PCD                (inc_PCD)
 );
 
-InstrMem InstrMem(
-    .addr           (InstrAdd),
-    .instr          (instr)
+decode decode(
+    .clk                    (clk),
+    .InstrD                 (InstrD),
+    .PCD                    (PCD),
+    .inc_PCD                (inc_PCD),
+    .RegWriteW              (RegWriteW),
+    .RdW                    (RdW),
+    .ResultW                (ResultW),
+    .JumpE                  (JumpE),
+    .BranchE                (BranchE),
+    .RegWriteE              (RegWriteE),
+    .ResultSrcE             (ResultSrcE),
+    .MemWriteE              (MemWriteE),
+    .ALUCtrlE               (ALUCtrlE),
+    .ALUSrcAE               (ALUSrcAE),
+    .ALUSrcBE               (ALUSrcBE),
+    .rs1E                   (rs1E),
+    .rs2E                   (rs2E),
+    .ImmExtE                (ImmExtE),
+    .PCE                    (PCE),
+    .funct3E                 (funct3E),
+    .RdE                    (RdE),
+    .inc_PCE                (inc_PCE),
+    .a0                     (a0)
 );
 
-CU CU(
-    .funct3         (instr[14:12]),
-    .op             (instr[6:0]),
-    .funct7_5       (instr[30]),
-    //Outputs
-    .ImmSrc         (ImmSrc),
-    .Jump           (Jump),
-    .Branch         (Branch),
-    .ALUSrcA        (ALUSrcA),
-    .ALUSrcB        (ALUSrcB),
-    .ALUctrl        (ALUctrl),
-    .RegWrite       (RegWrite),
-    .MemWrite       (MemWrite),
-    .ResultSrc      (ResultSrc)
+execute exectue(
+    .clk                    (clk),
+    .JumpE                  (JumpE),
+    .BranchE                (BranchE),
+    .RegWriteE              (RegWriteE),
+    .ResultSrcE             (ResultSrcE),
+    .MemWriteE              (MemWriteE),
+    .ALUCtrlE               (ALUCtrlE),
+    .ALUSrcAE               (ALUSrcAE),
+    .ALUSrcBE               (ALUSrcBE),
+    .rs1E                   (rs1E),
+    .rs2E                   (rs2E),
+    .ImmExtE                (ImmExtE),
+    .PCE                    (PCE),
+    .funct3E                (funct3E),
+    .RdE                    (RdE),
+    .inc_PCE                (inc_PCE),
+    .PCTarget               (PCTarget),
+    .PCSrc                  (PCSrc),
+    .RegWriteM              (RegWriteM),
+    .ResultSrcM             (ResultSrcM),
+    .MemWriteM              (MemWriteM),
+    .rs2M                   (rs2M),
+    .ALUoutM                (ALUoutM),
+    .funct3M                (funct3M),
+    .RdM                    (RdM),
+    .inc_PCM                (inc_PCM)
 );
 
-sign_ext sign_ext(
-    .ImmSrc         (ImmSrc),
-    .Instr          (instr[31:7]),
-    .ImmExt         (ImmExt)
+memory memory(
+    .clk                    (clk),
+    .RegWriteM              (RegWriteM),
+    .ResultSrcM             (ResultSrcM),
+    .MemWriteM              (MemWriteM),
+    .ALUoutM                (ALUoutM),
+    .rs2M                   (rs2M),
+    .funct3M                (funct3M),
+    .RdM                    (RdM),
+    .inc_PCM                (inc_PCM),
+    .trigger                (trigger),
+    .RegWriteW              (RegWriteW),
+    .ResultSrcW             (ResultSrcW),
+    .ALUoutW                (ALUoutW),
+    .ReadDataW              (ReadDataW),
+    .RdW                    (RdW),
+    .inc_PCW                (inc_PCW)
 );
 
-datapath datapath(
-    .clk            (clk),
-    .trigger        (trigger),
-    //Inputs from CU
-    .RegWrite       (RegWrite),
-    .MemWrite       (MemWrite),
-    .ALUctrl        (ALUctrl),
-    .ALUSrcA        (ALUSrcA),
-    .ALUSrcB        (ALUSrcB),
-    .funct3_i       (instr[14:12]),
-    .rs1            (instr[19:15]),
-    .rs2            (instr[24:20]),
-    .rd             (instr[11:7]),
-    .ResultSrc      (ResultSrc),
-    //Inputs from sign_ext
-    .ImmExt         (ImmExt),
-    //Inputs from PC
-    .inc_PC         (inc_PC),
-    .PC_out         (InstrAdd),
-    //Ouputs
-    .ALUout         (ALUout),
-    .Relation       (Relation),
-    .a0             (a0)
+writeback writeback(
+    .ResultSrcW             (ResultSrcW),
+    .ALUoutW                (ALUoutW),
+    .ReadDataW              (ReadDataW),
+    .inc_PCW                (inc_PCW),
+    .ResultW                (ResultW)
 );
+
 
 endmodule

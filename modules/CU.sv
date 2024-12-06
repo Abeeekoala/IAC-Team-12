@@ -18,7 +18,7 @@ always_comb begin
     ResultSrc = 2'b00;
     ALUSrcA = 1'b0;
     ALUSrcB = 1'b0;
-    ALUctrl = 4'b0000; //Not occupied control signal to handle faulty command
+    ALUctrl = 4'b0000;
     RegWrite = 1'b0;
     MemWrite = 1'b0;
     Branch = 1'b0;
