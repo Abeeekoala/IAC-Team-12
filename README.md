@@ -23,7 +23,7 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 | **ALU**                 |                 | *             |                   | *           |
 | **Register File**       | *               |               |                   |             |
 | **Instruction Memory**  |                 | *             |                   |             |
-| **Control Unit**        |                 | *             |                   | *           |
+| **Control Unit**        |                 | *             |                   |             |
 | **Sign Extend**         | *               |               |                   | *           |
 | **Data Path**           |                 | *             | *                 | *           |
 | **Data Memory**         |                 |               | *                 |             |
