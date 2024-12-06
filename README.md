@@ -35,20 +35,20 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 ---
 
 #### Pipelining
-| Component               | Shreeya Agarwal | Shravan Kumar | Charlotte Maxwell | Abraham Lin |
-|-------------------------|-----------------|---------------|-------------------|-------------|
-| **FF1**                 | *               | *             |                   | *           |
-| **FF2**                 | *               | *             |                   | *           |
-| **FF3**                 | *               | *             |                   | *           |
-| **FF4**                 | *               | *             |                   |             |
-| **Hazard Unit**         | *               |               |                   | *           |
-| **Fetch Assembly**      |                 | *             |                   | *           |
-| **Decode Assembly**     |                 | *             |                   | *           |
-| **Execute Assembly**    |                 | *             |                   | *           |
-| **Memopry Assembly**    |                 | *             |                   | *           |
-| **WriteBack Assembly**  |                 | *             |                   | *           |
-| **top Assembly**        |                 | *             |                   |             |
-| **Testbench**           |                 |               |                   | *           |
+| Component                     | Shreeya Agarwal | Shravan Kumar | Charlotte Maxwell | Abraham Lin |
+|-------------------------      |-----------------|---------------|-------------------|-------------|
+| **FF1**                       | *               | *             |                   | *           |
+| **FF2**                       | *               | *             |                   | *           |
+| **FF3**                       | *               | *             |                   | *           |
+| **FF4**                       | *               | *             |                   |             |
+| **Hazard Unit**               | *               |               |                   | *           |
+| **Fetch Implementation**      |                 | *             |                   |             |
+| **Decode Implementation**     |                 | *             |                   |             |
+| **Execute Implementation**    |                 | *             |                   |             |
+| **Memory Implementation**     |                 | *             |                   |             |
+| **WriteBack Implementation**  |                 | *             |                   |             |
+| **Top Implementation**        |                 | *             |                   |             |
+| **Testbench**                 |                 |               |                   | *           |
 
 ---
 
@@ -88,33 +88,6 @@ See the following videos, for the F1 program, and the 4 waveform PDF programs.
 
 **Noisy**
 
-
-
-
-- Shreeya:
-    - Program Counter: PC.sv
-        - Inputs: clk, rst, PCsrc, ImmOp[31:0]
-        - Outputs: PC[31:0]
-    - Sign extend: SignExtend.sv
-        - Inputs: ImmSrc, Imm[11:5]+[4:0] _(from instr)_
-        - Outputs: ImmOp[31:0]
-
-- Charlotte:
-    - DataPath: DataPath.sv
-        - Inputs: rs1[19:15], rs2[24:20], rd[11:7] _(from instr)_, clk, RegWrite, ALUsrc, ALUctrl[2:0], ImmOp[31:0]
-        - Outputs: EQ, a0[31:0]
-
-- Shravan:
-    - Control Unit: CU.sv
-        - Inputs: op[6:0], funct3[14:12], funct7[30] _(from instr)_, EQ
-        - Outputs: PCsrc, ALUctrl[2:0], ALUsrc, ImmSrc, RegWrite
-    - InstrMem: InstrMem.sv
-        - Inputs: PC[31:0]
-        - Outputs: instr[31:0] 
-- Abraham:
-    - Top level assembly: top.sv
-        - Inputs: clk, rst
-        - Outputs: a0 
 =======
 
 
