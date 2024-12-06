@@ -3,7 +3,7 @@ module memory(
     input logic                 RegWriteM,
     input logic [1:0]           ResultSrcM,
     input logic                 MemWriteM,
-    input logic [31:0]          ALUoutM,
+    input logic [31:0]          ALUoutM_i,
     input logic [31:0]          rs2M,
     input logic [2:0]           funct3M,
     input logic [4:0]           RdM,

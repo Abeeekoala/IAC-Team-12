@@ -11,6 +11,12 @@ logic [4:0]                 RdW;
 logic                       RegWriteW;
 logic [31:0]                ResultW;
 logic [31:0]                PCTarget;
+logic                       Stall;
+logic                       Flush;
+logic [1:0]                 ForwardA;
+logic [1:0]                 ForwardB;
+logic [31:0]                Rs1E;
+logic [31:0]                Rs2E;
 
 //  fetch to decode signals
 logic [31:0]                InstrD;
@@ -26,8 +32,8 @@ logic                       MemWriteE;
 logic [3:0]                 ALUCtrlE;
 logic                       ALUSrcAE;
 logic                       ALUSrcBE;
-logic [31:0]                rs1E;
-logic [31:0]                rs2E;
+logic [31:0]                RD1E;
+logic [31:0]                RD2E;
 logic [31:0]                ImmExtE;
 logic [31:0]                PCE;
 logic [2:0]                 funct3E;
@@ -55,6 +61,8 @@ fetch fetch(
     .rst                    (rst),
     .PCSrc                  (PCSrc),
     .PCTarget               (PCTarget),
+    .Stall                  (Stall),
+    .Flush                  (Flush),
     .InstrD                 (InstrD),
     .PCD                    (PCD),
     .inc_PCD                (inc_PCD)
@@ -68,6 +76,8 @@ decode decode(
     .RegWriteW              (RegWriteW),
     .RdW                    (RdW),
     .ResultW                (ResultW),
+    .Stall                  (Stall),
+    .Flush                  (Flush),
     .JumpE                  (JumpE),
     .BranchE                (BranchE),
     .RegWriteE              (RegWriteE),
@@ -76,11 +86,13 @@ decode decode(
     .ALUCtrlE               (ALUCtrlE),
     .ALUSrcAE               (ALUSrcAE),
     .ALUSrcBE               (ALUSrcBE),
-    .rs1E                   (rs1E),
-    .rs2E                   (rs2E),
+    .RD1E                   (RD1E),
+    .RD2E                   (RD2E),
     .ImmExtE                (ImmExtE),
     .PCE                    (PCE),
-    .funct3E                 (funct3E),
+    .funct3E                (funct3E),
+    .Rs1E                   (Rs1E),
+    .Rs2E                   (Rs2E),
     .RdE                    (RdE),
     .inc_PCE                (inc_PCE),
     .a0                     (a0)
@@ -96,20 +108,24 @@ execute exectue(
     .ALUCtrlE               (ALUCtrlE),
     .ALUSrcAE               (ALUSrcAE),
     .ALUSrcBE               (ALUSrcBE),
-    .rs1E                   (rs1E),
-    .rs2E                   (rs2E),
+    .RD1E                   (RD1E),
+    .RD2E                   (RD2E),
     .ImmExtE                (ImmExtE),
     .PCE                    (PCE),
     .funct3E                (funct3E),
     .RdE                    (RdE),
     .inc_PCE                (inc_PCE),
+    .ForwardA               (ForwardA),
+    .ForwardB               (ForwardB),
+    .ResultW                (ResultW),
+    .ALUoutM_i              (ALUoutM),
     .PCTarget               (PCTarget),
     .PCSrc                  (PCSrc),
     .RegWriteM              (RegWriteM),
     .ResultSrcM             (ResultSrcM),
     .MemWriteM              (MemWriteM),
     .rs2M                   (rs2M),
-    .ALUoutM                (ALUoutM),
+    .ALUoutM_o              (ALUoutM),
     .funct3M                (funct3M),
     .RdM                    (RdM),
     .inc_PCM                (inc_PCM)
@@ -120,7 +136,7 @@ memory memory(
     .RegWriteM              (RegWriteM),
     .ResultSrcM             (ResultSrcM),
     .MemWriteM              (MemWriteM),
-    .ALUoutM                (ALUoutM),
+    .ALUoutM_i              (ALUoutM),
     .rs2M                   (rs2M),
     .funct3M                (funct3M),
     .RdM                    (RdM),
@@ -142,5 +158,19 @@ writeback writeback(
     .ResultW                (ResultW)
 );
 
+hazard_unit hazard_unit(
+    .Rs1E                   (Rs1E),
+    .Rs2E                   (Rs2E),
+    .RdM                    (RdM),
+    .RdW                    (RdW),
+    .RegWriteM              (RegWriteM),
+    .RegWriteW              (RegWriteW),
+    .LoadM                  (ResultSrcM[0]),
+    .PCSrc                  (PCSrc),
+    .ForwardA               (FordwardA),
+    .ForwardB               (ForwardB),
+    .Stall                  (Stall),
+    .Flush                  (Flush)
+);
 
 endmodule

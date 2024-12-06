@@ -6,7 +6,7 @@ module hazard_unit(
     input logic             RegWriteM,      //if instruction in mem/wb stage writes to reg 
     input logic             RegWriteW,
     input logic             LoadM,          //LSB of ResultSrcM
-    input logic             PCsrc,          //If jump/Branch happen
+    input logic             PCSrc,          //If jump/Branch happen
     output logic [1:0]      ForwardA,      //forward signals for SrcA and SrcB inputs
     output logic [1:0]      ForwardB,        
     output logic            Stall,          //stall if data hazard
