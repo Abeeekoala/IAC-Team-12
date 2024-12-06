@@ -28,7 +28,7 @@ module execute (
     output logic [31:0]     ALUoutM_o,
     output logic [2:0]      funct3M,
     output logic [4:0]      RdM,
-    output logic [4:0]      Rd2M,
+    output logic [31:0]     Rd2M,
     output logic [31:0]     inc_PCM
 );
 

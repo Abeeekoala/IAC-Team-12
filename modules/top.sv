@@ -15,8 +15,8 @@ logic                       Stall;
 logic                       Flush;
 logic [1:0]                 ForwardA;
 logic [1:0]                 ForwardB;
-logic [31:0]                Rs1E;
-logic [31:0]                Rs2E;
+logic [4:0]                Rs1E;
+logic [4:0]                Rs2E;
 
 //  fetch to decode signals
 logic [31:0]                InstrD;

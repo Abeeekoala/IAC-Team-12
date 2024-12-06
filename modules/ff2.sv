@@ -50,7 +50,7 @@ always_ff @(posedge clk) begin
         ALUSrcAE <= ALUSrcAD;
         ALUSrcBE <= ALUSrcBD;
         RD1E <= RD1D;
-        RD2E <= RD2E;
+        RD2E <= RD2D;
         ImmExtE <= ImmExtD;
         PCE <= PCD;
         funct3E <= funct3D;
