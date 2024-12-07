@@ -5,6 +5,14 @@
 
 #define CYCLES 10000
 
+TEST_F(CpuTestbench, TestNoHazard)
+{
+    setupTest("0_no_hazard");
+    initSimulation();
+    runSimulation(CYCLES);
+    EXPECT_EQ(top_->a0, 39);
+}
+
 TEST_F(CpuTestbench, TestAddiBne)
 {
     setupTest("1_addi_bne");
@@ -66,6 +74,28 @@ TEST_F(CpuTestbench, TestLightSequence) {
     waitForOutput(0xFF, 0x0,  500);  // S8 expect S0
     waitForOutput(0x0,  0x1,  500);  // cycle back
 }
+
+TEST_F(CpuTestbench, TestDataHazard)
+{
+    setupTest("7_data_hazard");
+    initSimulation();
+    runSimulation(CYCLES);
+    EXPECT_EQ(top_->a0, -10);
+}
+
+TEST_F(CpuTestbench, TestDataHazardWithRest)
+{
+    setupTest("8_data_hazard_with_reset");
+    initSimulation();
+    runSimulation(3);
+    reset(5); // reset for 2 cycles
+    EXPECT_EQ(top_->a0, 50);
+    runSimulation(30);
+    EXPECT_EQ(top_->a0, -10);
+
+
+}
+
 
 int main(int argc, char **argv)
 {

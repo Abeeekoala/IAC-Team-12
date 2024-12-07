@@ -47,6 +47,27 @@ public:
         runSimulation(10);  // Process reset
         top_->rst = 0;
     }
+    void reset(int cycles = 1)
+    {
+        top_->rst = 1;
+        for (int i = 0; i < cycles; i++)
+        {
+            for (int clk = 0; clk < 2; clk++)
+            {
+                top_->eval();
+                tfp_->dump(2 * ticks_ + clk);
+                top_->clk = !top_->clk;
+            }
+            ticks_++;
+
+            if (Verilated::gotFinish())
+            {
+                exit(0);
+            }
+        }
+
+        top_->rst = 0;
+    }
 
     // Runs the simulation for a clock cycle, evaluates the DUT, dumps waveform.
     void runSimulation(int cycles = 1)

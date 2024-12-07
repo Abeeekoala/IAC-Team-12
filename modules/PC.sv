@@ -3,6 +3,7 @@ module  PC (
     input logic                 clk,                //synchronous   
     input logic                 PCSrc,              //control signal to choose between branch and incremented PC
     input logic     [31:0]      PCTarget,
+    input logic                 Stall,
     output logic    [31:0]      PC_out,             //current PC value
     output logic    [31:0]      inc_PC             //going into result mux
 );
@@ -25,6 +26,7 @@ mux PCNext_mux(
 PCreg PCreg(
     .clk        (clk),
     .rst        (rst),
+    .Stall      (Stall)
     .next_PC    (next_PC),
     .PC         (PC_out)
 );
