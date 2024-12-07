@@ -31,3 +31,7 @@ bfc0004c:	00000013          	nop
 bfc00050:	00000013          	nop
 bfc00054:	00000013          	nop
 bfc00058:	01650533          	add	a0,a0,s6
+bfc0005c:	00051263          	bnez	a0,bfc00060 <finish>
+
+bfc00060 <finish>:
+bfc00060:	00051063          	bnez	a0,bfc00060 <finish>

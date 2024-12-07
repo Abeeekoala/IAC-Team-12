@@ -6,5 +6,8 @@ main:   li      x0, 50          # attempt to load but shouldn't
         li      t1, 20
         li      t2, 30
         sub     a0, t1, t2      # a0 = t1 - t2 = -10
+        bne     a0, zero, finish    # enter finish state
 
+finish:     # expected result is -10
+    bne     a0, zero, finish     # loop forever
          
