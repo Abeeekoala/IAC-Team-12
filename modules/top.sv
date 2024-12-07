@@ -6,55 +6,58 @@ module top(
 );
 
 // transcending multiple regions signals
-logic                       PCSrc;
-logic [4:0]                 RdW;
-logic                       RegWriteW;
-logic [31:0]                ResultW;
-logic [31:0]                PCTarget;
-logic                       Stall;
-logic                       Flush;
-logic [1:0]                 ForwardA;
-logic [1:0]                 ForwardB;
-logic [4:0]                Rs1E;
-logic [4:0]                Rs2E;
+wire                        PCSrc;
+wire [4:0]                  RdW;
+wire                        RegWriteW;
+wire [31:0]                 ResultW;
+wire [31:0]                 PCTarget;
+wire                        Stall;
+wire                        Flush;
+wire [1:0]                  ForwardA;
+wire [1:0]                  ForwardB;
+wire [4:0]                  Rs1D;
+wire [4:0]                  Rs2D;
+wire [4:0]                  Rs1E;
+wire [4:0]                  Rs2E;
+
 
 //  fetch to decode signals
-logic [31:0]                InstrD;
-logic [31:0]                PCD;
-logic [31:0]                inc_PCD;
+wire [31:0]                 InstrD;
+wire [31:0]                 PCD;
+wire [31:0]                 inc_PCD;
 
 // decode to execute signals
-logic                       JumpE;
-logic                       BranchE;
-logic                       RegWriteE;
-logic [1:0]                 ResultSrcE;
-logic                       MemWriteE;
-logic [3:0]                 ALUCtrlE;
-logic                       ALUSrcAE;
-logic                       ALUSrcBE;
-logic [31:0]                RD1E;
-logic [31:0]                RD2E;
-logic [31:0]                ImmExtE;
-logic [31:0]                PCE;
-logic [2:0]                 funct3E;
-logic [4:0]                 RdE;
-logic [31:0]                inc_PCE;
+wire                        JumpE;
+wire                        BranchE;
+wire                        RegWriteE;
+wire [1:0]                  ResultSrcE;
+wire                        MemWriteE;
+wire [3:0]                  ALUCtrlE;
+wire                        ALUSrcAE;
+wire                        ALUSrcBE;
+wire [31:0]                 RD1E;
+wire [31:0]                 RD2E;
+wire [31:0]                 ImmExtE;
+wire [31:0]                 PCE;
+wire [2:0]                  funct3E;
+wire [4:0]                  RdE;
+wire [31:0]                 inc_PCE;
 
 // execute to memory signals
-logic                       RegWriteM;
-logic [1:0]                 ResultSrcM;
-logic                       MemWriteM;
-logic [31:0]                ALUoutM;
-logic [31:0]                Rd2M;
-logic [2:0]                 funct3M;
-logic [4:0]                 RdM;
-logic [31:0]                inc_PCM;
+wire                        RegWriteM;
+wire [1:0]                  ResultSrcM;
+wire                        MemWriteM;
+wire [31:0]                 ALUoutM;
+wire [31:0]                 Rd2M;
+wire [2:0]                  funct3M;
+wire [4:0]                  RdM;
+wire [31:0]                 inc_PCM;
 
 // memory to writeback signals
-logic [1:0]                 ResultSrcW;
-logic [31:0]                ALUoutW;
-logic [31:0]                ReadDataW;
-logic [31:0]                inc_PCW;
+wire [1:0]                 ResultSrcW;
+wire [31:0]                ALUoutW;
+wire [31:0]                ReadDataW;
+wire [31:0]                inc_PCW;
 
 fetch fetch(
     .clk                    (clk),
@@ -91,6 +94,8 @@ decode decode(
     .ImmExtE                (ImmExtE),
     .PCE                    (PCE),
     .funct3E                (funct3E),
+    .Rs1D                   (Rs1D),
+    .Rs2D                   (Rs2D),
     .Rs1E                   (Rs1E),
     .Rs2E                   (Rs2E),
     .RdE                    (RdE),
@@ -100,7 +105,6 @@ decode decode(
 
 execute exectue(
     .clk                    (clk),
-    .Stall                  (Stall),
     .JumpE                  (JumpE),
     .BranchE                (BranchE),
     .RegWriteE              (RegWriteE),
@@ -160,13 +164,16 @@ writeback writeback(
 );
 
 hazard_unit hazard_unit(
+    .Rs1D                   (Rs1D),
+    .Rs2D                   (Rs2D),
     .Rs1E                   (Rs1E),
     .Rs2E                   (Rs2E),
+    .RdE                    (RdE),
     .RdM                    (RdM),
     .RdW                    (RdW),
     .RegWriteM              (RegWriteM),
     .RegWriteW              (RegWriteW),
-    .LoadM                  (ResultSrcM[0]),
+    .LoadE                  (ResultSrcE[0]),
     .PCSrc                  (PCSrc),
     .ForwardA               (ForwardA),
     .ForwardB               (ForwardB),

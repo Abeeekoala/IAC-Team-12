@@ -22,7 +22,7 @@ always_comb begin
         a0 = regfile_array[{5'b01010}];
     end
 
-always_ff @(posedge clk)
+always_ff @(negedge clk)
     begin
         if(WE3 == 1'b1 && A3 != 5'b00000)
             regfile_array[A3] <= WD3;

@@ -17,8 +17,6 @@ module ff2 (
     input logic [4:0]       Rs1D,
     input logic [4:0]       Rs2D,
     input logic [31:0]      inc_PCD,
-    input logic             Stall,
-    input logic             Flush,
 
     output logic             JumpE,
     output logic             BranchE,
@@ -40,12 +38,11 @@ module ff2 (
 );
 
 always_ff @(posedge clk) begin
-    if (!Stall) begin
         JumpE <= JumpD;
         BranchE <= BranchD;
-        RegWriteE <= (Flush) ? 1'b0 : RegWriteD; // Ensure that regfile & memory are unchanged when Flushed
+        RegWriteE <= RegWriteD; 
         ResultSrcE <= ResultSrcD;
-        MemWriteE <= (Flush) ? 1'b0 : MemWriteD; // Ensure that regfile & memory are unchanged when Flushed
+        MemWriteE <= MemWriteD;
         ALUCtrlE <= ALUCtrlD;
         ALUSrcAE <= ALUSrcAD;
         ALUSrcBE <= ALUSrcBD;
@@ -58,7 +55,6 @@ always_ff @(posedge clk) begin
         Rs1E <= Rs1D;
         Rs2E <= Rs2D;
         inc_PCE <= inc_PCD;
-    end
 end
 
 endmodule

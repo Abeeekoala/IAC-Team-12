@@ -1,6 +1,5 @@
 module execute (
     input logic             clk,
-    input logic             Stall,
     input logic             JumpE,
     input logic             BranchE,
     input logic             RegWriteE,
@@ -95,7 +94,6 @@ ff3 EM_FF(
     .RdE                    (RdE),
     .Rd2E                   (Rd2),
     .inc_PCE                (inc_PCE),
-    .Stall                  (Stall),
 
     .RegWriteM              (RegWriteM),
     .ResultSrcM             (ResultSrcM),

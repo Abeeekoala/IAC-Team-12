@@ -6,8 +6,8 @@ module decode (
     input logic                 RegWriteW,
     input logic [4:0]           RdW,
     input logic [31:0]          ResultW,
-    input logic                 Stall,
     input logic                 Flush,
+    input logic                 Stall,
     output logic                JumpE,
     output logic                BranchE,
     output logic                RegWriteE,
@@ -22,6 +22,8 @@ module decode (
     output logic [31:0]         PCE,
     output logic [2:0]          funct3E,
     output logic [4:0]          RdE,
+    output logic [4:0]          Rs1D,
+    output logic [4:0]          Rs2D,
     output logic [4:0]          Rs1E,
     output logic [4:0]          Rs2E,
     output logic [31:0]         inc_PCE,
@@ -41,10 +43,15 @@ wire [31:0]         RD2D;
 wire [31:0]         ImmExtD;
 wire [2:0]          ImmSrc;
 
+assign Rs1D = InstrD[19:15];
+assign Rs2D = InstrD[24:20];
+
 CU control_unit(
     .funct3         (InstrD[14:12]),
     .op             (InstrD[6:0]),
     .funct7_5       (InstrD[30]),
+    .Flush          (Flush),
+    .Stall          (Stall),
     .ImmSrc         (ImmSrc),
     .MemWrite       (MemWriteD),
     .RegWrite       (RegWriteD),
@@ -93,8 +100,6 @@ ff2 DE_FF(
     .Rs1D           (InstrD[19:15]),
     .Rs2D           (InstrD[24:20]),
     .inc_PCD        (inc_PCD),
-    .Stall          (Stall),
-    .Flush          (Flush),
     
     .JumpE          (JumpE),
     .BranchE        (BranchE),
