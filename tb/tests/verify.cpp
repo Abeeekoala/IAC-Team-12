@@ -83,6 +83,19 @@ TEST_F(CpuTestbench, TestDataHazard)
     EXPECT_EQ(top_->a0, -10);
 }
 
+TEST_F(CpuTestbench, TestDataHazardWithRest)
+{
+    setupTest("8_data_hazard_with_reset");
+    initSimulation();
+    runSimulation(3);
+    reset(5); // reset for 2 cycles
+    EXPECT_EQ(top_->a0, 50);
+    runSimulation(30);
+    EXPECT_EQ(top_->a0, -10);
+
+
+}
+
 
 int main(int argc, char **argv)
 {

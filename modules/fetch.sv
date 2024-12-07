@@ -44,7 +44,7 @@ InstrMem InstrMem(
 
 mux FLush_mux(
     .in0        (InstrF),
-    .in1        (32'h0000),   //nop
+    .in1        (32'h0013),   //nop
     .sel        (Flush),
     .out        (Instr)
 );

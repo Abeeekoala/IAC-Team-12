@@ -164,6 +164,7 @@ writeback writeback(
 );
 
 hazard_unit hazard_unit(
+    .rst                    (rst),
     .Rs1D                   (Rs1D),
     .Rs2D                   (Rs2D),
     .Rs1E                   (Rs1E),
