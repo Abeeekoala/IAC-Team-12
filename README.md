@@ -31,7 +31,7 @@ The overall CPU (single-cycle / pipelined) was designed by Abraham.
 | **Data Memory**         |                 |               | *                 |             |
 | **Datapath**            |                 | *             | *                 | *           |
 | **Top Level Assembly**  | *               | *             | *                 | *           |
-| **Testbenches**         |                 |               |                   | *           |
+| **Testbenches & Debug** |                 |               |                   | *           |
 | **F1.s**                | *               |               |                   | *           |
 
 ---
@@ -50,7 +50,7 @@ The overall CPU (single-cycle / pipelined) was designed by Abraham.
 | **Memory Implementation**     |                 | *             |                   |             |
 | **WriteBack Implementation**  |                 | *             |                   |             |
 | **Top Implementation**        |                 | *             |                   | *           |
-| **Testbench**                 |                 |               |                   | *           |
+| **Testbench  & Debug**        |                 |               |                   | *           |
 
 ---
 
