@@ -75,6 +75,15 @@ TEST_F(CpuTestbench, TestLightSequence) {
     waitForOutput(0x0,  0x1,  500);  // cycle back
 }
 
+TEST_F(CpuTestbench, TestDataHazard)
+{
+    setupTest("7_data_hazard");
+    initSimulation();
+    runSimulation(CYCLES);
+    EXPECT_EQ(top_->a0, -10);
+}
+
+
 int main(int argc, char **argv)
 {
     testing::InitGoogleTest(&argc, argv);
