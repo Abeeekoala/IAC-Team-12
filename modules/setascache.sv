@@ -13,6 +13,7 @@ module setascache #(
     output logic fetch,              // Signal to fetch data from memory
     output logic writeback,          // Writeback to main memory for dirty eviction
     output logic [DATA_WIDTH-1:0] WB_DATA,  // Writeback data to memory
+    output logic [DATA_WIDTH-1:0] WB_addr,
     output logic [DATA_WIDTH-1:0] DATA_OUT  // Data to the CPU
 );
 
@@ -54,7 +55,8 @@ module setascache #(
         fetch = 0;
         writeback = 0;
         MMIO_access = (A == 32'h000000FC);
-        WB_DATA = '0
+        WB_DATA = '0;
+        WB_addr = '0;
         
         if (MMIO_access) begin
             hit = 1;
@@ -85,12 +87,15 @@ module setascache #(
                     // Evict way 0 if dirty
                     if (cache[set].DB0) begin
                         writeback = 1;
+                        WB_addr = {cache[set].tag0, set, 3'b000};
                         WB_DATA = cache[set].data0;
+
                     end
                 end else begin
                     // Evict way 1 if dirty
                     if (cache[set].DB1) begin
                         writeback = 1;
+                        WB_addr = {cache[set].tag1, set, 3'b000};
                         WB_DATA = cache[set].data1;
                     end
                 end

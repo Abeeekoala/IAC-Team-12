@@ -5,7 +5,8 @@ module dataMemory #(
     input logic trigger,
     input logic fetch,                  // Fetch data from main memory
     input logic writeback,              // Write-back from cache to main memory
-    input logic [DATA_WIDTH-1:0] A,     // Memory address
+    input logic [DATA_WIDTH-1:0] A,     // Memory read address
+    input logic [DATA_WIDTH-1:0] WB_addr.
     input logic [DATA_WIDTH-1:0] WB_DATA, // Data to write back to memory
     input logic [2:0] funct3,           // Store type
     output logic [DATA_WIDTH-1:0] RD    // Read data output
@@ -38,7 +39,7 @@ module dataMemory #(
     // Write logic for store and write-back instructions
     always_ff @(posedge clk) begin
         if (writeback) begin
-            mem[A] <= WB_DATA;  // Write-back to main memory
+            mem[WB_addr] <= WB_DATA;  // Write-back to main memory
         end
     end
 
