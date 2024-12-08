@@ -52,6 +52,9 @@ wire [31:0]                 Rd2M;
 wire [2:0]                  funct3M;
 wire [4:0]                  RdM;
 wire [31:0]                 inc_PCM;
+wire                        WB_DATA;
+wire                        WB_addr;
+wire                        writeback;
 
 // memory to writeback signals
 wire [1:0]                 ResultSrcW;
@@ -152,7 +155,11 @@ memory memory(
     .ALUoutW                (ALUoutW),
     .ReadDataW              (ReadDataW),
     .RdW                    (RdW),
-    .inc_PCW                (inc_PCW)
+    .inc_PCW                (inc_PCW),
+    .stall                  (stall),
+    .hit                    (hit)  
+    .fetch                  (fetch),
+    .rst                    (rst)
 );
 
 writeback writeback(
