@@ -4,6 +4,7 @@ module setascache #(
     input logic clk,
     input logic rst,
     input logic WE,                  // Write Enable (for stores)
+    input logic [DATA_WIDTH-1:0] RD  // Read Date from memory
     input logic [DATA_WIDTH-1:0] WD, // Write Data
     input logic [DATA_WIDTH-1:0] A,  // Address
     input logic [2:0] funct3,        // Load/Store type
@@ -36,7 +37,8 @@ module setascache #(
     logic [27:0] tag;
     logic [1:0] set;
     logic [DATA_WIDTH-1:0] Data;
-    logic [DATA_WIDTH-1:0] RD;
+    logic MMIO_access;
+    logic way_hit;
 
     // Address breakdown
     always_comb begin
@@ -51,51 +53,59 @@ module setascache #(
         stall = 0;
         fetch = 0;
         writeback = 0;
-
-        // Check for a cache hit in either way
-        // Way 0
-        if (cache[set].ValitdityBit0 && (cache[set].tag0 == tag)) begin
+        MMIO_access = (A == 32'h000000FC);
+        WB_DATA = '0
+        
+        if (MMIO_access) begin
             hit = 1;
-            Data = cache[set].data0;
-            cache[set].U = 1; // Update LRU
-        end 
-        // Way 1
-        else if (cache[set].ValitdityBit1 && (cache[set].tag1 == tag)) begin
-            hit = 1;
-            Data = cache[set].data1;
-            cache[set].U = 0; // Update LRU
-        end 
-        // Cache miss
+            stall = 0;
+            DATA_OUT = RD;
+        end
         else begin
-            hit = 0;
-            stall = 1;  // Stall the pipeline for a miss
-            fetch = 1;  // Fetch data from main memory
-            // Check if eviction is needed
-            if (cache[set].U == 0) begin
-                // Evict way 0 if dirty
-                if (cache[set].DB0) begin
-                    writeback = 1;
-                    WB_DATA = cache[set].data0;
-                end
-            end else begin
-                // Evict way 1 if dirty
-                if (cache[set].DB1) begin
-                    writeback = 1;
-                    WB_DATA = cache[set].data1;
+            // Check for a cache hit in either way
+            // Way 0
+            if (cache[set].ValitdityBit0 && (cache[set].tag0 == tag)) begin
+                hit = 1;
+                Data = cache[set].data0;
+                way_hit = 0; // Update LRU
+            end 
+            // Way 1
+            else if (cache[set].ValitdityBit1 && (cache[set].tag1 == tag)) begin
+                hit = 1;
+                Data = cache[set].data1;
+                way_hit = 1; // Update LRU
+            end 
+            // Cache miss
+            else begin
+                hit = 0;
+                stall = 1;  // Stall the pipeline for a miss
+                fetch = 1;  // Fetch data from main memory
+                // Check if eviction is needed
+                if (cache[set].U == 0) begin
+                    // Evict way 0 if dirty
+                    if (cache[set].DB0) begin
+                        writeback = 1;
+                        WB_DATA = cache[set].data0;
+                    end
+                end else begin
+                    // Evict way 1 if dirty
+                    if (cache[set].DB1) begin
+                        writeback = 1;
+                        WB_DATA = cache[set].data1;
+                    end
                 end
             end
-        end
-
-        // Output data (load instructions) given hit as otherwise data hasn't loaded
-        if (!WE && hit) begin
-            case (funct3)
-                3'b000: DATA_OUT = {{24{Data[7]}}, Data[7:0]};    // lb
-                3'b001: DATA_OUT = {{16{Data[15]}}, Data[15:0]};  // lh
-                3'b010: DATA_OUT = Data;                          // lw
-                3'b100: DATA_OUT = {24'b0, Data[7:0]};            // lbu
-                3'b101: DATA_OUT = {16'b0, Data[15:0]};           // lhu
-                default: DATA_OUT = 32'b0;                        // Default case
-            endcase
+            // Output data (load instructions) given hit as otherwise data hasn't loaded
+            if (!WE && hit) begin
+                case (funct3)
+                    3'b000: DATA_OUT = {{24{Data[7]}}, Data[7:0]};    // lb
+                    3'b001: DATA_OUT = {{16{Data[15]}}, Data[15:0]};  // lh
+                    3'b010: DATA_OUT = Data;                          // lw
+                    3'b100: DATA_OUT = {24'b0, Data[7:0]};            // lbu
+                    3'b101: DATA_OUT = {16'b0, Data[15:0]};           // lhu
+                    default: DATA_OUT = 32'b0;                        // Default case
+                endcase
+            end
         end
     end
 
@@ -115,8 +125,13 @@ module setascache #(
             end
         end 
         else begin
+            //Update LRU bit
+            if (hit) begin
+                cache[set].U <= !(way_hit);
+            end 
+
             if (hit && WE) begin // Memory block alr in cache either first time or write-allocate (stall & fetch & write -> hit & update/store)
-                if (cache[set].U) begin 
+                if (way_hit == 0) begin 
                     // Hit at Way 0; Write to way 0
                     case (funct3)
                         3'b000: cache[set].data0[7:0] <= WD[7:0];      // sb
@@ -124,6 +139,7 @@ module setascache #(
                         3'b010: cache[set].data0 <= WD;                // sw
                     endcase
                     cache[set].DB0 <= 1; // Set dirty bit for Way 0
+                    cache[set].U <= 1;
                 end else begin
                     // Hit at Way 1; Write to Way 1
                     case (funct3)
@@ -132,6 +148,7 @@ module setascache #(
                         3'b010: cache[set].data1 <= WD;                // sw
                     endcase
                     cache[set].DB1 <= 1; // Set dirty bit for Way 1
+                    cache[set].U <= 0;
                 end
             end
 
@@ -163,17 +180,5 @@ module setascache #(
             end
         end
     end
-
-    // Data Memory Instance
-    dataMemory datamemory (
-        .clk       (clk),  
-        .A         (A),
-        .WD        (WD),  
-        .funct3    (func3),           
-        .fetch     (fetch),       // Fetch signal to load data
-        .writeback (writeback),   // Writeback signal to main memory
-        .WB_DATA   (WB_DATA),     // Writeback data to memory
-        .RD        (RD)           // Data read from memory
-    );
 
 endmodule
