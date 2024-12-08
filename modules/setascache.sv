@@ -2,6 +2,7 @@ module setascache #(
     parameter DATA_WIDTH = 32
 ) (
     input logic clk,
+    input logic rst,
     input logic WE,                  // Write Enable (for stores)
     input logic [DATA_WIDTH-1:0] WD, // Write Data
     input logic [DATA_WIDTH-1:0] A,  // Address
@@ -15,17 +16,18 @@ module setascache #(
 );
 
     typedef struct packed {
-        logic U; // LRU bit -- 1 = Way 1 recently used, 0 = Way 2
+        logic U; // LRU bit -- 1 = [Way 0 recently used]; 0 = [Way 1 recently used] => should write to the other way
         // Way 1
         logic ValitdityBit1;
+        logic DB1; // Dirty bit
         logic [27:0] tag1;
         logic [DATA_WIDTH-1:0] data1; 
-        logic DB1; // Dirty bit
-        // Way 2
-        logic ValitdityBit2;
-        logic [27:0] tag2;
-        logic [DATA_WIDTH-1:0] data2; 
-        logic DB2; // Dirty bit
+
+        // Way 0
+        logic ValitdityBit0;
+        logic DB0; // Dirty bit
+        logic [27:0] tag0;
+        logic [DATA_WIDTH-1:0] data0; 
     } CacheType;
 
     CacheType cache [4]; // Define 4 sets, 2-way associative cache
@@ -51,37 +53,41 @@ module setascache #(
         writeback = 0;
 
         // Check for a cache hit in either way
-        if (cache[set].ValitdityBit1 && (cache[set].tag1 == tag)) begin
+        // Way 0
+        if (cache[set].ValitdityBit0 && (cache[set].tag0 == tag)) begin
+            hit = 1;
+            Data = cache[set].data0;
+            cache[set].U = 1; // Update LRU
+        end 
+        // Way 1
+        else if (cache[set].ValitdityBit1 && (cache[set].tag1 == tag)) begin
             hit = 1;
             Data = cache[set].data1;
-            cache[set].U = 1; // Update LRU
-        end else if (cache[set].ValitdityBit2 && (cache[set].tag2 == tag)) begin
-            hit = 1;
-            Data = cache[set].data2;
             cache[set].U = 0; // Update LRU
-        end else begin
-            // Cache miss
+        end 
+        // Cache miss
+        else begin
             hit = 0;
             stall = 1;  // Stall the pipeline for a miss
             fetch = 1;  // Fetch data from main memory
             // Check if eviction is needed
             if (cache[set].U == 0) begin
+                // Evict way 0 if dirty
+                if (cache[set].DB0) begin
+                    writeback = 1;
+                    WB_DATA = cache[set].data0;
+                end
+            end else begin
                 // Evict way 1 if dirty
                 if (cache[set].DB1) begin
                     writeback = 1;
                     WB_DATA = cache[set].data1;
                 end
-            end else begin
-                // Evict way 2 if dirty
-                if (cache[set].DB2) begin
-                    writeback = 1;
-                    WB_DATA = cache[set].data2;
-                end
             end
         end
 
         // Output data (load instructions) given hit as otherwise data hasn't loaded
-        if (~WE && hit) begin
+        if (!WE && hit) begin
             case (funct3)
                 3'b000: DATA_OUT = {{24{Data[7]}}, Data[7:0]};    // lb
                 3'b001: DATA_OUT = {{16{Data[15]}}, Data[15:0]};  // lh
@@ -93,61 +99,77 @@ module setascache #(
         end
     end
 
+    // Write Policy: Write-back scheme with write-allocate
     // Cache Write Logic
-    always_ff @(posedge clk) begin
-        if (hit && WE) begin // Memory block alr in cache 
-            if (cache[set].U == 1) begin
-                // Write to way 1
-                case (funct3)
-                    3'b000: cache[set].data1[7:0] <= WD[7:0];      // sb
-                    3'b001: cache[set].data1[15:0] <= WD[15:0];    // sh
-                    3'b010: cache[set].data1 <= WD;                // sw
-                endcase
-                cache[set].DB1 <= 1; // Set dirty bit for way 1
-            end else begin
-                // Write to way 2
-                case (funct3)
-                    3'b000: cache[set].data2[7:0] <= WD[7:0];      // sb
-                    3'b001: cache[set].data2[15:0] <= WD[15:0];    // sh
-                    3'b010: cache[set].data2 <= WD;                // sw
-                endcase
-                cache[set].DB2 <= 1; // Set dirty bit for way 2
+    always_ff @(posedge clk or posedge rst) begin
+        if (rst) begin
+            // Reset all sets in the cache
+            for (int i = 0; i < 4; i++) begin
+                cache[i].U <= 0;
+                cache[i].ValitdityBit0 <= 0;
+                cache[i].ValitdityBit1 <= 0;
+                cache[i].DB0 <= 0;
+                cache[i].DB1 <= 0;
+                cache[i].tag0 <= '0;
+                cache[i].tag1 <= '0;
             end
-        end
+        end 
+        else begin
+            if (hit && WE) begin // Memory block alr in cache either first time or write-allocate (stall & fetch & write -> hit & update/store)
+                if (cache[set].U) begin 
+                    // Hit at Way 0; Write to way 0
+                    case (funct3)
+                        3'b000: cache[set].data0[7:0] <= WD[7:0];      // sb
+                        3'b001: cache[set].data0[15:0] <= WD[15:0];    // sh
+                        3'b010: cache[set].data0 <= WD;                // sw
+                    endcase
+                    cache[set].DB0 <= 1; // Set dirty bit for Way 0
+                end else begin
+                    // Hit at Way 1; Write to Way 1
+                    case (funct3)
+                        3'b000: cache[set].data1[7:0] <= WD[7:0];      // sb
+                        3'b001: cache[set].data1[15:0] <= WD[15:0];    // sh
+                        3'b010: cache[set].data1 <= WD;                // sw
+                    endcase
+                    cache[set].DB1 <= 1; // Set dirty bit for Way 1
+                end
+            end
 
-        if (~hit && fetch) begin // Cache miss: fetch from memory
-            if (cache[set].U == 0) begin
-                // Evict way 1 if dirty
-                if (cache[set].DB1) begin
-                    cache[set].DB1 <= 0; // Clear dirty bit after writeback
+            if (~hit && fetch) begin //Fetch from memory and write to Cache
+                // Cache miss: fetch from memory 
+                // Write to the Least recently used Way
+                // Way 0
+                if (cache[set].U == 0) begin
+                    // Clear dirty bit after writeback
+                    if (cache[set].DB0) begin
+                        cache[set].DB0 <= 0; 
+                    end
+                    cache[set].ValitdityBit0 <= 1;
+                    cache[set].tag0 <= tag;
+                    cache[set].data0 <= RD; // New data from memory
+                    cache[set].U <= 1;      // Update LRU
+                end 
+                // Way 1
+                else begin
+                    // Clear dirty bit after writeback
+                    if (cache[set].DB1) begin
+                        cache[set].DB1 <= 0; 
+                    end
+                    cache[set].ValitdityBit1 <= 1;
+                    cache[set].tag1 <= tag;
+                    cache[set].data1 <= RD; // New data from memory
+                    cache[set].U <= 0;      // Update LRU
                 end
-                cache[set].ValitdityBit1 <= 1;
-                cache[set].tag1 <= tag;
-                cache[set].data1 <= RD; // New data from memory
-                cache[set].U <= 1;      // Update LRU
-            end else begin
-                // Evict way 2 if dirty
-                if (cache[set].DB2) begin
-                    cache[set].DB2 <= 0; // Clear dirty bit after writeback
-                end
-                cache[set].ValitdityBit2 <= 1;
-                cache[set].tag2 <= tag;
-                cache[set].data2 <= RD; // New data from memory
-                cache[set].U <= 0;      // Update LRU
             end
-            stall = 0;
-            fetch = 0;
         end
     end
 
     // Data Memory Instance
     dataMemory datamemory (
-        .clk       (clk),
-        .WE        (WE),   
+        .clk       (clk),  
         .A         (A),
         .WD        (WD),  
-        .funct3    (func3),
-        .CH        (hit),           
+        .funct3    (func3),           
         .fetch     (fetch),       // Fetch signal to load data
         .writeback (writeback),   // Writeback signal to main memory
         .WB_DATA   (WB_DATA),     // Writeback data to memory
