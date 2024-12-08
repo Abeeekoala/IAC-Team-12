@@ -58,7 +58,7 @@ The overall CPU (single-cycle / pipelined) was designed by Abraham.
 | Component                       | Shreeya Agarwal | Shravan Kumar | Charlotte Maxwell | Abraham Lin |
 |---------------------------------|-----------------|---------------|-------------------|-------------|
 | **Direct Mapped Cache**         |                 |               | *                 |             |
-| **2-Way Set Associative Cache** |                 |               | *                 |             |
+| **2-Way Set Associative Cache** |                 |               | *                 | *           |
 
 Note that as team members all frequently met up together, the above table and commits do not accurately represent the individual contribution of team members as:
 
