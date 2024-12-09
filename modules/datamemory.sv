@@ -1,5 +1,6 @@
 module datamemory #(
-    parameter DATA_WIDTH = 32
+    parameter DATA_WIDTH = 32,
+              MEM_WIDTH  = 8
 ) (
     input logic trigger,                // Input trigger (MMIO)
     input logic clk,                    // Clock signal
@@ -10,8 +11,8 @@ module datamemory #(
     output logic [DATA_WIDTH-1:0] RD    // Data read from memory
 );
 
-    // Memory array: 2^18 locations 0x00000000 to 0x0001FFFF, each DATA_WIDTH bits wide
-    logic [DATA_WIDTH-1:0] mem [0:2**18-1];
+    // Memory array: 2^17 locations 0x00000000 to 0x0001FFFF, each DATA_WIDTH bits wide
+    logic [MEM_WIDTH-1:0] mem [0:2**17-1];
 
     initial begin
         $readmemh("data.hex", mem, 32'h00010000);
@@ -31,12 +32,12 @@ module datamemory #(
         else begin
             // Regular memory read 
             case (funct3)
-                3'b000: RD = {{24{mem[A][7]}}, mem[A][7:0]};    // lb
-                3'b001: RD = {{16{mem[A][15]}}, mem[A][15:0]};  // lh
-                3'b010: RD = mem[A];                            // lw
-                3'b100: RD = {24'b0, mem[A][7:0]};              // lbu
-                3'b101: RD = {16'b0, mem[A][15:0]};             // lhu
-                default: RD = 32'b0;                            // Default case
+                3'b000: RD = {{24{mem[A][7]}}, mem[A]};                 // lb
+                3'b001: RD = {{16{mem[A+1][15]}}, mem[A+1], mem[A]};    // lh
+                3'b010: RD = {mem[A+3], mem[A+2], mem[A+1], mem[A]};    // lw
+                3'b100: RD = {24'b0, mem[A]};                           // lbu
+                3'b101: RD = {16'b0, mem[A+1], mem[A]};                 // lhu
+                default: RD = 32'b0;                                    // Default case
             endcase
         end
     end
@@ -45,9 +46,17 @@ module datamemory #(
     always_ff @(posedge clk) begin
         if (WE) begin // Store instruction
             case (funct3)
-                3'b000: mem[A][7:0] <= WD[7:0];    // sb
-                3'b001: mem[A][15:0] <= WD[15:0];  // sh
-                3'b010: mem[A] <= WD;              // sw
+                3'b000: mem[A] <= WD[7:0];      // sb
+                3'b001: begin
+                    mem[A + 1] <= WD[15:8];     // sh
+                    mem[A] <= WD[7:0];
+                end
+                3'b010: begin
+                    mem[A + 3] <= WD[31:24];    // sw
+                    mem[A + 2] <= WD[23:16];
+                    mem[A + 1] <= WD[15:8];
+                    mem[A] <= WD[7:0];
+                end
             endcase
         end
     end
