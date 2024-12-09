@@ -6,7 +6,7 @@ module dataMemory #(
     input logic fetch,                  // Fetch data from main memory
     input logic writeback,              // Write-back from cache to main memory
     input logic [DATA_WIDTH-1:0] A,     // Memory read address
-    input logic [DATA_WIDTH-1:0] WB_addr.
+    input logic [DATA_WIDTH-1:0] WB_addr,
     input logic [DATA_WIDTH-1:0] WB_DATA, // Data to write back to memory
     output logic [DATA_WIDTH-1:0] RD    // Read data output
 );

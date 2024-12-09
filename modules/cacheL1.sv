@@ -6,12 +6,13 @@ module setascache #(
     input logic [DATA_WIDTH-1:0] WD, // Write Data
     input logic [DATA_WIDTH-1:0] A,  // Address
     input logic [2:0] funct3,        // Load/Store type
+    input logic [DATA_WIDTH-1:0] RD;
     input logic hitL2,               // Data Hit/Miss signal in L2 cache level 
     output logic hitL1,                // Cache Hit/Miss signal
     output logic fetchL1,              // Signal to fetch data from memory
     output logic writeback,          // Writeback to main memory for dirty eviction
-    output logic writeL2,
-    output logic [DATA_WIDTH-1:0] WB_DATA,  // Writeback data to memory
+    output logic WEL2,            // Logic to enable evicted data from L1 to be written to L1 instead 
+    output logic [DATA_WIDTH-1:0] WB_DATAL1,  // Writeback data to memory
     output logic [DATA_WIDTH-1:0] EVICT_DATA,  // Evict Data to L2
     output logic [DATA_WIDTH-1:0] DATA_OUT  // Data to the CPU
 );
@@ -36,7 +37,6 @@ module setascache #(
     logic [27:0] tag;
     logic [1:0] set;
     logic [DATA_WIDTH-1:0] Data;
-    logic [DATA_WIDTH-1:0] RD;
 
     // Address breakdown
     always_comb begin
@@ -47,43 +47,48 @@ module setascache #(
     // Cache Access Logic
     always_comb begin
         // Default outputs
-        hit = 0;
+        hitL1 = 0;
         stall = 0;
-        fetch = 0;
+        fetchL1 = 0;
         writeback = 0;
+        writeL2 = 0; 
 
         // Check for a cache hit in either way
         if (cache[set].ValitdityBit1 && (cache[set].tag1 == tag)) begin
-            hit = 1;
+            hitL1 = 1;
             Data = cache[set].data1;
             cache[set].U = 1; // Update LRU
         end else if (cache[set].ValitdityBit2 && (cache[set].tag2 == tag)) begin
-            hit = 1;
+            hitL1= 1;
             Data = cache[set].data2;
             cache[set].U = 0; // Update LRU
         end else begin
             // Cache miss
-            hit = 0;
+            hitL1 = 0;
             stall = 1;  // Stall the pipeline for a miss
-            fetch = 1;  // Fetch data from main memory
+            fetchL1 = 1;  // Fetch data from main memory
             // Check if eviction is needed
             if (cache[set].U == 0) begin
                 // Evict way 1 if dirty
                 if (cache[set].DB1) begin
                     writeback = 1;
                     WB_DATA = cache[set].data1;
+                    EVICT_DATA = cache[set].data1;
+                    WEL2 = 1; // move data to L2
                 end
             end else begin
                 // Evict way 2 if dirty
                 if (cache[set].DB2) begin
                     writeback = 1;
                     WB_DATA = cache[set].data2;
+                    EVICT_DATA = cache[set].data2;
+                    writeL2 = 1;
                 end
             end
         end
 
         // Output data (load instructions) given hit as otherwise data hasn't loaded
-        if (~WE && hit) begin
+        if (~WE && hitL1) begin
             case (funct3)
                 3'b000: DATA_OUT = {{24{Data[7]}}, Data[7:0]};    // lb
                 3'b001: DATA_OUT = {{16{Data[15]}}, Data[15:0]};  // lh
@@ -97,7 +102,7 @@ module setascache #(
 
     // Cache Write Logic
     always_ff @(posedge clk) begin
-        if (hit && WE) begin // Memory block alr in cache 
+        if (hitL1 && WE) begin // Memory block alr in cache 
             if (cache[set].U == 1) begin
                 // Write to way 1
                 case (funct3)
@@ -117,7 +122,7 @@ module setascache #(
             end
         end
 
-        if (~hit && fetch) begin // Cache miss: fetch from memory
+        if (~hit && fetchL1) begin // Cache miss: fetch from either L2 or memory
             if (cache[set].U == 0) begin
                 // Evict way 1 if dirty
                 if (cache[set].DB1) begin
@@ -138,7 +143,7 @@ module setascache #(
                 cache[set].U <= 0;      // Update LRU
             end
             stall = 0;
-            fetch = 0;
+            fetchL1 = 0;
         end
     end
 
@@ -147,13 +152,15 @@ module setascache #(
 setascacheL2 L2(
     .clk (clk),
     .WE  (WE),
-    .WD  (WD),
+    .WEL2 (WEL2),
+    .WD  (WD), 
     .A   (A),
     .func3 (func3),
-    .hitL1 (hit),
-    .fetchL1 (fetch),
+    .hitL1 (hitL1), 
+    .fetchL1 (fetchL1),
     .writeback (writeback),
-    .WB_DATA (WB_DATA),
+    .EVICT_DATA (EVICT_DATA),
+    .WB_DATAL1 (WB_DATA),
     .DATA_OUT (RD),
 );
 
