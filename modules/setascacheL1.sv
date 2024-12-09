@@ -15,7 +15,7 @@ module setascache #(
     output logic writeback,          // Writeback to main memory for dirty eviction
     output logic [DATA_WIDTH-1:0] WB_DATA,  // Writeback data to memory
     output logic [DATA_WIDTH-1:0] WB_addr,
-    output logic [DATA_WIDTH-1:0] DATA_OUT  // Data to the CPU
+    output logic [DATA_WIDTH-1:0] DATA_OUT,  // Data to the CPU
 
     // L2 interface signals 
     output logic L2_fetch,

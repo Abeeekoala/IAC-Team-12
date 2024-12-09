@@ -20,7 +20,18 @@ module memory(
     output logic                fetch        
 );
 
-logic [31:0]             ReadDataM;
+logic [31:0] ReadDataM;    // Data from L1 cache or memory
+logic        hit;          // Cache hit signal from L1
+logic        writeback;    
+logic [31:0] WB_DATA;      
+logic [31:0] WB_addr;
+
+// L2 interface signals
+logic L2_fetch, L2_WE, L2_stall;
+logic [31:0] L2_DATA_OUT;
+logic L2_writeback;
+logic [31:0] L2_WB_DATA, L2_WB_ADDR;
+
 
 datamemory DataMem(
     .trigger                    (trigger),
@@ -49,7 +60,7 @@ ff4 MW_FF(
     .inc_PCW                    (inc_PCW)
 );
 
-setascache two_way_cache (
+setascache L1 (
     .clk                        (clk),
     .WE                         (MemWriteM),
     .RD                         (ReadDataM),
@@ -63,7 +74,44 @@ setascache two_way_cache (
     .DATA_OUT                   (ReadDataM),
     .WB_DATA                    (WB_DATA),
     .WB_addr                    (WB_addr),
-    .writeback                  (writeback)                    
+    .writeback                  (writeback), 
+    //L2 interface signals
+    .L2_fetch                   (L2_fetch),
+    .L2_hit                     (L2_hit),
+    .L2_RD                      (L2_DATA_OUT),
+    .L2_writeback               (L2_writeback),
+    .L2_WB_DATA                 (L2_WB_DATA),
+    .L2_WB_ADDR                 (L2_WB_ADDR)
 );
+
+setascacheL2 L2 (
+    .clk                        (clk),
+    .rst                        (rst),
+    .WE                         (L2_WE),
+    .RD                         (L2_DATA_OUT),
+    .fetch                      (L2_fetch),        
+    .A                          (ALUoutM_i),
+    .WD                         (Rd2M),
+    .funct3                     (funct3M),
+    .stall                      (L2_stall),
+    .hit                        (L2_hit),    
+    .DATA_OUT                   (L2_DATA_OUT),
+    .WB_DATA                    (L2_WB_DATA),
+    .WB_addr                    (L2_WB_ADDR),
+    .writeback                  (L2_writeback)
+);
+
+always_comb begin
+    fetch = hit ? 1'b0 : L2_fetch;
+    stall = ~hit || L2_stall;
+
+    // Control L2 interface based on L1 behavior
+    L2_fetch = ~hit;
+    L2_WE = MemWriteM && ~hit;
+
+    writeback = ~hit && L2_writeback;
+    WB_DATA = L2_WB_DATA;
+    WB_addr = L2_WB_ADDR;
+end
 
 endmodule
