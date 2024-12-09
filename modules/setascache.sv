@@ -107,11 +107,39 @@ module setascache #(
             // Output data (load instructions) given hit as otherwise data hasn't loaded
         if (!WE && hit) begin
                 case (funct3)
-                    3'b000: DATA_OUT = {{24{Data[7]}}, Data[7:0]};    // lb
-                    3'b001: DATA_OUT = {{16{Data[15]}}, Data[15:0]};  // lh
-                    3'b010: DATA_OUT = Data;                          // lw
-                    3'b100: DATA_OUT = {24'b0, Data[7:0]};            // lbu
-                    3'b101: DATA_OUT = {16'b0, Data[15:0]};           // lhu
+                    3'b000: begin                                           // lb
+                        case (A[1:0])
+                            2'b00: DATA_OUT = {{24{Data[7]}}, Data[7:0]};
+                            2'b01: DATA_OUT = {{24{Data[15]}}, Data[15:8]};
+                            2'b10: DATA_OUT = {{24{Data[23]}}, Data[23:16]};
+                            2'b11: DATA_OUT = {{24{Data[31]}}, Data[31:24]};      
+                        endcase
+                    end 
+                    3'b001: begin                                           // lh
+                        if (A[1]) begin
+                            DATA_OUT = {{16{Data[31]}}, Data[31:16]};
+                        end 
+                        else begin
+                            DATA_OUT = {{16{Data[15]}}, Data[15:0]};
+                        end
+                    end          
+                    3'b010: DATA_OUT = Data;                                // lw
+                    3'b100: begin
+                        case (A[1:0])
+                            2'b00: DATA_OUT = {{24{1'b0}}, Data[7:0]};
+                            2'b01: DATA_OUT = {{24{1'b0}}, Data[15:8]};
+                            2'b10: DATA_OUT = {{24{1'b0}}, Data[23:16]};
+                            2'b11: DATA_OUT = {{24{1'b0}}, Data[31:24]};      
+                        endcase
+                    end
+                    3'b101: begin                                           // lhu
+                        if (A[1]) begin
+                            DATA_OUT = {{16{1'b0}}, Data[31:16]};
+                        end 
+                        else begin
+                            DATA_OUT = {{16{1'b0}}, Data[15:0]};
+                        end
+                    end           
                     default: DATA_OUT = 32'b0;                        // Default case
                 endcase
             end
@@ -142,8 +170,22 @@ module setascache #(
                 if (way_hit == 0) begin 
                     // Hit at Way 0; Write to way 0
                     case (funct3)
-                        3'b000: cache[set].data0[7:0] <= WD[7:0];      // sb
-                        3'b001: cache[set].data0[15:0] <= WD[15:0];    // sh
+                        3'b000: begin // sb
+                            case (A[1:0])
+                                2'b00: cache[set].data0[7:0] <= WD[7:0];
+                                2'b01: cache[set].data0[15:8] <= WD[7:0];
+                                2'b10: cache[set].data0[23:16] <= WD[7:0];
+                                2'b11: cache[set].data0[31:24] <= WD[7:0];       
+                            endcase
+                        end
+                        3'b001: begin
+                            if (A[1]) begin
+                                cache[set].data0[31:16] <= WD[15:0];    // sh
+                            end
+                            else begin
+                                cache[set].data0[15:0] <= WD[15:0];
+                            end
+                        end
                         3'b010: cache[set].data0 <= WD;                // sw
                     endcase
                     cache[set].DB0 <= 1; // Set dirty bit for Way 0

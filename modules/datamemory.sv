@@ -1,5 +1,6 @@
 module datamemory #(
-    parameter DATA_WIDTH = 32  
+    parameter DATA_WIDTH = 32,
+              MEM_WIDTH  = 8  
 ) (
     input logic clk,                    // Clock signal
     input logic trigger,
@@ -12,7 +13,7 @@ module datamemory #(
 );
 
     // Memory array: 2^18 locations, each DATA_WIDTH bits wide
-    logic [DATA_WIDTH-1:0] mem [0:2**18-1];
+    logic [MEM_WIDTH-1:0] mem [0:2**18-1];
 
     initial begin
         $readmemh("data.hex", mem, 32'h00010000);
@@ -31,14 +32,17 @@ module datamemory #(
             RD = {31'b0, trigger};
         end
         else if (fetch) begin
-            RD = mem[A];  // Fetch whole data from memory
+            RD = {mem[{A[16:2], 2'b11}], mem[{A[16:2], 2'b10}], mem[{A[16:2], 2'b01}], mem[{A[16:2], 2'b00}]};  // Make sure we always fetch the whole data for cache
         end
     end
 
     // Write logic for store and write-back instructions
     always_ff @(posedge clk) begin
         if (writeback) begin
-            mem[WB_addr] <= WB_DATA;  // Write-back to main memory
+            mem[A + 3] <= WB_DATA[31:24];
+            mem[A + 2] <= WB_DATA[23:16];
+            mem[A + 1] <= WB_DATA[15:8];
+            mem[A] <= WB_DATA[7:0];
         end
     end
 
