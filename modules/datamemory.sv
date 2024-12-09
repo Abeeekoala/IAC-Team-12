@@ -12,8 +12,8 @@ module datamemory #(
     output logic [DATA_WIDTH-1:0] RD    // Read data output
 );
 
-    // Memory array: 2^18 locations, each DATA_WIDTH bits wide
-    logic [MEM_WIDTH-1:0] mem [0:2**18-1];
+    // Memory array: 2^17 locations, each DATA_WIDTH bits wide
+    logic [MEM_WIDTH-1:0] mem [0:2**17-1];
 
     initial begin
         $readmemh("data.hex", mem, 32'h00010000);
@@ -39,10 +39,10 @@ module datamemory #(
     // Write logic for store and write-back instructions
     always_ff @(posedge clk) begin
         if (writeback) begin
-            mem[A + 3] <= WB_DATA[31:24];
-            mem[A + 2] <= WB_DATA[23:16];
-            mem[A + 1] <= WB_DATA[15:8];
-            mem[A] <= WB_DATA[7:0];
+            mem[WB_addr + 3] <= WB_DATA[31:24];
+            mem[WB_addr + 2] <= WB_DATA[23:16];
+            mem[WB_addr + 1] <= WB_DATA[15:8];
+            mem[WB_addr] <= WB_DATA[7:0];
         end
     end
 

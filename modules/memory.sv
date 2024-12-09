@@ -46,6 +46,7 @@ ff4 MW_FF(
     .ReadDataM                  (ReadDataM),
     .RdM                        (RdM),
     .inc_PCM                    (inc_PCM),
+    .stall                      (stall),
     .RegWriteW                  (RegWriteW),
     .ResultSrcW                 (ResultSrcW),
     .ALUoutW                    (ALUoutW),

@@ -6,6 +6,7 @@ module ff4 (
     input logic [31:0]              ReadDataM, //datamem, fix same name from InstrMem
     input logic [4:0]               RdM,
     input logic [31:0]              inc_PCM,
+    input logic                     stall,
 
     output logic                    RegWriteW,
     output logic [1:0]              ResultSrcW,
@@ -16,7 +17,7 @@ module ff4 (
 );
 
 always_ff @ (posedge clk)
-    begin
+    if (!stall) begin
         RegWriteW <= RegWriteM;
         ResultSrcW <= ResultSrcM;
         ALUoutW <= ALUoutM;
