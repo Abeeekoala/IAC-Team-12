@@ -47,6 +47,22 @@ module setascache #(
         tag = A[31:4];  // Tag from address
         set = A[3:2];   // Set index from address
     end
+    
+    // register the fetch signal to prevent RD latching
+    // use negative clock to insure We update cache on the next CLK posedge if miss
+    logic fetch_reg;
+
+    always_ff @(negedge clk or posedge rst) begin
+        if (rst) begin
+            fetch_reg <= 0;
+        end else if (!hit && (Read || WE)) begin
+            fetch_reg <= 1;
+        end else begin
+            fetch_reg <= 0; // clear fetch once the data is ready
+        end
+    end
+
+    assign fetch = fetch_reg;
 
     // Cache Access Logic
     always_comb begin
@@ -54,7 +70,6 @@ module setascache #(
         hit = 0;
         way_hit = 0;
         stall = 0;
-        fetch = 0;
         writeback = 0;
         MMIO_access = (A == 32'h000000FC);
         WB_DATA = '0;
@@ -62,7 +77,6 @@ module setascache #(
         DATA_OUT = '0;
         Data = '0;
         if (MMIO_access) begin
-            stall = 0;
             DATA_OUT = RD;
         end
         else begin
@@ -83,7 +97,6 @@ module setascache #(
             else if (Read || WE) begin
                 hit = 0;
                 stall = 1;  // Stall the pipeline for a miss
-                fetch = 1;  // Fetch data from main memory
                 // Check if eviction is needed
                 if (cache[set].U == 0) begin
                     // Evict way 0 if dirty
@@ -103,8 +116,8 @@ module setascache #(
                 end
             end
         end
-            // Output data (load instructions) given hit as otherwise data hasn't loaded
-        if (!WE && hit) begin
+        // Output data (load instructions) given hit as otherwise data hasn't loaded
+        if (Read && hit) begin
                 case (funct3)
                     3'b000: begin                                           // lb
                         case (A[1:0])
@@ -123,7 +136,7 @@ module setascache #(
                         end
                     end          
                     3'b010: DATA_OUT = Data;                                // lw
-                    3'b100: begin
+                    3'b100: begin                                           // lbu
                         case (A[1:0])
                             2'b00: DATA_OUT = {{24{1'b0}}, Data[7:0]};
                             2'b01: DATA_OUT = {{24{1'b0}}, Data[15:8]};
@@ -192,8 +205,22 @@ module setascache #(
                 end else begin
                     // Hit at Way 1; Write to Way 1
                     case (funct3)
-                        3'b000: cache[set].data1[7:0] <= WD[7:0];      // sb
-                        3'b001: cache[set].data1[15:0] <= WD[15:0];    // sh
+                        3'b000: begin // sb
+                            case (A[1:0])
+                                2'b00: cache[set].data1[7:0] <= WD[7:0];
+                                2'b01: cache[set].data1[15:8] <= WD[7:0];
+                                2'b10: cache[set].data1[23:16] <= WD[7:0];
+                                2'b11: cache[set].data1[31:24] <= WD[7:0];       
+                            endcase
+                        end
+                        3'b001: begin
+                            if (A[1]) begin
+                                cache[set].data1[31:16] <= WD[15:0];    // sh
+                            end
+                            else begin
+                                cache[set].data1[15:0] <= WD[15:0];
+                            end
+                        end
                         3'b010: cache[set].data1 <= WD;                // sw
                     endcase
                     cache[set].DB1 <= 1; // Set dirty bit for Way 1
