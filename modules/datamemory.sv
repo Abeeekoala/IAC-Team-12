@@ -8,7 +8,6 @@ module dataMemory #(
     input logic [DATA_WIDTH-1:0] A,     // Memory read address
     input logic [DATA_WIDTH-1:0] WB_addr.
     input logic [DATA_WIDTH-1:0] WB_DATA, // Data to write back to memory
-    input logic [2:0] funct3,           // Store type
     output logic [DATA_WIDTH-1:0] RD    // Read data output
 );
 
