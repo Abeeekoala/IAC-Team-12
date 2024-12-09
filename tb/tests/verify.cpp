@@ -48,10 +48,10 @@ TEST_F(CpuTestbench, TestJalRet)
 TEST_F(CpuTestbench, TestPdf)
 {
     setupTest("5_pdf");
-    setData("reference/gaussian.mem");
+    setData("reference/triangle.mem");
     initSimulation();
     runSimulation(CYCLES * 100);
-    EXPECT_EQ(top_->a0, 15363);
+    EXPECT_EQ(top_->a0, 39404);
 }
 
 TEST_F(CpuTestbench, TestLightSequence) {
