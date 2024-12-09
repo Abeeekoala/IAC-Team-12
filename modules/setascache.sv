@@ -62,7 +62,6 @@ module setascache #(
         DATA_OUT = '0;
         Data = '0;
         if (MMIO_access) begin
-            hit = 1;
             stall = 0;
             DATA_OUT = RD;
         end
