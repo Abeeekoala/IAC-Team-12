@@ -1,14 +1,13 @@
-module dataMemory #(
-    parameter DATA_WIDTH = 32,  
+module datamemory #(
+    parameter DATA_WIDTH = 32  
 ) (
     input logic clk,                    // Clock signal
     input logic trigger,
     input logic fetch,                  // Fetch data from main memory
     input logic writeback,              // Write-back from cache to main memory
     input logic [DATA_WIDTH-1:0] A,     // Memory read address
-    input logic [DATA_WIDTH-1:0] WB_addr.
+    input logic [DATA_WIDTH-1:0] WB_addr,
     input logic [DATA_WIDTH-1:0] WB_DATA, // Data to write back to memory
-    input logic [2:0] funct3,           // Store type
     output logic [DATA_WIDTH-1:0] RD    // Read data output
 );
 

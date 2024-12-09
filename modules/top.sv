@@ -2,6 +2,7 @@ module top(
     input   logic           clk,
     input   logic           rst,
     input   logic           trigger,
+    output  logic           hit,
     output  logic [31:0]    a0
 );
 
@@ -52,9 +53,7 @@ wire [31:0]                 Rd2M;
 wire [2:0]                  funct3M;
 wire [4:0]                  RdM;
 wire [31:0]                 inc_PCM;
-wire                        WB_DATA;
-wire                        WB_addr;
-wire                        writeback;
+wire                        stall;
 
 // memory to writeback signals
 wire [1:0]                 ResultSrcW;
@@ -62,12 +61,15 @@ wire [31:0]                ALUoutW;
 wire [31:0]                ReadDataW;
 wire [31:0]                inc_PCW;
 
+//stall signal OE between Stall (from hazarrd Unit) and stall (from cache)
+wire                       stall_in;
+assign stall_in = (stall || Stall);
 fetch fetch(
     .clk                    (clk),
     .rst                    (rst),
     .PCSrc                  (PCSrc),
     .PCTarget               (PCTarget),
-    .Stall                  (Stall),
+    .Stall                  (stall_in),
     .Flush                  (Flush),
     .InstrD                 (InstrD),
     .PCD                    (PCD),
@@ -83,6 +85,7 @@ decode decode(
     .RdW                    (RdW),
     .ResultW                (ResultW),
     .Stall                  (Stall),
+    .stall                  (stall),
     .Flush                  (Flush),
     .JumpE                  (JumpE),
     .BranchE                (BranchE),
@@ -127,6 +130,7 @@ execute exectue(
     .ForwardB               (ForwardB),
     .ResultW                (ResultW),
     .ALUoutM_i              (ALUoutM),
+    .stall                  (stall),
     .PCTarget               (PCTarget),
     .PCSrc                  (PCSrc),
     .RegWriteM              (RegWriteM),
@@ -157,8 +161,7 @@ memory memory(
     .RdW                    (RdW),
     .inc_PCW                (inc_PCW),
     .stall                  (stall),
-    .hit                    (hit)  
-    .fetch                  (fetch),
+    .hit                    (hit),  
     .rst                    (rst)
 );
 

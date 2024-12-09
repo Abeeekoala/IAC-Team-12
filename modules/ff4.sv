@@ -12,7 +12,7 @@ module ff4 (
     output logic [31:0]             ALUoutW,
     output logic [31:0]             ReadDataW,
     output logic [4:0]              RdW,
-    output logic [31:0]             inc_getPCW
+    output logic [31:0]             inc_PCW
 );
 
 always_ff @ (posedge clk)

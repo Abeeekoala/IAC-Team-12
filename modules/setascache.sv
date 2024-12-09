@@ -4,9 +4,10 @@ module setascache #(
     input logic clk,
     input logic rst,
     input logic WE,                  // Write Enable (for stores)
-    input logic [DATA_WIDTH-1:0] RD  // Read Date from memory
+    input logic [DATA_WIDTH-1:0] RD,  // Read Date from memory
     input logic [DATA_WIDTH-1:0] WD, // Write Data
     input logic [DATA_WIDTH-1:0] A,  // Address
+    input logic Read,
     input logic [2:0] funct3,        // Load/Store type
     output logic stall,              // Pipeline stall for cache miss
     output logic hit,                // Cache Hit/Miss signal
@@ -43,21 +44,23 @@ module setascache #(
 
     // Address breakdown
     always_comb begin
-        tag = A[31:5];  // Tag from address
-        set = A[4:3];   // Set index from address
+        tag = A[31:4];  // Tag from address
+        set = A[3:2];   // Set index from address
     end
 
     // Cache Access Logic
     always_comb begin
         // Default outputs
         hit = 0;
+        way_hit = 0;
         stall = 0;
         fetch = 0;
         writeback = 0;
         MMIO_access = (A == 32'h000000FC);
         WB_DATA = '0;
         WB_addr = '0;
-        
+        DATA_OUT = '0;
+        Data = '0;
         if (MMIO_access) begin
             hit = 1;
             stall = 0;
@@ -78,7 +81,7 @@ module setascache #(
                 way_hit = 1; // Update LRU
             end 
             // Cache miss
-            else begin
+            else if (Read || WE) begin
                 hit = 0;
                 stall = 1;  // Stall the pipeline for a miss
                 fetch = 1;  // Fetch data from main memory
@@ -87,7 +90,7 @@ module setascache #(
                     // Evict way 0 if dirty
                     if (cache[set].DB0) begin
                         writeback = 1;
-                        WB_addr = {cache[set].tag0, set, 3'b000};
+                        WB_addr = {cache[set].tag0, set, 2'b00};
                         WB_DATA = cache[set].data0;
 
                     end
@@ -95,13 +98,14 @@ module setascache #(
                     // Evict way 1 if dirty
                     if (cache[set].DB1) begin
                         writeback = 1;
-                        WB_addr = {cache[set].tag1, set, 3'b000};
+                        WB_addr = {cache[set].tag1, set, 2'b00};
                         WB_DATA = cache[set].data1;
                     end
                 end
             end
+        end
             // Output data (load instructions) given hit as otherwise data hasn't loaded
-            if (!WE && hit) begin
+        if (!WE && hit) begin
                 case (funct3)
                     3'b000: DATA_OUT = {{24{Data[7]}}, Data[7:0]};    // lb
                     3'b001: DATA_OUT = {{16{Data[15]}}, Data[15:0]};  // lh
@@ -111,7 +115,6 @@ module setascache #(
                     default: DATA_OUT = 32'b0;                        // Default case
                 endcase
             end
-        end
     end
 
     // Write Policy: Write-back scheme with write-allocate
@@ -157,7 +160,7 @@ module setascache #(
                 end
             end
 
-            if (~hit && fetch) begin //Fetch from memory and write to Cache
+            if (fetch) begin //Fetch from memory and write to Cache
                 // Cache miss: fetch from memory 
                 // Write to the Least recently used Way
                 // Way 0

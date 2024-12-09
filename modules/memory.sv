@@ -17,20 +17,25 @@ module memory(
     output logic [4:0]          RdW, 
     output logic [31:0]         inc_PCW, 
     output logic                stall, 
-    output logic                fetch        
+    output logic                hit
 );
 
-logic [31:0]             ReadDataM;
+logic [31:0]            ReadDataM;
+wire  [31:0]            RD;
+wire                    writeback;
+wire  [31:0]            WB_addr;
+wire  [31:0]            WB_DATA;
+wire                    fetch;
 
 datamemory DataMem(
     .trigger                    (trigger),
     .clk                        (clk),
     .fetch                      (fetch),
     .A                          (ALUoutM_i),
-    .RD                         (ReadDataM)
+    .RD                         (RD),
     .writeback                  (writeback),
     .WB_addr                    (WB_addr),
-    .WB_DATA                    (WB_DATA),
+    .WB_DATA                    (WB_DATA)
 );
 
 ff4 MW_FF(
@@ -52,12 +57,13 @@ ff4 MW_FF(
 setascache two_way_cache (
     .clk                        (clk),
     .WE                         (MemWriteM),
-    .RD                         (ReadDataM),
+    .RD                         (RD),
     .fetch                      (fetch),        
     .A                          (ALUoutM_i),
     .WD                         (Rd2M),
     .rst                        (rst),
     .funct3                     (funct3M),
+    .Read                       (ResultSrcM[0]),
     .stall                      (stall),
     .hit                        (hit),    
     .DATA_OUT                   (ReadDataM),

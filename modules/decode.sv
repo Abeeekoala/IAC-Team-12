@@ -8,6 +8,7 @@ module decode (
     input logic [31:0]          ResultW,
     input logic                 Flush,
     input logic                 Stall,
+    input logic                 stall,
     output logic                JumpE,
     output logic                BranchE,
     output logic                RegWriteE,
@@ -100,6 +101,7 @@ ff2 DE_FF(
     .Rs1D           (InstrD[19:15]),
     .Rs2D           (InstrD[24:20]),
     .inc_PCD        (inc_PCD),
+    .stall          (stall),
     
     .JumpE          (JumpE),
     .BranchE        (BranchE),

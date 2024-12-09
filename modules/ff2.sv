@@ -17,6 +17,7 @@ module ff2 (
     input logic [4:0]       Rs1D,
     input logic [4:0]       Rs2D,
     input logic [31:0]      inc_PCD,
+    input logic             stall,
 
     output logic             JumpE,
     output logic             BranchE,
@@ -38,6 +39,7 @@ module ff2 (
 );
 
 always_ff @(posedge clk) begin
+    if (!stall) begin
         JumpE <= JumpD;
         BranchE <= BranchD;
         RegWriteE <= RegWriteD; 
@@ -55,6 +57,7 @@ always_ff @(posedge clk) begin
         Rs1E <= Rs1D;
         Rs2E <= Rs2D;
         inc_PCE <= inc_PCD;
+    end
 end
 
 endmodule
