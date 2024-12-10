@@ -9,95 +9,95 @@ class HazardUnitTestbench : public BaseTestbench
 protected:
     void initializeInputs() override
     {
-        top->rst = 1'b0;
-        top->Rs1D = 5'b00000;
-        top->Rs2D = 5'b00000;
-        top->Rs1E = 5'b00000;
-        top->Rs2E = 5'b00000;
-        top->RdE = 5'b00000;
-        top->RdM = 5'b00000;
-        top->RdW = 5'b00000;
-        top->RegWriteM = 1'b0;
-        top->RegWriteW = 1'b0;
-        top->LoadE = 1'b0;
-        top->PCSrc = 1'b0;
+        top->rst = 0;
+        top->Rs1D = 0;
+        top->Rs2D = 0;
+        top->Rs1E = 0;
+        top->Rs2E = 0;
+        top->RdE = 0;
+        top->RdM = 0;
+        top->RdW = 0;
+        top->RegWriteM = 0;
+        top->RegWriteW = 0;
+        top->LoadE = 0;
+        top->PCSrc = 0;
     }
 };
 
 TEST_F(HazardUnit_Testbench, ForwardA_WB)
 {
-    top->Rs1E = 5'b00110;
-    top->RdM = 5'b00110;
-    top->RegWriteM = 1'b1;
+    top->Rs1E = 29;
+    top->RdM = 29;
+    top->RegWriteM = 1;
     top->eval();
 
-    EXPECT_EQ(top->ForwardA, 2'b10);
+    EXPECT_EQ(top->ForwardA, 2);
 }
 
 TEST_F(HazardUnit_Testbench, ForwardA_MEM)
 {
-    top->Rs1E = 5'b00110;
-    top->RdW = 5'b00110;
-    top->RegWriteW = 1'b1;
+    top->Rs1E = 29;
+    top->RdW = 29;
+    top->RegWriteW = 1;
     top->eval();
 
-    EXPECT_EQ(top->ForwardA, 2'b01);
+    EXPECT_EQ(top->ForwardA, 1);
 }
 
 TEST_F(HazardUnit_Testbench, ForwardB_WB)
 {
-    top->Rs2E = 5'b00110;
-    top->RdW = 5'b00110;
+    top->Rs2E = 29;
+    top->RdW = 29;
     top->RegWriteW = 1'b1;
     top->eval();
 
-    EXPECT_EQ(top->ForwardB, 2'b01);
+    EXPECT_EQ(top->ForwardB, 1);
 }
 
 TEST_F(HazardUnit_Testbench, ForwardB_MEM)
 {
-    top->Rs2E = 5'b00110;
-    top->RdM = 5'b00110;
-    top->RegWriteW = 1'b1;
+    top->Rs2E = 29;
+    top->RdM = 29;
+    top->RegWriteW = 1;
     top->eval();
 
-    EXPECT_EQ(top->ForwardB, 2'b10);
+    EXPECT_EQ(top->ForwardB, 2);
 }
 
 TEST_F(HazardUnit_Testbench, Stall1)
 {
-    top->Rs1D = 5'b00110;
-    top->RdE = 5'b00110;
-    top->LoadE = 1'b1;
+    top->Rs1D = 29;
+    top->RdE = 29;
+    top->LoadE = 1;
     top->eval();
 
-    EXPECT_EQ(top->Flush, 1'b1);
+    EXPECT_EQ(top->Flush, 1);
 }
 
 TEST_F(HazardUnit_Testbench, Stall2)
 {
-    top->Rs2D = 5'b00110;
-    top->RdE = 5'b00110;
-    top->LoadE = 1'b1;
+    top->Rs2D = 29;
+    top->RdE = 29;
+    top->LoadE = 1;
     top->eval();
 
-    EXPECT_EQ(top->Stall, 1'b1);
+    EXPECT_EQ(top->Stall, 1);
 }
 
 TEST_F(HazardUnit_Testbench, Flush1)
 {
-    top->rst = 1'b1;
+    top->rst = 1;
     top->eval();
 
-    EXPECT_EQ(top->Flush, 1'b1);
+    EXPECT_EQ(top->Flush, 1);
 }
 
 TEST_F(HazardUnit_Testbench, Flush2)
 {
-    top->PCSrc = 1'b1;
+    top->PCSrc = 1;
     top->eval();
 
-    EXPECT_EQ(top->Flush, 1'b1);
+    EXPECT_EQ(top->Flush, 1);
 }
 
 int main(int argc, char **argv)
