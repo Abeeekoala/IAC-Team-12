@@ -8,10 +8,12 @@ module setascacheL2 #(
     input logic [DATA_WIDTH-1:0] WD, // Write Data
     input logic [DATA_WIDTH-1:0] A,  // Address
     input logic Read,
+    input logic [DATA_WIDTH-1:0] preload_data  // for preloading data from main memory, for spacial locality
     input logic [2:0] funct3,        // Load/Store type
     output logic stall,              // Pipeline stall for cache miss
     output logic hit,                // Cache Hit/Miss signal
     output logic fetch,              // Signal to fetch data from memory
+    output logic [DATA_WIDTH-1:0] preload_addr,          // preload addr
     output logic writeback,          // Writeback to main memory for dirty eviction
     output logic [DATA_WIDTH-1:0] WB_DATA,  // Writeback data to memory
     output logic [DATA_WIDTH-1:0] WB_addr,
@@ -33,11 +35,11 @@ module setascacheL2 #(
         logic [DATA_WIDTH-1:0] data0; 
     } CacheType;
 
-    CacheType cache [8]; // Define 4 sets, 2-way associative cache
+    CacheType cache [8]; // Define 8 sets, 2-way associative cache
 
     // Variables
     logic [26:0] tag;
-    logic [1:0] set;
+    logic [2:0] set;
     logic [DATA_WIDTH-1:0] Data;
     logic MMIO_access;
     logic way_hit;
@@ -76,6 +78,9 @@ module setascacheL2 #(
         WB_addr = '0;
         DATA_OUT = '0;
         Data = '0;
+        //local loading default
+        preload_addr = A + 8; // add 8 as 8 cache blocks
+        preloadE = 0;
         if (MMIO_access) begin
             DATA_OUT = RD;
         end
@@ -197,6 +202,10 @@ module setascacheL2 #(
                 // Cache miss: fetch from memory 
                 // Write to the Least recently used Way
                 // Way 0
+                preloadE = fetch && ~hit;
+                if (preloadE) begin
+                    preload_data = RDpre;
+                end
                 if (cache[set].U == 0) begin
                     // Clear dirty bit after writeback
                     if (cache[set].DB0) begin
@@ -206,6 +215,12 @@ module setascacheL2 #(
                     cache[set].tag0 <= tag;
                     cache[set].data0 <= RD; // New data from memory
                     cache[set].U <= 1;      // Update LRU
+
+                    //preload 
+                    cache[set].ValitdityBit1 <= 1;
+                    cache[set].tag1 <= tag + 1;
+                    cache[set].data1 <= preload_data; // New data from memory
+                    cache[set].U <= 1;
                 end 
                 // Way 1
                 else begin
@@ -217,6 +232,12 @@ module setascacheL2 #(
                     cache[set].tag1 <= tag;
                     cache[set].data1 <= RD; // New data from memory
                     cache[set].U <= 0;      // Update LRU
+                    
+                    //preload
+                    cache[set].ValitdityBit0 <= 1;
+                    cache[set].tag0 <= tag;
+                    cache[set].data0 <= preload_data; // New data from memory
+                    cache[set].U <= 1; 
                 end
             end
         end

@@ -32,6 +32,9 @@ logic [31:0] L2_DATA_OUT;
 logic L2_writeback;
 logic [31:0] L2_WB_DATA, L2_WB_ADDR;
 
+//local loading signals
+logic [31:0] preload_addr, preload_data;
+
 
 datamemory DataMem(
     .trigger                    (trigger),
@@ -42,6 +45,8 @@ datamemory DataMem(
     .writeback                  (writeback),
     .WB_addr                    (WB_addr),
     .WB_DATA                    (WB_DATA),
+    .preload_addr               (preload_addr),
+    .RDpre                      (preload_data)
 );
 
 ff4 MW_FF(
@@ -98,7 +103,9 @@ setascacheL2 L2 (
     .DATA_OUT                   (L2_DATA_OUT),
     .WB_DATA                    (L2_WB_DATA),
     .WB_addr                    (L2_WB_ADDR),
-    .writeback                  (L2_writeback)
+    .writeback                  (L2_writeback),
+    .preload_data               (preload_data),
+    .preload_addr               (preload_addr)
 );
 
 always_comb begin

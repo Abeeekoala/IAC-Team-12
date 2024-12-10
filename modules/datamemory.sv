@@ -8,7 +8,9 @@ module dataMemory #(
     input logic [DATA_WIDTH-1:0] A,     // Memory read address
     input logic [DATA_WIDTH-1:0] WB_addr,
     input logic [DATA_WIDTH-1:0] WB_DATA, // Data to write back to memory
+    input logic [DATA_WIDTH-1:0] preload_addr, // Address for preload of data
     output logic [DATA_WIDTH-1:0] RD    // Read data output
+    output logic [DATA_WIDTH-1:0] RDpre    // Read data output for preloading 
 );
 
     // Memory array: 2^18 locations, each DATA_WIDTH bits wide
@@ -32,6 +34,7 @@ module dataMemory #(
         end
         else if (fetch) begin
             RD = mem[A];  // Fetch whole data from memory
+            RDpre = mem[preload_addr]; // fetch preload data    
         end
     end
 
