@@ -51,7 +51,7 @@ TEST_F(CpuTestbench, TestPdf)
     setData("reference/triangle.mem");
     initSimulation();
     runSimulation(CYCLES * 100);
-    EXPECT_EQ(top_->a0, 39404);
+    EXPECT_EQ(top_->a0, 39404); // obtained from calc_expected_value.cpp
 }
 
 TEST_F(CpuTestbench, TestLightSequence) {
