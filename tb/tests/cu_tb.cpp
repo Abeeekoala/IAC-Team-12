@@ -13,29 +13,22 @@ protected:
         top->funct7_5 = 0;
         top->Flush = 0; 
         top->Stall = 0; 
-        top->ImmSrc = 0; 
-        top->MemWrite = 0; 
-        top->RegWrite = 0; 
-        top->ALUctrl = 0; 
-        top->ALUSrcA = 0; 
-        top->ALUSrcB = 0; 
-        top->ResultSrc = 0; 
-        top->Branch = 0; 
-        top->Jump = 0; 
         top->eval();
 
     }
 
-    void initialiseCUInputs (ControlUnitTestbench* tb,
-        int funct3,
-        int op,
-        bool funct7_5,
-        bool Flush,
-        bool Stall,
-    )
+    void setInputs(uint32_t op, uint32_t funct3 = 0, uint32_t funct7_5 = 0, uint32_t Flush = 0, uint32_t = Stall = 0){
+        top->op = op;
+        top->funct3 = funct3;
+        top->funct7_5 = funct7_5;
+        top->Flush = Flush;
+        top->Stall = Stall;
+        top->eval();
+
+    }
 
     tb->top->funct3 = 0b101; //3 bits for funct3
-    tb->top->op = 0b0110011; //7 bits for opcode
+    tb->top->op = 0b0110011; //7 bits for op
     tb->top->funct7_5 = 0;  //1 bit for funct7[5]
     tb->top->Flush = 1;     //1 bit flush signal
     tb->top->Stall = 0;     //1-bit stall signal
@@ -43,111 +36,322 @@ protected:
 
 };
 
+// Test for R-Type instructions
 TEST_F(CU_Testbench, RTypeInstructions) {
     // Test ADD
-    setInputs(OPCODE_R, 0b000, 0);
+    setInputs(b0110011, b000, b0, b0, b0);
     EXPECT_EQ(top->ALUctrl, 0b0000);
     EXPECT_EQ(top->RegWrite, 1);
+    EXPECT_EQ(top->ImmSrc, 0);
+    EXPECT_EQ(top->MemWrite, 0);
+    EXPECT_EQ(top->ALUSrcA, 0);
+    EXPECT_EQ(top->ALUSrcB, 0);
+    EXPECT_EQ(top->ResultSrc, 0);
+    EXPECT_EQ(top->Branch, 0);
+    EXPECT_EQ(top->Jump, 0);
 
     // Test SUB
-    setInputs(OPCODE_R, 0b000, 1);
+    setInputs(b0110011, b000, b0, b0, b0);
     EXPECT_EQ(top->ALUctrl, 0b0001);
-
-    // Test AND
-    setInputs(OPCODE_R, 0b111);
-    EXPECT_EQ(top->ALUctrl, 0b0010);
-
-    // Test OR
-    setInputs(OPCODE_R, 0b110);
-    EXPECT_EQ(top->ALUctrl, 0b0011);
+    EXPECT_EQ(top->RegWrite, 0);
+    EXPECT_EQ(top->ImmSrc, 0);
+    EXPECT_EQ(top->MemWrite, 0);
+    EXPECT_EQ(top->ALUSrcA, 0);
+    EXPECT_EQ(top->ALUSrcB, 0);
+    EXPECT_EQ(top->ResultSrc, 0);
+    EXPECT_EQ(top->Branch, 0);
+    EXPECT_EQ(top->Jump, 0);
 
     // Test XOR
-    setInputs(OPCODE_R, 0b100);
+    setInputs(b0110011, b100, b0, b0, b0);
     EXPECT_EQ(top->ALUctrl, 0b0100);
+    EXPECT_EQ(top->RegWrite, 0);
+    EXPECT_EQ(top->ImmSrc, 0);
+    EXPECT_EQ(top->MemWrite, 0);
+    EXPECT_EQ(top->ALUSrcA, 0);
+    EXPECT_EQ(top->ALUSrcB, 0);
+    EXPECT_EQ(top->ResultSrc, 0);
+    EXPECT_EQ(top->Branch, 0);
+    EXPECT_EQ(top->Jump, 0);
 
-    // Test SLL
-    setInputs(OPCODE_R, 0b001);
+    // Test OR
+    setInputs(b0110011, b110, b0, b0, b0);
+    EXPECT_EQ(top->ALUctrl, 0b0011);
+    EXPECT_EQ(top->RegWrite, 0);
+    EXPECT_EQ(top->ImmSrc, 0);
+    EXPECT_EQ(top->MemWrite, 0);
+    EXPECT_EQ(top->ALUSrcA, 0);
+    EXPECT_EQ(top->ALUSrcB, 0);
+    EXPECT_EQ(top->ResultSrc, 0);
+    EXPECT_EQ(top->Branch, 0);
+    EXPECT_EQ(top->Jump, 0);
+
+    // Test AND
+    setInputs(b0110011, b111, b0, b0, b0);
+    EXPECT_EQ(top->ALUctrl, 0b0010);
+    EXPECT_EQ(top->RegWrite, 0);
+    EXPECT_EQ(top->ImmSrc, 0);
+    EXPECT_EQ(top->MemWrite, 0);
+    EXPECT_EQ(top->ALUSrcA, 0);
+    EXPECT_EQ(top->ALUSrcB, 0);
+    EXPECT_EQ(top->ResultSrc, 0);
+    EXPECT_EQ(top->Branch, 0);
+    EXPECT_EQ(top->Jump, 0);    
+
+    // Test LSL
+    setInputs(b0110011, b001, b0, b0, b0);
     EXPECT_EQ(top->ALUctrl, 0b0101);
+    EXPECT_EQ(top->RegWrite, 0);
+    EXPECT_EQ(top->ImmSrc, 0);
+    EXPECT_EQ(top->MemWrite, 0);
+    EXPECT_EQ(top->ALUSrcA, 0);
+    EXPECT_EQ(top->ALUSrcB, 0);
+    EXPECT_EQ(top->ResultSrc, 0);
+    EXPECT_EQ(top->Branch, 0);
+    EXPECT_EQ(top->Jump, 0);
 
-    // Test SRL
-    setInputs(OPCODE_R, 0b101, 0);
+    // Test LSR
+    setInputs(b0110011, b101, b0, b0, b0);
     EXPECT_EQ(top->ALUctrl, 0b0110);
-
-    // Test SRA
-    setInputs(OPCODE_R, 0b101, 1);
-    EXPECT_EQ(top->ALUctrl, 0b0111);
+    EXPECT_EQ(top->RegWrite, 0);
+    EXPECT_EQ(top->ImmSrc, 0);
+    EXPECT_EQ(top->MemWrite, 0);
+    EXPECT_EQ(top->ALUSrcA, 0);
+    EXPECT_EQ(top->ALUSrcB, 0);
+    EXPECT_EQ(top->ResultSrc, 0);
+    EXPECT_EQ(top->Branch, 0);
+    EXPECT_EQ(top->Jump, 0);
 
     // Test SLT
-    setInputs(OPCODE_R, 0b010);
-    EXPECT_EQ(top->ALUctrl, 0b1001);
+    setInputs(b0110011, b010, b0, b0, b0);
+    EXPECT_EQ(top->ALUctrl, 0b0111);
+    EXPECT_EQ(top->RegWrite, 0);
+    EXPECT_EQ(top->ImmSrc, 0);
+    EXPECT_EQ(top->MemWrite, 0);
+    EXPECT_EQ(top->ALUSrcA, 0);
+    EXPECT_EQ(top->ALUSrcB, 0);
+    EXPECT_EQ(top->ResultSrc, 0);
+    EXPECT_EQ(top->Branch, 0);
+    EXPECT_EQ(top->Jump, 0);
 
     // Test SLTU
-    setInputs(OPCODE_R, 0b011);
+    setInputs(b0110011, b011, b0, b0, b0);
+    EXPECT_EQ(top->ALUctrl, 0b1001);
+    EXPECT_EQ(top->RegWrite, 0);
+    EXPECT_EQ(top->ImmSrc, 0);
+    EXPECT_EQ(top->MemWrite, 0);
+    EXPECT_EQ(top->ALUSrcA, 0);
+    EXPECT_EQ(top->ALUSrcB, 0);
+    EXPECT_EQ(top->ResultSrc, 0);
+    EXPECT_EQ(top->Branch, 0);
+    EXPECT_EQ(top->Jump, 0);
+
+    // Test SLTU
+    setInputs(b0110011, b011, b0, b0, b0);
     EXPECT_EQ(top->ALUctrl, 0b1010);
+    EXPECT_EQ(top->RegWrite, 0);
+    EXPECT_EQ(top->ImmSrc, 0);
+    EXPECT_EQ(top->MemWrite, 0);
+    EXPECT_EQ(top->ALUSrcA, 0);
+    EXPECT_EQ(top->ALUSrcB, 0);
+    EXPECT_EQ(top->ResultSrc, 0);
+    EXPECT_EQ(top->Branch, 0);
+    EXPECT_EQ(top->Jump, 0);
 }
 
+// Test for I-Type instructions
 TEST_F(CU_Testbench, ITypeInstructions) {
     // Test ADDI
-    setInputs(OPCODE_I, 0b000);
+    setInputs(b0010011, b000, b0, b0, b0);
     EXPECT_EQ(top->ALUctrl, 0b0000);
     EXPECT_EQ(top->RegWrite, 1);
+    EXPECT_EQ(top->ImmSrc, 0);
+    EXPECT_EQ(top->MemWrite, 0);
+    EXPECT_EQ(top->ALUSrcA, 0);
     EXPECT_EQ(top->ALUSrcB, 1);
+    EXPECT_EQ(top->ResultSrc, 0);
+    EXPECT_EQ(top->Branch, 0);
+    EXPECT_EQ(top->Jump, 0);
 
     // Test XORI
-    setInputs(OPCODE_I, 0b100);
+    setInputs(b0010011, b100, 0b000000, 0, 0);
     EXPECT_EQ(top->ALUctrl, 0b0100);
+    EXPECT_EQ(top->RegWrite, 1);
+    EXPECT_EQ(top->ImmSrc, 0);
+    EXPECT_EQ(top->MemWrite, 0);
+    EXPECT_EQ(top->ALUSrcA, 0);
+    EXPECT_EQ(top->ALUSrcB, 1);
+    EXPECT_EQ(top->ResultSrc, 0);
+    EXPECT_EQ(top->Branch, 0);
+    EXPECT_EQ(top->Jump, 0);
 
     // Test ORI
-    setInputs(OPCODE_I, 0b110);
+    setInputs(b0010011, b110, 0b000000, 0, 0);
     EXPECT_EQ(top->ALUctrl, 0b0011);
+    EXPECT_EQ(top->RegWrite, 1);
+    EXPECT_EQ(top->ImmSrc, 0);
+    EXPECT_EQ(top->MemWrite, 0);
+    EXPECT_EQ(top->ALUSrcA, 0);
+    EXPECT_EQ(top->ALUSrcB, 1);
+    EXPECT_EQ(top->ResultSrc, 0);
+    EXPECT_EQ(top->Branch, 0);
+    EXPECT_EQ(top->Jump, 0);
 
     // Test ANDI
-    setInputs(OPCODE_I, 0b111);
+    setInputs(b0010011, b111);
     EXPECT_EQ(top->ALUctrl, 0b0010);
+    EXPECT_EQ(top->RegWrite, 1);
+    EXPECT_EQ(top->ImmSrc, 0);
+    EXPECT_EQ(top->MemWrite, 0);
+    EXPECT_EQ(top->ALUSrcA, 0);
+    EXPECT_EQ(top->ALUSrcB, 1);
+    EXPECT_EQ(top->ResultSrc, 0);
+    EXPECT_EQ(top->Branch, 0);
+    EXPECT_EQ(top->Jump, 0);
+
+    //TEST SLLI
+    setInputs(b0010011, b001, b0, b0, b0)
+    EXPECT_EQ(top->ALUctrl, 0b0101)
+    EXPECT_EQ(top->RegWrite, 1);
+    EXPECT_EQ(top->ImmSrc, 0b001);
+    EXPECT_EQ(top->MemWrite, 0);
+    EXPECT_EQ(top->ALUSrcA, 0);
+    EXPECT_EQ(top->ALUSrcB, 1);
+    EXPECT_EQ(top->ResultSrc, 0);
+    EXPECT_EQ(top->Branch, 0);
+    EXPECT_EQ(top->Jump, 0);
+
+    // TEST SRLI
+    setInputs (b0010011, b101, b0, b0, b0)
+    EXPECT_EQ(top->ALUctrl, b0110)
+    EXPECT_EQ(top->RegWrite, 1);
+    EXPECT_EQ(top->ImmSrc, 0b001);
+    EXPECT_EQ(top->MemWrite, 0);
+    EXPECT_EQ(top->ALUSrcA, 0);
+    EXPECT_EQ(top->ALUSrcB, 1);
+    EXPECT_EQ(top->ResultSrc, 0);
+    EXPECT_EQ(top->Branch, 0);
+    EXPECT_EQ(top->Jump, 0);
+
+    // TEST SRAI
+    setInputs (b0010011, b101, b1, b0, b0)
+    EXPECT_EQ(top->ALUctrl, b1000)
+    EXPECT_EQ(top->RegWrite, 1);
+    EXPECT_EQ(top->ImmSrc, 0);
+    EXPECT_EQ(top->MemWrite, 0);
+    EXPECT_EQ(top->ALUSrcA, 0);
+    EXPECT_EQ(top->ALUSrcB, 1);
+    EXPECT_EQ(top->ResultSrc, 0);
+    EXPECT_EQ(top->Branch, 0);
+    EXPECT_EQ(top->Jump, 0);
+
+    // TEST SLTI
+    setInputs (b0010011, b010, b0, b0, b0)
+    EXPECT_EQ(top->ALUctrl, 0b1001)
+    EXPECT_EQ(top->RegWrite, 1);
+    EXPECT_EQ(top->ImmSrc, 0);
+    EXPECT_EQ(top->MemWrite, 0);
+    EXPECT_EQ(top->ALUSrcA, 0);
+    EXPECT_EQ(top->ALUSrcB, 1);
+    EXPECT_EQ(top->ResultSrc, 0);
+    EXPECT_EQ(top->Branch, 0);
+    EXPECT_EQ(top->Jump, 0);
+
+    // TEST SLTIU
+    setInputs (b0010011, b011, b0, b0, b0)
+    EXPECT_EQ(top->ALUctrl, 0b1010)
+    EXPECT_EQ(top->RegWrite, 1);
+    EXPECT_EQ(top->ImmSrc, 0b001);
+    EXPECT_EQ(top->MemWrite, 0);
+    EXPECT_EQ(top->ALUSrcA, 0);
+    EXPECT_EQ(top->ALUSrcB, 1);
+    EXPECT_EQ(top->ResultSrc, 0);
+    EXPECT_EQ(top->Branch, 0);
+    EXPECT_EQ(top->Jump, 0);
 }
 
+// Test for LW and SW instructions
 TEST_F(CU_Testbench, LWAndSWInstructions) {
     // Test LW
-    setInputs(OPCODE_LW, 0b010);
-    EXPECT_EQ(top->MemWrite, 0);
-    EXPECT_EQ(top->ALUSrcB, 1);
+    setInputs(b0000011, b000, b0, b0, b0);
+    EXPECT_EQ(top->ALUctrl, 0b0000);
     EXPECT_EQ(top->RegWrite, 1);
+    EXPECT_EQ(top->ImmSrc, 0);
+    EXPECT_EQ(top->MemWrite, 0);
+    EXPECT_EQ(top->ALUSrcA, 0);
+    EXPECT_EQ(top->ALUSrcB, 1);
+    EXPECT_EQ(top->ResultSrc, 1);
+    EXPECT_EQ(top->Branch, 0);
+    EXPECT_EQ(top->Jump, 0);
+
 
     // Test SW
-    setInputs(OPCODE_SW, 0b010);
-    EXPECT_EQ(top->MemWrite, 1);
+    setInputs(b0000011, b000, b0, b0, b0);
+    EXPECT_EQ(top->ALUctrl, 0b0000);
     EXPECT_EQ(top->RegWrite, 0);
+    EXPECT_EQ(top->ImmSrc, 0b010);
+    EXPECT_EQ(top->MemWrite, 0);
+    EXPECT_EQ(top->ALUSrcA, 0);
+    EXPECT_EQ(top->ALUSrcB, 1);
+    EXPECT_EQ(top->ResultSrc, 0);
+    EXPECT_EQ(top->Branch, 0);
+    EXPECT_EQ(top->Jump, 0);
 }
 
-TEST_F(CU_Testbench, BranchInstructions) {
-    // Test BEQ
-    setInputs(OPCODE_BEQ, 0b000);
-    EXPECT_EQ(top->Branch, 1);
-    EXPECT_EQ(top->ALUctrl, 0b0001); // SUB for comparison
-}
-
+// Test for Jump instructions
 TEST_F(CU_Testbench, JumpInstructions) {
     // Test JAL
-    setInputs(OPCODE_JAL, 0);
+    setInputs(0b1101111);
+    EXPECT_EQ(top->ALUctrl, 0b0010);
+    EXPECT_EQ(top->RegWrite, 1);
+    EXPECT_EQ(top->ImmSrc, 1);
+    EXPECT_EQ(top->MemWrite, 1);
+    EXPECT_EQ(top->ALUSrcA, 1);
+    EXPECT_EQ(top->ALUSrcB, 1);
+    EXPECT_EQ(top->ResultSrc, 1);
+    EXPECT_EQ(top->Branch, 1);
     EXPECT_EQ(top->Jump, 1);
-    EXPECT_EQ(top->ResultSrc, 2);
 }
 
+    // Test JALR
+    setInputs(0b1100111);
+    EXPECT_EQ(top->ALUctrl, 0b0010);
+    EXPECT_EQ(top->RegWrite, 1);
+    EXPECT_EQ(top->ImmSrc, 1);
+    EXPECT_EQ(top->MemWrite, 1);
+    EXPECT_EQ(top->ALUSrcA, 1);
+    EXPECT_EQ(top->ALUSrcB, 1);
+    EXPECT_EQ(top->ResultSrc, 1);
+    EXPECT_EQ(top->Branch, 1);
+    EXPECT_EQ(top->Jump, 1);
+}
+
+// Test for Flush and Stall behavior
 TEST_F(CU_Testbench, FlushAndStallBehavior) {
     // Test with Flush
     top->Flush = 1;
-    setInputs(OPCODE_R, 0b000);
-    EXPECT_EQ(top->RegWrite, 0);
-    EXPECT_EQ(top->MemWrite, 0);
+    setInputs(0b000);
+    EXPECT_EQ(top->ALUctrl, 0b0010);
+    EXPECT_EQ(top->RegWrite, 1);
+    EXPECT_EQ(top->ImmSrc, 1);
+    EXPECT_EQ(top->MemWrite, 1);
+    EXPECT_EQ(top->ALUSrcA, 1);
+    EXPECT_EQ(top->ALUSrcB, 1);
+    EXPECT_EQ(top->ResultSrc, 1);
+    EXPECT_EQ(top->Branch, 1);
+    EXPECT_EQ(top->Jump, 1);
 
     // Test with Stall
     top->Flush = 0;
     top->Stall = 1;
-    setInputs(OPCODE_R, 0b000);
-    EXPECT_EQ(top->RegWrite, 0);
-    EXPECT_EQ(top->MemWrite, 0);
+    setInputs(0b000);
+    EXPECT_EQ(top->ALUctrl, 0b0010);
+    EXPECT_EQ(top->RegWrite, 1);
+    EXPECT_EQ(top->ImmSrc, 1);
+    EXPECT_EQ(top->MemWrite, 1);
+    EXPECT_EQ(top->ALUSrcA, 1);
+    EXPECT_EQ(top->ALUSrcB, 1);
+    EXPECT_EQ(top->ResultSrc, 1);
+    EXPECT_EQ(top->Branch, 1);
+    EXPECT_EQ(top->Jump, 1);
 }
-
-int main(int argc, char** argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
