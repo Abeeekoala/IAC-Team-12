@@ -29,8 +29,7 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 | **Data Memory**         |                 |               | *                 |             |
 | **Datapath**            |                 |               | *                 | *           |
 | **Top Level Assembly**  | *               |               | *                 | *           |
-| **Testbench**           |
-|        **and debugging**|                 |               |                   | *           |
+| **Testbench & debugging**|                |               |                   | *           |              
 | **F1.s**                | *               |               |                   | *           |
 
 ---
@@ -59,6 +58,7 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 | **Direct Mapped Cache**                   |                 |               | *                 |             |
 | **2-Way Set Associative Cache**           |                 |               | *                 | *           |
 | **Memory and top update for 2 way cache** | *               |               |                   |             |
+| **Testbench and debugging**               |                 |               | *                 | *           |
 
 The CPU diagrams as seen in the following document were designed by Abraham.
 
