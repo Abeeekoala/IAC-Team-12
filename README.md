@@ -20,16 +20,17 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 | Component               | Shreeya Agarwal | Shravan Kumar | Charlotte Maxwell | Abraham Lin |
 |-------------------------|-----------------|---------------|-------------------|-------------|
 | **PC**                  | *               | *             | *                 | *           |
-| **ALU**                 |                 |               |                   | *           |
+| **ALU**                 |                 | *             |                   | *           |
 | **Register File**       | *               |               |                   |             |
 | **Instruction Memory**  |                 | *             |                   |             |
-| **Control Unit**        |                 | *             |                   |             |
-| **Sign Extend**         | *               |               |                   | *           |
-| **Data Path**           |                 | *             | *                 | *           |
+| **Control Unit**        |                 | *             |                   | *           |
+| **Sign Extend**         | *               | *             |                   | *           |
+| **Data Path**           |                 |               | *                 | *           |
 | **Data Memory**         |                 |               | *                 |             |
-| **Datapath**            |                 | *             | *                 | *           |
-| **Top Level Assembly**  | *               | *             | *                 | *           |
-| **Testbenches**         |                 |               |                   | *           |
+| **Datapath**            |                 |               | *                 | *           |
+| **Top Level Assembly**  | *               |               | *                 | *           |
+| **Testbench**           |
+|        **and debugging**|                 |               |                   | *           |
 | **F1.s**                | *               |               |                   | *           |
 
 ---
@@ -42,13 +43,13 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 | **FF3**                       | *               | *             |                   | *           |
 | **FF4**                       | *               | *             |                   |             |
 | **Hazard Unit**               | *               |               |                   | *           |
-| **Fetch Implementation**      |                 | *             |                   |             |
-| **Decode Implementation**     |                 | *             |                   |             |
-| **Execute Implementation**    |                 | *             |                   |             |
-| **Memory Implementation**     |                 | *             |                   |             |
-| **WriteBack Implementation**  |                 | *             |                   |             |
-| **Top Implementation**        |                 | *             |                   | *           |
-| **Testbench**                 |                 |               |                   | *           |
+| **Fetch**                     |                 | *             |                   |             |
+| **Decode**                    |                 | *             |                   |             |
+| **Execute**                   |                 | *             |                   |             |
+| **Memory**                    |                 | *             |                   |             |
+| **WriteBack**                 |                 | *             |                   |             |
+| **Top**                       |                 | *             |                   | *           |
+| **Testbench and debugging**   |                 |               |                   | *           |
 
 ---
 
@@ -57,7 +58,7 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 |-------------------------------------------|-----------------|---------------|-------------------|-------------|
 | **Direct Mapped Cache**                   |                 |               | *                 |             |
 | **2-Way Set Associative Cache**           |                 |               | *                 | *           |
-| **memory and top update for 2 way cache**   | *               |               |                   |             |
+| **Memory and top update for 2 way cache** | *               |               |                   |             |
 
 The CPU diagrams as seen in the following document were designed by Abraham.
 
