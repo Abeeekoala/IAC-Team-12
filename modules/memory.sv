@@ -41,7 +41,7 @@ datamemory DataMem(
     .clk                        (clk),
     .fetch                      (fetch),
     .A                          (ALUoutM_i),
-    .RD                         (ReadDataM)
+    .RD                         (ReadDataM),
     .writeback                  (writeback),
     .WB_addr                    (WB_addr),
     .WB_DATA                    (WB_DATA),

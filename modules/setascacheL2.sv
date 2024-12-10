@@ -132,7 +132,7 @@ module setascacheL2 #(
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
             // Reset all sets in the cache
-            for (int i = 0; i < 4; i++) begin
+            for (int i = 0; i < 8; i++) begin
                 cache[i].U <= 0;
                 cache[i].ValitdityBit0 <= 0;
                 cache[i].ValitdityBit1 <= 0;
@@ -202,8 +202,7 @@ module setascacheL2 #(
                 // Cache miss: fetch from memory 
                 // Write to the Least recently used Way
                 // Way 0
-                preloadE = fetch && ~hit;
-                if (preloadE) begin
+                if (fetch && ~hit) begin
                     preload_data = RDpre;
                 end
                 if (cache[set].U == 0) begin
