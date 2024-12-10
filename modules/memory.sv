@@ -27,7 +27,7 @@ logic [31:0] WB_DATA;
 logic [31:0] WB_addr;
 
 // L2 interface signals
-logic L2_fetch, L2_WE, L2_stall;
+logic L2_fetch, L2_WE;
 logic [31:0] L2_DATA_OUT;
 logic L2_writeback;
 logic [31:0] L2_WB_DATA, L2_WB_ADDR;
@@ -74,7 +74,6 @@ setascache L1 (
     .WD                         (Rd2M),
     .rst                        (rst),
     .funct3                     (funct3M),
-    .stall                      (stall),
     .hit                        (hit),    
     .DATA_OUT                   (ReadDataM),
     .WB_DATA                    (WB_DATA),
@@ -93,12 +92,12 @@ setascacheL2 L2 (
     .clk                        (clk),
     .rst                        (rst),
     .WE                         (L2_WE),
-    .RD                         (L2_DATA_OUT),
+    .RD                         (ReadDataM),
     .fetch                      (L2_fetch),        
     .A                          (ALUoutM_i),
     .WD                         (Rd2M),
     .funct3                     (funct3M),
-    .stall                      (L2_stall),
+    .stall                      (stall),
     .hit                        (L2_hit),    
     .DATA_OUT                   (L2_DATA_OUT),
     .WB_DATA                    (L2_WB_DATA),
@@ -110,7 +109,6 @@ setascacheL2 L2 (
 
 always_comb begin
     fetch = hit ? 1'b0 : L2_fetch;
-    stall = ~hit || L2_stall;
 
     // Control L2 interface based on L1 behavior
     L2_fetch = ~hit;

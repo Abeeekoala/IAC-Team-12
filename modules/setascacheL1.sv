@@ -9,15 +9,12 @@ module setascache #(
     input logic [DATA_WIDTH-1:0] A,  // Address
     input logic Read,
     input logic [2:0] funct3,        // Load/Store type
-    output logic stall,              // Pipeline stall for cache miss
+    output logic stall,
     output logic hit,                // Cache Hit/Miss signal
     output logic fetch,              // Signal to fetch data from memory
-    output logic writeback,          // Writeback to main memory for dirty eviction
-    output logic [DATA_WIDTH-1:0] WB_DATA,  // Writeback data to memory
-    output logic [DATA_WIDTH-1:0] WB_addr,
     output logic [DATA_WIDTH-1:0] DATA_OUT,  // Data to the CPU
 
-    // L2 interface signals 
+    // L2 interface signals  // Eviction policy : First write back to L2 then once evicted from L2 write to main memory 
     output logic L2_fetch,
     input logic [DATA_WIDTH-1:0] L2_RD, // Read data from L2
     input logic L2_hit,  // Data contained within L2
@@ -39,7 +36,8 @@ module setascache #(
         logic DB0; // Dirty bit
         logic [27:0] tag0;
         logic [DATA_WIDTH-1:0] data0; 
-    } CacheType;
+    }
+     CacheType;
 
     CacheType cache [4]; // Define 4 sets, 2-way associative cache
 
@@ -49,7 +47,6 @@ module setascache #(
     logic [DATA_WIDTH-1:0] Data;
     logic MMIO_access;
     logic way_hit;
-    logic l2_stall;
 
     // Address breakdown
     always_comb begin
@@ -59,24 +56,21 @@ module setascache #(
     
     // register the fetch signal to prevent RD latching
     // use negative clock to insure We update cache on the next CLK posedge if miss
-    logic fetch_reg;
 
     always_ff @(negedge clk or posedge rst) begin
         if (rst) begin
-            fetch_reg <= 0;
+            fetch <= 0;
+            L2_fetch <=0;
         end else if (!hit && (Read || WE)) begin
             if (!L2_hit) begin
-                fetch = 1; // Miss in L1 and L2
+                fetch <= 1; // Miss in L1 and L2
+                L2_fetch <=0;
             end else begin
-                L2_fetch = 1; // Miss in L1 fetch from L2
+                fetch <=0;
+                L2_fetch <= 1; // Miss in L1 fetch from L2
             end
-            fetch_reg <= 1; // maybe need seperate for L1/L2 -- unsuure
-        end else begin
-            fetch_reg <= 0; // clear fetch once the data is ready
         end
     end
-
-    assign fetch = fetch_reg;
 
     // Cache Access Logic
     always_comb begin
@@ -115,17 +109,16 @@ module setascache #(
                 if (cache[set].U == 0) begin
                     // Evict way 0 if dirty
                     if (cache[set].DB0) begin
-                        writeback = 1;
-                        WB_addr = {cache[set].tag0, set, 2'b00};
-                        WB_DATA = cache[set].data0;
-
+                        L2_writeback = 1;
+                        L2_WB_ADDR = {cache[set].tag0, set, 2'b00};
+                        L2_WB_DATA = cache[set].data0;
                     end
                 end else begin
                     // Evict way 1 if dirty
                     if (cache[set].DB1) begin
-                        writeback = 1;
-                        WB_addr = {cache[set].tag1, set, 2'b00};
-                        WB_DATA = cache[set].data1;
+                        L2_writeback = 1;
+                        L2_WB_ADDR = {cache[set].tag1, set, 2'b00};
+                        L2_WB_DATA = cache[set].data1;
                     end
                 end
             end
@@ -279,19 +272,7 @@ module setascache #(
                 end
             end
 
-            if (writeback && !L2_writeback) begin
-                // Evict to L2 instead of memory
-                if (cache[set].U == 0 && cache[set].DB0) begin
-                    L2_WB_DATA <= cache[set].data0;
-                    L2_WB_ADDR <= {cache[set].tag0, set, 2'b00};
-                    L2_writeback <= 1;
-                end else if (cache[set].DB1) begin
-                    L2_WB_DATA <= cache[set].data1;
-                    L2_WB_ADDR <= {cache[set].tag1, set, 2'b00};
-                    L2_writeback <= 1;
-                end
             end
         end
-    end
 
 endmodule

@@ -8,7 +8,7 @@ module setascacheL2 #(
     input logic [DATA_WIDTH-1:0] WD, // Write Data
     input logic [DATA_WIDTH-1:0] A,  // Address
     input logic Read,
-    input logic [DATA_WIDTH-1:0] preload_data  // for preloading data from main memory, for spacial locality
+    input logic [DATA_WIDTH-1:0] preload_data,  // for preloading data from main memory, for spacial locality
     input logic [2:0] funct3,        // Load/Store type
     output logic stall,              // Pipeline stall for cache miss
     output logic hit,                // Cache Hit/Miss signal
@@ -16,8 +16,13 @@ module setascacheL2 #(
     output logic [DATA_WIDTH-1:0] preload_addr,          // preload addr
     output logic writeback,          // Writeback to main memory for dirty eviction
     output logic [DATA_WIDTH-1:0] WB_DATA,  // Writeback data to memory
-    output logic [DATA_WIDTH-1:0] WB_addr,
-    output logic [DATA_WIDTH-1:0] DATA_OUT  // Data to the CPU
+    output logic [DATA_WIDTH-1:0] WB_addr,  
+    output logic [DATA_WIDTH-1:0] DATA_OUT,  // Data to the CPU
+    //L2 Control signals
+    input logic L2_fetch,
+    input logic L2_writeback,
+    input logic [DATA_WIDTH-1:0] L2_WB_DATA,
+    input logic [DATA_WIDTH-1:0] L2_WB_ADDR
 );
 
     typedef struct packed {
@@ -144,6 +149,17 @@ module setascacheL2 #(
         end 
         else begin
             //Update LRU bit
+            if (L2_writeback) begin
+                if(way_hit==0)begin
+                    cache[L2_WB_ADDR[4:2]].data0 <= L2_WB_DATA;
+                    cache[L2_WB_ADDR[4:2]].DB0 <= 1;
+                    cache[L2_WB_ADDR[4:2]].U <= 1
+                end else begin
+                    cache[L2_WB_ADDR[4:2]].data1 <= L2_WB_DATA;
+                    cache[L2_WB_ADDR[4:2]].DB1 <= 1;
+                    cache[L2_WB_ADDR[4:2]].U <= 0
+                end
+            end 
             if (hit) begin
                 cache[set].U <= !(way_hit);
             end 
@@ -243,3 +259,10 @@ module setascacheL2 #(
     end
 
 endmodule
+
+
+/// To change:
+
+""" Current writeback logic insufficient add compatabilities with the L2 write logic defined in L1 for eviction and write to L2
+Also add fetch logic to define a fetch from Datamem and have compatabilities with L2-fetch to decide when to fetch from data mem
+"""
