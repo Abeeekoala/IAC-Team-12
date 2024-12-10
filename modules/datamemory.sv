@@ -28,6 +28,19 @@ module datamemory #(
     always_comb begin
         RD = '0;
         if (A == 32'h000000FC) begin
+            // MMIO read from trigger address
+            RD = {31'b0, trigger};  // Return trigger in LSB
+        end 
+        else begin
+            // Regular memory read 
+            case (funct3)
+                3'b000: RD = {{24{mem[A][7]}}, mem[A]};                 // lb
+                3'b001: RD = {{16{mem[A+1][7]}}, mem[A+1], mem[A]};    // lh
+                3'b010: RD = {mem[A+3], mem[A+2], mem[A+1], mem[A]};    // lw
+                3'b100: RD = {24'b0, mem[A]};                           // lbu
+                3'b101: RD = {16'b0, mem[A+1], mem[A]};                 // lhu
+                default: RD = 32'b0;                                    // Default case
+            endcase
             // Direct MMIO read, ignore "fetch" in this case.
             RD = {31'b0, trigger};
         end
