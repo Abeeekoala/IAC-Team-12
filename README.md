@@ -124,7 +124,7 @@ Following the project brief after lab 4, the main requirements we had were:
  
  and the inputs to the following modules (insert) to implement (insert the following changes)
 
-![alt text](images/pipelinedesign.jpg)
+![alt text](images/RISCVsingle_cycle_final.png)
 
  ### Data Memory
 
@@ -245,7 +245,7 @@ We adapted this to the following diagram. The main changes we implemented were:
  - splitting up the implementation into the 4 stages (`fetch`, `decode`, `memory`, `execute`) and then adapting the `top.sv` file to combine the logic
  - A trigger signal coming into the Data Memory
 
- ![alt text](images/RISCV_pipelined_hazard[1].png)
+ ![alt text](images/RISCV_pipelined_hazard_final.png)
 
  Since the control unit needed no major adaptations following single cycle, implementation of pipelining was smooth, especially as tackling it in 4 separate stages and combining it in the `top` file made debugging and keeping track of all the inputs and outputs easier.
 
@@ -363,7 +363,7 @@ The *set-associative cache* improves upon the direct-mapped cache by allowing mu
 ![alt text](images/2waycache.png)
 
 This was our final CPU design with the 2 way set-associative cache implemented.
-![alt text](images/pipelinewhazard.png)
+![alt text](images/RISCV_pipelined_cache_final.png)
 
 ### The key differences are as follows:
 
