@@ -33,7 +33,7 @@ module datamemory #(
             // Regular memory read 
             case (funct3)
                 3'b000: RD = {{24{mem[A][7]}}, mem[A]};                 // lb
-                3'b001: RD = {{16{mem[A+1][15]}}, mem[A+1], mem[A]};    // lh
+                3'b001: RD = {{16{mem[A+1][7]}}, mem[A+1], mem[A]};    // lh
                 3'b010: RD = {mem[A+3], mem[A+2], mem[A+1], mem[A]};    // lw
                 3'b100: RD = {24'b0, mem[A]};                           // lbu
                 3'b101: RD = {16'b0, mem[A+1], mem[A]};                 // lhu
