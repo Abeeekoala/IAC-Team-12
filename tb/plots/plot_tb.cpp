@@ -26,6 +26,7 @@ int main(int argc, char **argv, char **env){
     top->clk = 1;
     top->rst = 0;
     int plot = 0;
+    bool to_plot = false; 
     int last_a0 = -1;
     //run simulation for many clock cycles
     for (i=0; i<1000000; i++){
@@ -34,18 +35,26 @@ int main(int argc, char **argv, char **env){
             top->clk = !top->clk;   // unit is in ps!!!
             top->eval ();
         }
-        if (plot == 0 && top->a0 != 0)
+        if (plot == 0 && top->a0 == 210)
         {
             plot = 1;
         }
         if (plot > 256){
             break;
         }
-        if (plot > 0 && top->a0 != last_a0){
-            vbdPlot(int(top->a0), 0, 255);
-            last_a0 = top->a0;
-            plot++;
+        if (plot > 0){
+            if (top->a0 == 210 && to_plot){
+                to_plot = false;
+                vbdPlot(int(last_a0), 0, 255);
+                plot++;
+            }
+            else if (top->a0 == 210){
+                to_plot = true;
+                last_a0 = top->a0;
+            }
         }
+        
+        
 
         vbdCycle(i+1);
             // either simulation finished, or 'q' is pressed
