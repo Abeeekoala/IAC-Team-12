@@ -36,7 +36,9 @@ _loop2:                         # repeat
 display:    # function send PDF array value to a0 for display
     LI      a1, 0               # a1 = offset into pdf array
     LI      a2, 255             # a2 = max index of pdf array
+    LI      a0, 210             # a0 = 210 mark the start of plotting
 _loop3:                         # repeat
+    LI      a0, 205            # a0 = 210 mark that we loaded a pdf value
     LBU     a0, base_pdf(a1)    #   a0 = mem[base_pdf+a1)
     addi    a1, a1, 1           #   incr 
     BNE     a1, a2, _loop3      # until end of pdf array
