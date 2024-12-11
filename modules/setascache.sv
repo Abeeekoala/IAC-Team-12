@@ -9,7 +9,7 @@ module setascache #(
     input logic [DATA_WIDTH-1:0] A,  // Address
     input logic Read,
     input logic [2:0] funct3,        // Load/Store type
-    output logic stall,              // Pipeline stall for cache miss
+    output logic stall_cache,              // Pipeline stall for cache miss
     output logic hit,                // Cache Hit/Miss signal
     output logic fetch,              // Signal to fetch data from memory
     output logic writeback,          // Writeback to main memory for dirty eviction
@@ -69,7 +69,7 @@ module setascache #(
         // Default outputs
         hit = 0;
         way_hit = 0;
-        stall = 0;
+        stall_cache = 0;
         writeback = 0;
         MMIO_access = (A == 32'h000000FC);
         WB_DATA = '0;
@@ -96,7 +96,7 @@ module setascache #(
             // Cache miss
             else if (Read || WE) begin
                 hit = 0;
-                stall = 1;  // Stall the pipeline for a miss
+                stall_cache = 1;  // Stall the pipeline for a miss
                 // Check if eviction is needed
                 if (cache[set].U == 0) begin
                     // Evict way 0 if dirty

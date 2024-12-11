@@ -3,7 +3,7 @@ module CU (
     input logic [6:0]       op,
     input logic             funct7_5,
     input logic             Flush,
-    input logic             Stall,
+    input logic             stall_in,
     output logic [2:0]      ImmSrc,
     output logic            MemWrite,
     output logic            RegWrite,
@@ -29,7 +29,7 @@ always_comb begin
         case(op)
             // r-type instructions
             7'b0110011: begin
-                if (!Stall)
+                if (!stall_in)
                     RegWrite = 1'b1;
                 case(funct3)
                     3'b000: begin
@@ -78,7 +78,7 @@ always_comb begin
             
             // i-type instructions
             7'b0010011: begin
-                if (!Stall)
+                if (!stall_in)
                     RegWrite = 1'b1;
                 ALUSrcB = 1'b1;
                 case(funct3)
@@ -131,7 +131,7 @@ always_comb begin
         
             // Load instructions
             7'b0000011: begin
-                if (!Stall)
+                if (!stall_in)
                     RegWrite = 1'b1;
                 ALUctrl = 4'b0000;
                 ALUSrcB = 1'b1;
@@ -140,7 +140,7 @@ always_comb begin
 
             // Store instructions
             7'b0100011: begin
-                if (!Stall)
+                if (!stall_in)
                     MemWrite = 1'b1;
                 ALUctrl = 4'b0000;
                 ALUSrcB = 1'b1;
@@ -149,7 +149,7 @@ always_comb begin
 
             // LUI
             7'b0110111: begin
-                if (!Stall)
+                if (!stall_in)
                     RegWrite = 1'b1;
                 ALUctrl = 4'b1011;
                 ALUSrcB = 1'b1;
@@ -158,7 +158,7 @@ always_comb begin
 
             // AUIPC
             7'b0010111: begin
-                if (!Stall)
+                if (!stall_in)
                     RegWrite = 1'b1;
                 ALUSrcA = 1'b1;
                 ALUSrcB = 1'b1;
@@ -168,7 +168,7 @@ always_comb begin
 
             // JAL
             7'b1101111: begin
-                if (!Stall)
+                if (!stall_in)
                     RegWrite = 1'b1;
                 ALUSrcA = 1'b1;
                 ALUSrcB = 1'b1;
@@ -179,7 +179,7 @@ always_comb begin
 
             // JALR
             7'b1100111: begin
-                if (!Stall) begin
+                if (!stall_in) begin
                     RegWrite = 1'b1;
                     Jump = 1'b1;
                 end
@@ -191,7 +191,7 @@ always_comb begin
 
             // B-type instructions
             7'b1100011: begin
-                if (!Stall)
+                if (!stall_in)
                     Branch = 1'b1;
                 ALUSrcA = 1'b1;
                 ALUSrcB = 1'b1;

@@ -3,7 +3,7 @@ module fetch (
     input logic             rst,
     input logic             PCSrc,
     input logic [31:0]      PCTarget,
-    input logic             Stall,
+    input logic             stall_in,
     input logic             Flush,
     output logic [31:0]     InstrD,
     output logic [31:0]     PCD,
@@ -27,7 +27,7 @@ PCreg PCreg(
     .next_PC    (PCNext),
     .rst        (rst),
     .clk        (clk),
-    .Stall      (Stall),
+    .stall_in   (stall_in),
     .PC         (PC)
 );
 
@@ -54,7 +54,7 @@ ff1 FD_FF(
     .InstrF     (Instr),
     .PCF        (PC),
     .inc_PCF    (inc_PC),
-    .Stall      (Stall),
+    .stall_in   (stall_in),
     .InstrD     (InstrD),
     .PCD        (PCD),
     .inc_PCD    (inc_PCD)

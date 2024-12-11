@@ -31,19 +31,6 @@ module datamemory #(
             // MMIO read from trigger address
             RD = {31'b0, trigger};  // Return trigger in LSB
         end 
-        else begin
-            // Regular memory read 
-            case (funct3)
-                3'b000: RD = {{24{mem[A][7]}}, mem[A]};                 // lb
-                3'b001: RD = {{16{mem[A+1][7]}}, mem[A+1], mem[A]};    // lh
-                3'b010: RD = {mem[A+3], mem[A+2], mem[A+1], mem[A]};    // lw
-                3'b100: RD = {24'b0, mem[A]};                           // lbu
-                3'b101: RD = {16'b0, mem[A+1], mem[A]};                 // lhu
-                default: RD = 32'b0;                                    // Default case
-            endcase
-            // Direct MMIO read, ignore "fetch" in this case.
-            RD = {31'b0, trigger};
-        end
         else if (fetch) begin
             RD = {mem[{A[16:2], 2'b11}], mem[{A[16:2], 2'b10}], mem[{A[16:2], 2'b01}], mem[{A[16:2], 2'b00}]};  // Make sure we always fetch the whole data for cache
         end

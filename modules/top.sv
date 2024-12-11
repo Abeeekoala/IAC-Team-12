@@ -53,23 +53,23 @@ wire [31:0]                 Rd2M;
 wire [2:0]                  funct3M;
 wire [4:0]                  RdM;
 wire [31:0]                 inc_PCM;
-wire                        stall;
 
 // memory to writeback signals
-wire [1:0]                 ResultSrcW;
-wire [31:0]                ALUoutW;
-wire [31:0]                ReadDataW;
-wire [31:0]                inc_PCW;
+wire [1:0]                  ResultSrcW;
+wire [31:0]                 ALUoutW;
+wire [31:0]                 ReadDataW;
+wire [31:0]                 inc_PCW;
 
-//stall signal OE between Stall (from hazarrd Unit) and stall (from cache)
-wire                       stall_in;
-assign stall_in = (stall || Stall);
+//stall signal OR between Stall (from hazarrd Unit) and stall (from cache)
+wire                        stall_in;
+wire                        stall_cache;
+assign stall_in = (stall_cache || Stall);
 fetch fetch(
     .clk                    (clk),
     .rst                    (rst),
     .PCSrc                  (PCSrc),
     .PCTarget               (PCTarget),
-    .Stall                  (stall_in),
+    .stall_in               (stall_in),
     .Flush                  (Flush),
     .InstrD                 (InstrD),
     .PCD                    (PCD),
@@ -84,8 +84,8 @@ decode decode(
     .RegWriteW              (RegWriteW),
     .RdW                    (RdW),
     .ResultW                (ResultW),
-    .Stall                  (Stall),
-    .stall                  (stall),
+    .stall_in               (stall_in),
+    .stall_cache            (stall_cache),
     .Flush                  (Flush),
     .JumpE                  (JumpE),
     .BranchE                (BranchE),
@@ -130,7 +130,7 @@ execute exectue(
     .ForwardB               (ForwardB),
     .ResultW                (ResultW),
     .ALUoutM_i              (ALUoutM),
-    .stall                  (stall),
+    .stall_cache            (stall_cache),
     .PCTarget               (PCTarget),
     .PCSrc                  (PCSrc),
     .RegWriteM              (RegWriteM),
@@ -160,7 +160,7 @@ memory memory(
     .ReadDataW              (ReadDataW),
     .RdW                    (RdW),
     .inc_PCW                (inc_PCW),
-    .stall                  (stall),
+    .stall_cache            (stall_cache),
     .hit                    (hit),  
     .rst                    (rst)
 );

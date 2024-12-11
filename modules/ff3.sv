@@ -8,7 +8,7 @@ module ff3 (
     input logic [4:0]       RdE,
     input logic [31:0]      Rd2E,
     input logic [31:0]      inc_PCE,
-    input logic             stall,
+    input logic             stall_cache,
 
     output logic            RegWriteM,
     output logic [1:0]      ResultSrcM,
@@ -21,7 +21,7 @@ module ff3 (
 );
 
 always_ff @ (posedge clk) begin
-    if (!stall) begin
+    if (!stall_cache) begin
         RegWriteM <= RegWriteE;
         ResultSrcM <= ResultSrcE;
         MemWriteM <= MemWriteE;

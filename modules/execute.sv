@@ -19,7 +19,7 @@ module execute (
     input logic [1:0]       ForwardB,
     input logic [31:0]      ResultW,
     input logic [31:0]      ALUoutM_i,
-    input logic             stall,
+    input logic             stall_cache,
     output logic [31:0]     PCTarget,
     output logic            PCSrc,
     output logic            RegWriteM,
@@ -95,7 +95,7 @@ ff3 EM_FF(
     .RdE                    (RdE),
     .Rd2E                   (Rd2),
     .inc_PCE                (inc_PCE),
-    .stall                  (stall),
+    .stall_cache            (stall_cache),
 
     .RegWriteM              (RegWriteM),
     .ResultSrcM             (ResultSrcM),

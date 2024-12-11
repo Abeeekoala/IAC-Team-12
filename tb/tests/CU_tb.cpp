@@ -2,6 +2,7 @@
 
 Vdut *top;
 VerilatedVcdC *tfp;
+unsigned int ticks = 0;
 
 class CUTestbench : public BaseTestbench
 {
@@ -16,319 +17,375 @@ protected:
         top->eval();
 
     }
-
-    void setInputs(uint32_t op, uint32_t funct3 = 0, uint32_t funct7_5 = 0, uint32_t Flush = 0, uint32_t = Stall = 0){
-        top->op = op;
-        top->funct3 = funct3;
-        top->funct7_5 = funct7_5;
-        top->Flush = Flush;
-        top->Stall = Stall;
-        top->eval();
-
-    }
-
-    tb->top->funct3 = 0b101; //3 bits for funct3
-    tb->top->op = 0b0110011; //7 bits for op
-    tb->top->funct7_5 = 0;  //1 bit for funct7[5]
-    tb->top->Flush = 1;     //1 bit flush signal
-    tb->top->Stall = 0;     //1-bit stall signal
-    top->eval();
-
 };
 
 // Test for R-Type instructions
-TEST_F(CU_Testbench, RTypeInstructions) {
+TEST_F(CU_Testbench, ADD) {
     // Test ADD
-    setInputs(b0110011, b000, b0, b0, b0);
-    EXPECT_EQ(top->ALUctrl, 0b0000);
-    EXPECT_EQ(top->RegWrite, 1);
-    EXPECT_EQ(top->ImmSrc, 0);
-    EXPECT_EQ(top->MemWrite, 0);
-    EXPECT_EQ(top->ALUSrcA, 0);
-    EXPECT_EQ(top->ALUSrcB, 0);
-    EXPECT_EQ(top->ResultSrc, 0);
-    EXPECT_EQ(top->Branch, 0);
-    EXPECT_EQ(top->Jump, 0);
+
+    top->op = 0b0110011;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b000;
+    top->funct7_5 = 0b1;
+    top->eval();
+
+    EXPECTED_EQ(top->ALUctrl = 0b0001);
+}
+
+TEST_F(CU_Testbench, SUB){
 
     // Test SUB
-    setInputs(b0110011, b000, b0, b0, b0);
-    EXPECT_EQ(top->ALUctrl, 0b0001);
-    EXPECT_EQ(top->RegWrite, 0);
-    EXPECT_EQ(top->ImmSrc, 0);
-    EXPECT_EQ(top->MemWrite, 0);
-    EXPECT_EQ(top->ALUSrcA, 0);
-    EXPECT_EQ(top->ALUSrcB, 0);
-    EXPECT_EQ(top->ResultSrc, 0);
-    EXPECT_EQ(top->Branch, 0);
-    EXPECT_EQ(top->Jump, 0);
+    top->op = 0b0110011;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b000;
+    top->funct7_5 = 0b0;
+    top->eval();
 
-    // Test XOR
-    setInputs(b0110011, b100, b0, b0, b0);
-    EXPECT_EQ(top->ALUctrl, 0b0100);
-    EXPECT_EQ(top->RegWrite, 0);
-    EXPECT_EQ(top->ImmSrc, 0);
-    EXPECT_EQ(top->MemWrite, 0);
-    EXPECT_EQ(top->ALUSrcA, 0);
-    EXPECT_EQ(top->ALUSrcB, 0);
-    EXPECT_EQ(top->ResultSrc, 0);
-    EXPECT_EQ(top->Branch, 0);
-    EXPECT_EQ(top->Jump, 0);
+    EXPECTED_EQ(top->ALUctrl = 0b000);
+}
 
-    // Test OR
-    setInputs(b0110011, b110, b0, b0, b0);
-    EXPECT_EQ(top->ALUctrl, 0b0011);
-    EXPECT_EQ(top->RegWrite, 0);
-    EXPECT_EQ(top->ImmSrc, 0);
-    EXPECT_EQ(top->MemWrite, 0);
-    EXPECT_EQ(top->ALUSrcA, 0);
-    EXPECT_EQ(top->ALUSrcB, 0);
-    EXPECT_EQ(top->ResultSrc, 0);
-    EXPECT_EQ(top->Branch, 0);
-    EXPECT_EQ(top->Jump, 0);
+TEST_F(CU_Testbench, XOR){
 
-    // Test AND
-    setInputs(b0110011, b111, b0, b0, b0);
-    EXPECT_EQ(top->ALUctrl, 0b0010);
-    EXPECT_EQ(top->RegWrite, 0);
-    EXPECT_EQ(top->ImmSrc, 0);
-    EXPECT_EQ(top->MemWrite, 0);
-    EXPECT_EQ(top->ALUSrcA, 0);
-    EXPECT_EQ(top->ALUSrcB, 0);
-    EXPECT_EQ(top->ResultSrc, 0);
-    EXPECT_EQ(top->Branch, 0);
-    EXPECT_EQ(top->Jump, 0);    
+    top->op = 0b0110011;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b100;
+    top->funct7_5 = 0b0; //do i need this line explicitily mentioned
+    top->eval();
 
-    // Test LSL
-    setInputs(b0110011, b001, b0, b0, b0);
-    EXPECT_EQ(top->ALUctrl, 0b0101);
-    EXPECT_EQ(top->RegWrite, 0);
-    EXPECT_EQ(top->ImmSrc, 0);
-    EXPECT_EQ(top->MemWrite, 0);
-    EXPECT_EQ(top->ALUSrcA, 0);
-    EXPECT_EQ(top->ALUSrcB, 0);
-    EXPECT_EQ(top->ResultSrc, 0);
-    EXPECT_EQ(top->Branch, 0);
-    EXPECT_EQ(top->Jump, 0);
+    EXPECTED_EQ(top->ALUctrl = 0b0100);
+}
 
-    // Test LSR
-    setInputs(b0110011, b101, b0, b0, b0);
-    EXPECT_EQ(top->ALUctrl, 0b0110);
-    EXPECT_EQ(top->RegWrite, 0);
-    EXPECT_EQ(top->ImmSrc, 0);
-    EXPECT_EQ(top->MemWrite, 0);
-    EXPECT_EQ(top->ALUSrcA, 0);
-    EXPECT_EQ(top->ALUSrcB, 0);
-    EXPECT_EQ(top->ResultSrc, 0);
-    EXPECT_EQ(top->Branch, 0);
-    EXPECT_EQ(top->Jump, 0);
+TEST_F(CU_Testbench, OR){
+    top->op = 0b0110011;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b110;
+    top->funct7_5 = 0b0; //do i need this line explicitily mentioned
+    top->eval();
 
-    // Test SLT
-    setInputs(b0110011, b010, b0, b0, b0);
-    EXPECT_EQ(top->ALUctrl, 0b0111);
-    EXPECT_EQ(top->RegWrite, 0);
-    EXPECT_EQ(top->ImmSrc, 0);
-    EXPECT_EQ(top->MemWrite, 0);
-    EXPECT_EQ(top->ALUSrcA, 0);
-    EXPECT_EQ(top->ALUSrcB, 0);
-    EXPECT_EQ(top->ResultSrc, 0);
-    EXPECT_EQ(top->Branch, 0);
-    EXPECT_EQ(top->Jump, 0);
+    EXPECTED_EQ(top->ALUctrl = 0b0011);
+}
 
-    // Test SLTU
-    setInputs(b0110011, b011, b0, b0, b0);
-    EXPECT_EQ(top->ALUctrl, 0b1001);
-    EXPECT_EQ(top->RegWrite, 0);
-    EXPECT_EQ(top->ImmSrc, 0);
-    EXPECT_EQ(top->MemWrite, 0);
-    EXPECT_EQ(top->ALUSrcA, 0);
-    EXPECT_EQ(top->ALUSrcB, 0);
-    EXPECT_EQ(top->ResultSrc, 0);
-    EXPECT_EQ(top->Branch, 0);
-    EXPECT_EQ(top->Jump, 0);
+TEST_F(CU_Testbench, AND){
 
-    // Test SLTU
-    setInputs(b0110011, b011, b0, b0, b0);
-    EXPECT_EQ(top->ALUctrl, 0b1010);
-    EXPECT_EQ(top->RegWrite, 0);
-    EXPECT_EQ(top->ImmSrc, 0);
-    EXPECT_EQ(top->MemWrite, 0);
-    EXPECT_EQ(top->ALUSrcA, 0);
-    EXPECT_EQ(top->ALUSrcB, 0);
-    EXPECT_EQ(top->ResultSrc, 0);
-    EXPECT_EQ(top->Branch, 0);
-    EXPECT_EQ(top->Jump, 0);
+    top->op = 0b0110011;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b111;
+    top->funct7_5 = 0b0; //do i need this line explicitily mentioned
+    top->eval();
+
+    EXPECTED_EQ(top->ALUctrl = 0b0010);
+}
+
+TEST_F(CU_Testbench, LSL){
+
+    top->op = 0b0110011;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b001;
+    top->funct7_5 = 0b0; //do i need this line explicitily mentioned
+    top->eval();
+
+    EXPECTED_EQ(top->ALUctrl = 0b0101);
+}
+
+TEST_F(CU_Testbench, LSR){
+
+    top->op = 0b0110011;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b101;
+    top->funct7_5 = 0b0;
+    top->eval();
+
+    EXPECTED_EQ(top->ALUctrl = 0b0111);
+
+}
+
+TEST_F(CU_Testbench, ASR){
+
+    top->op = 0b0110011;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b111;
+    top->funct7_5 = 0b1; 
+    top->eval();
+
+    EXPECTED_EQ(top->ALUctrl = 0b0110);
+}
+
+TEST_F(CU_Testbench, SLT){
+
+    top->op = 0b0110011;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b010;
+    top->funct7_5 = 0b0; //do i need this line explicitily mentioned
+    top->eval();
+
+    EXPECTED_EQ(top->ALUctrl = 0b1001);
+}
+
+TEST_F(CU_Testbench, SLTU){
+
+    top->op = 0b0110011;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b011;
+    top->funct7_5 = 0b0; //do i need this line explicitily mentioned
+    top->eval();
+
+    EXPECTED_EQ(top->ALUctrl = 0b1010);
+    EXPECTED_EQ(top->ImmSrc = 0b001);
+
 }
 
 // Test for I-Type instructions
-TEST_F(CU_Testbench, ITypeInstructions) {
-    // Test ADDI
-    setInputs(b0010011, b000, b0, b0, b0);
-    EXPECT_EQ(top->ALUctrl, 0b0000);
-    EXPECT_EQ(top->RegWrite, 1);
-    EXPECT_EQ(top->ImmSrc, 0);
-    EXPECT_EQ(top->MemWrite, 0);
-    EXPECT_EQ(top->ALUSrcA, 0);
-    EXPECT_EQ(top->ALUSrcB, 1);
-    EXPECT_EQ(top->ResultSrc, 0);
-    EXPECT_EQ(top->Branch, 0);
-    EXPECT_EQ(top->Jump, 0);
+TEST_F(CU_Testbench, ADDI) {
 
-    // Test XORI
-    setInputs(b0010011, b100, 0b000000, 0, 0);
-    EXPECT_EQ(top->ALUctrl, 0b0100);
-    EXPECT_EQ(top->RegWrite, 1);
-    EXPECT_EQ(top->ImmSrc, 0);
-    EXPECT_EQ(top->MemWrite, 0);
-    EXPECT_EQ(top->ALUSrcA, 0);
-    EXPECT_EQ(top->ALUSrcB, 1);
-    EXPECT_EQ(top->ResultSrc, 0);
-    EXPECT_EQ(top->Branch, 0);
-    EXPECT_EQ(top->Jump, 0);
+    top->op = 0b010011;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b000;
+    top->funct7_5 = 0b0; //do i need this line explicitily mentioned
+    top->eval();
 
-    // Test ORI
-    setInputs(b0010011, b110, 0b000000, 0, 0);
-    EXPECT_EQ(top->ALUctrl, 0b0011);
-    EXPECT_EQ(top->RegWrite, 1);
-    EXPECT_EQ(top->ImmSrc, 0);
-    EXPECT_EQ(top->MemWrite, 0);
-    EXPECT_EQ(top->ALUSrcA, 0);
-    EXPECT_EQ(top->ALUSrcB, 1);
-    EXPECT_EQ(top->ResultSrc, 0);
-    EXPECT_EQ(top->Branch, 0);
-    EXPECT_EQ(top->Jump, 0);
+    EXPECTED_EQ(top->ALUctrl = 0b0000);
+    EXPECTED_EQ(top->RegWrite = 0b1);
+    EXPECTED_EQ(top->ALUSrcB = 0b1);
+}
 
-    // Test ANDI
-    setInputs(b0010011, b111);
-    EXPECT_EQ(top->ALUctrl, 0b0010);
-    EXPECT_EQ(top->RegWrite, 1);
-    EXPECT_EQ(top->ImmSrc, 0);
-    EXPECT_EQ(top->MemWrite, 0);
-    EXPECT_EQ(top->ALUSrcA, 0);
-    EXPECT_EQ(top->ALUSrcB, 1);
-    EXPECT_EQ(top->ResultSrc, 0);
-    EXPECT_EQ(top->Branch, 0);
-    EXPECT_EQ(top->Jump, 0);
+TEST_F(CU_Testbench, XORI){
 
-    //TEST SLLI
-    setInputs(b0010011, b001, b0, b0, b0)
-    EXPECT_EQ(top->ALUctrl, 0b0101)
-    EXPECT_EQ(top->RegWrite, 1);
-    EXPECT_EQ(top->ImmSrc, 0b001);
-    EXPECT_EQ(top->MemWrite, 0);
-    EXPECT_EQ(top->ALUSrcA, 0);
-    EXPECT_EQ(top->ALUSrcB, 1);
-    EXPECT_EQ(top->ResultSrc, 0);
-    EXPECT_EQ(top->Branch, 0);
-    EXPECT_EQ(top->Jump, 0);
+    top->op = 0b010011;
+    top->Stall = 0b0;
+    top->Flush = 0b0; //do i need this line explicityl mentioned
+    top->funct3 = 0b100;
+    top->funct7_5 = 0b0; //do i need this line explicitily mentioned
+    top->eval();
 
-    // TEST SRLI
-    setInputs (b0010011, b101, b0, b0, b0)
-    EXPECT_EQ(top->ALUctrl, b0110)
-    EXPECT_EQ(top->RegWrite, 1);
-    EXPECT_EQ(top->ImmSrc, 0b001);
-    EXPECT_EQ(top->MemWrite, 0);
-    EXPECT_EQ(top->ALUSrcA, 0);
-    EXPECT_EQ(top->ALUSrcB, 1);
-    EXPECT_EQ(top->ResultSrc, 0);
-    EXPECT_EQ(top->Branch, 0);
-    EXPECT_EQ(top->Jump, 0);
+    EXPECTED_EQ(top->ALUctrl = 0b0100);
+    EXPECTED_EQ(top->RegWrite = 0b1);
+    EXPECTED_EQ(top->ALUSrcB = 0b1);
 
-    // TEST SRAI
-    setInputs (b0010011, b101, b1, b0, b0)
-    EXPECT_EQ(top->ALUctrl, b1000)
-    EXPECT_EQ(top->RegWrite, 1);
-    EXPECT_EQ(top->ImmSrc, 0);
-    EXPECT_EQ(top->MemWrite, 0);
-    EXPECT_EQ(top->ALUSrcA, 0);
-    EXPECT_EQ(top->ALUSrcB, 1);
-    EXPECT_EQ(top->ResultSrc, 0);
-    EXPECT_EQ(top->Branch, 0);
-    EXPECT_EQ(top->Jump, 0);
+}
 
-    // TEST SLTI
-    setInputs (b0010011, b010, b0, b0, b0)
-    EXPECT_EQ(top->ALUctrl, 0b1001)
-    EXPECT_EQ(top->RegWrite, 1);
-    EXPECT_EQ(top->ImmSrc, 0);
-    EXPECT_EQ(top->MemWrite, 0);
-    EXPECT_EQ(top->ALUSrcA, 0);
-    EXPECT_EQ(top->ALUSrcB, 1);
-    EXPECT_EQ(top->ResultSrc, 0);
-    EXPECT_EQ(top->Branch, 0);
-    EXPECT_EQ(top->Jump, 0);
+TEST_F(CU_Testbench, ORI){
 
-    // TEST SLTIU
-    setInputs (b0010011, b011, b0, b0, b0)
-    EXPECT_EQ(top->ALUctrl, 0b1010)
-    EXPECT_EQ(top->RegWrite, 1);
-    EXPECT_EQ(top->ImmSrc, 0b001);
-    EXPECT_EQ(top->MemWrite, 0);
-    EXPECT_EQ(top->ALUSrcA, 0);
-    EXPECT_EQ(top->ALUSrcB, 1);
-    EXPECT_EQ(top->ResultSrc, 0);
-    EXPECT_EQ(top->Branch, 0);
-    EXPECT_EQ(top->Jump, 0);
+    top->op = 0b010011;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b110;
+    top->funct7_5 = 0b0; //do i need this line explicitily mentioned
+    top->eval();
+
+    EXPECTED_EQ(top->ALUctrl = 0b0011);
+    EXPECTED_EQ(top->RegWrite = 0b1);
+    EXPECTED_EQ(top->ALUSrcB = 0b1);
+}
+
+EXPECTED_F(CU_Testbench, ANDI){
+    
+    top->op = 0b010011;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b111;
+    top->funct7_5 = 0b0; //do i need this line explicitily mentioned
+    top->eval();
+
+    EXPECTED_EQ(top->ALUctrl = 0b0010);
+    EXPECTED_EQ(top->RegWrite = 0b1);
+    EXPECTED_EQ(top->ALUSrcB = 0b1);
+}
+
+EXPECTED_F(CU_Testbench, SLLI){
+
+    top->op = 0b010011;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b001;
+    top->funct7_5 = 0b0; 
+    top->eval();
+
+    EXPECTED_EQ(top->ALUctrl = 0b0101);
+    EXPECTED_EQ(top->ImmSrc = 0b001);
+    EXPECTED_EQ(top->RegWrite = 0b1);
+    EXPECTED_EQ(top->ALUSrcB = 0b1);
+}
+
+TEST_F(CU_Testbench, SRLI){
+
+    top->op = 0b010011;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b000;
+    top->funct7_5 = 0b0; 
+    top->eval();
+
+    EXPECTED_EQ(top->ALUctrl = 0b1000);
+    EXPECTED_EQ(top->ImmSrc = 0b001);
+    EXPECTED_EQ(top->RegWrite = 0b1);
+    EXPECTED_EQ(top->ALUSrcB = 0b1);
+}
+
+TEST_F(CU_Testbench, SRAI){
+
+    top->op = 0b010011;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b000;
+    top->funct7_5 = 0b1; 
+    top->eval();
+
+    EXPECTED_EQ(top->ALUctrl = 0b0110);
+    EXPECTED_EQ(top->ImmSrc = 0b001)
+    EXPECTED_EQ(top->RegWrite = 0b1);
+    EXPECTED_EQ(top->ALUSrcB = 0b1);
+}
+
+TEST_F(CU_Testbench, SLTI){
+
+    top->op = 0b010011;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b010;
+    top->funct7_5 = 0b0; //do i need this line explicitily mentioned
+    top->eval();
+
+    EXPECTED_EQ(top->ALUctrl = 0b1001);
+    EXPECTED_EQ(top->RegWrite = 0b1);
+    EXPECTED_EQ(top->ALUSrcB = 0b1);
+}
+
+TEST_F(CU_Testbench, SLTIU){
+
+    top->op = 0b010011;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b000;
+    top->funct7_5 = 0b0; //do i need this line explicitily mentioned
+    top->eval();
+
+    EXPECTED_EQ(top->ALUctrl = 0b1010);
+    EXPECTED_EQ(top-ImmSrc = 0b001);
+    EXPECTED_EQ(top->RegWrite = 0b1);
+    EXPECTED_EQ(top->ALUSrcB = 0b1);
 }
 
 // Test for LW and SW instructions
-TEST_F(CU_Testbench, LWAndSWInstructions) {
-    // Test LW
-    setInputs(b0000011, b000, b0, b0, b0);
-    EXPECT_EQ(top->ALUctrl, 0b0000);
-    EXPECT_EQ(top->RegWrite, 1);
-    EXPECT_EQ(top->ImmSrc, 0);
-    EXPECT_EQ(top->MemWrite, 0);
-    EXPECT_EQ(top->ALUSrcA, 0);
-    EXPECT_EQ(top->ALUSrcB, 1);
-    EXPECT_EQ(top->ResultSrc, 1);
-    EXPECT_EQ(top->Branch, 0);
-    EXPECT_EQ(top->Jump, 0);
+TEST_F(CU_Testbench, LoadInstruction) {
+    top->op = 0b0000011;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b000; //do i need this line mentioned
+    top->funct7_5 = 0b0; //do i need this line explicitily mentioned
+    top->eval();
 
+    EXPECTED_EQ(top->ALUctrl = 0b0000);
+    EXPECTED_EQ(top->ALUSrcB = 0b1);
+    EXPECTED_EQ(top->ImmSrc = 0b010);
+    EXPECTED_EQ(top->MemWrite = 0b1);
 
-    // Test SW
-    setInputs(b0000011, b000, b0, b0, b0);
-    EXPECT_EQ(top->ALUctrl, 0b0000);
-    EXPECT_EQ(top->RegWrite, 0);
-    EXPECT_EQ(top->ImmSrc, 0b010);
-    EXPECT_EQ(top->MemWrite, 0);
-    EXPECT_EQ(top->ALUSrcA, 0);
-    EXPECT_EQ(top->ALUSrcB, 1);
-    EXPECT_EQ(top->ResultSrc, 0);
-    EXPECT_EQ(top->Branch, 0);
-    EXPECT_EQ(top->Jump, 0);
 }
 
-// Test for Jump instructions
-TEST_F(CU_Testbench, JumpInstructions) {
-    // Test JAL
-    setInputs(0b1101111);
-    EXPECT_EQ(top->ALUctrl, 0b0010);
-    EXPECT_EQ(top->RegWrite, 1);
-    EXPECT_EQ(top->ImmSrc, 1);
-    EXPECT_EQ(top->MemWrite, 1);
-    EXPECT_EQ(top->ALUSrcA, 1);
-    EXPECT_EQ(top->ALUSrcB, 1);
-    EXPECT_EQ(top->ResultSrc, 1);
-    EXPECT_EQ(top->Branch, 1);
-    EXPECT_EQ(top->Jump, 1);
+
+TEST_F(CU_Testbench, StoreInstruction){
+    top->op = 0b0100011;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b000; //do i need this line mentioned
+    top->funct7_5 = 0b0; //do i need this line explicitily mentioned
+    top->eval();
+
+    EXPECTED_EQ(top->ALUctrl = 0b0000);
+    EXPECTED_EQ(top->ALUSrcB = 0b1);
+    EXPECTED_EQ(top->ImmSrc = 0b010);
+    EXPECTED_EQ(top->MemWrite = 0b1);
 }
 
-    // Test JALR
-    setInputs(0b1100111);
-    EXPECT_EQ(top->ALUctrl, 0b0010);
-    EXPECT_EQ(top->RegWrite, 1);
-    EXPECT_EQ(top->ImmSrc, 1);
-    EXPECT_EQ(top->MemWrite, 1);
-    EXPECT_EQ(top->ALUSrcA, 1);
-    EXPECT_EQ(top->ALUSrcB, 1);
-    EXPECT_EQ(top->ResultSrc, 1);
-    EXPECT_EQ(top->Branch, 1);
-    EXPECT_EQ(top->Jump, 1);
+TEST_F(CU_Testbench, LUI){
+
+    top->op = 0b0110111;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b000; //do i need this line mentioned
+    top->funct7_5 = 0b0; //do i need this line explicitily mentioned
+    top->eval();
+
+    EXPECTED_EQ(top->ALUctrl = 0b1011);
+    EXPECTED_EQ(top->ALUSrcB = 0b1);
+    EXPECTED_EQ(top->ImmSrc = 0b100);
+    EXPECTED_EQ(top->RegWrite = 0b1);
 }
 
-// Test for Flush and Stall behavior
-TEST_F(CU_Testbench, FlushAndStallBehavior) {
-    // Test with Flush
+TEST_F(CU_Testbench, AUIPC){
+
+    top->op = 0b0010111;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b000; //do i need this line mentioned
+    top->funct7_5 = 0b0; //do i need this line explicitily mentioned
+    top->eval();
+
+    EXPECTED_EQ(top->ALUctrl = 0b1011);
+    EXPECTED_EQ(top->ALUSrcB = 0b1);
+    EXPECTED_EQ(top->ALUSrcA = 0b1);
+    EXPECTED_EQ(top->ImmSrc = 0b100);
+    EXPECTED_EQ(top->RegWrite = 0b1);
+}
+
+TEST_F(CU_Testbench, JAL) {
+
+    top->op = 0b1101111;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b000; //do i need this line mentioned
+    top->funct7_5 = 0b0; //do i need this line explicitily mentioned
+    top->eval();
+
+    EXPECTED_EQ(top->ALUSrcB = 0b1);
+    EXPECTED_EQ(top->ALUSrcA = 0b1);
+    EXPECTED_EQ(top->ImmSrc = 0b101);
+    EXPECTED_EQ(top->ResultSrc = 0b10);
+    EXPECTED_EQ(top->Jump = 0b1);
+}
+
+TEST_F(CU_Testbench, JALR){
+
+    top->op = 0b1100111;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b000; //do i need this line mentioned
+    top->funct7_5 = 0b0; //do i need this line explicitily mentioned
+    top->eval();
+
+    EXPECTED_EQ(top->ALUSrcB = 0b1);
+    EXPECTED_EQ(top->ALUSrcA = 0b0);
+    EXPECTED_EQ(top->ResultSrc = 0b10);
+}
+
+TEST_F(CU_Testbench, B_type){
+
+    top->op = 0b1100011;
+    top->Stall = 0b0;
+    top->Flush = 0b0;
+    top->funct3 = 0b000; //do i need this line mentioned
+    top->funct7_5 = 0b0; //do i need this line explicitily mentioned
+    top->eval();
+
+    EXPECTED_EQ(top->Branch = 0b1);
+    EXPECTED_EQ(top->ALUSrcA = 0b1);
+    EXPECTED_EQ(top->ALUSrcB = 0b1);
+    EXPECTED_EQ(top->ImmSrc = 0b011);
+}
+
+// " Test for Flush and Stall behavior
+/* TEST_F(CU_Testbench, FlushAndStallBehavior) {
+    /// Test with Flush
     top->Flush = 1;
     setInputs(0b000);
     EXPECT_EQ(top->ALUctrl, 0b0010);
@@ -353,5 +410,25 @@ TEST_F(CU_Testbench, FlushAndStallBehavior) {
     EXPECT_EQ(top->ALUSrcB, 1);
     EXPECT_EQ(top->ResultSrc, 1);
     EXPECT_EQ(top->Branch, 1);
-    EXPECT_EQ(top->Jump, 1);
-}
+    EXPECT_EQ(top->Jump, 1); 
+} */
+
+int main(int argc, char **argv)
+{
+    top = new Vdut;
+    tfp = new VerilatedVcdC;
+
+    Verilated::traceEverOn(true);
+    top->trace(tfp, 99);
+    tfp->open("waveform.vcd");
+
+    testing::InitGoogleTest(&argc, argv);
+    auto res = RUN_ALL_TESTS();
+
+    top->final();
+    tfp->close();
+
+    delete top;
+    delete tfp;
+
+    

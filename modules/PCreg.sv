@@ -3,7 +3,7 @@ module PCreg (
     input logic [31:0]          next_PC,        //next program counter value
     input logic                 rst,            //rst
     input logic                 clk,            //clock signal
-    input logic                 Stall,
+    input logic                 stall_in,
     output logic [31:0]         PC              //output current PC stored in reg
 );
 
@@ -19,7 +19,7 @@ always_ff @(posedge clk or posedge rst)
         sreg <= 32'b0;                          // keep PC at 0 for one cycle
         hold <= 1'b0;                     // clear the hold_reset flag
     end
-    else if (!Stall)
+    else if (!stall_in)
         sreg <= next_PC;                      //load next value when not Stall 
     
 

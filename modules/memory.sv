@@ -16,7 +16,7 @@ module memory(
     output logic [31:0]         ReadDataW,  
     output logic [4:0]          RdW, 
     output logic [31:0]         inc_PCW, 
-    output logic                stall, 
+    output logic                stall_cache, 
     output logic                hit
 );
 
@@ -46,6 +46,7 @@ ff4 MW_FF(
     .ReadDataM                  (ReadDataM),
     .RdM                        (RdM),
     .inc_PCM                    (inc_PCM),
+    .stall_cache                (stall_cache),
     .RegWriteW                  (RegWriteW),
     .ResultSrcW                 (ResultSrcW),
     .ALUoutW                    (ALUoutW),
@@ -64,7 +65,7 @@ setascache two_way_cache (
     .rst                        (rst),
     .funct3                     (funct3M),
     .Read                       (ResultSrcM[0]),
-    .stall                      (stall),
+    .stall_cache                (stall_cache),
     .hit                        (hit),    
     .DATA_OUT                   (ReadDataM),
     .WB_DATA                    (WB_DATA),
