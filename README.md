@@ -89,6 +89,7 @@ See the following videos, for the F1 program, and the 4 waveform PDF programs.
 **Gaussian**
 
 **Sine**
+https://github.com/user-attachments/assets/82db8f81-3c06-4cf6-a02c-94502efaebdc
 
 **Triangle**
 
