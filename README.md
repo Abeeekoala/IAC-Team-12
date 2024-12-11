@@ -29,7 +29,7 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 | **Data Memory**         |                 |               | *                 |             |
 | **Datapath**            |                 |               | *                 | *           |
 | **Top Level Assembly**  | *               |               | *                 | *           |
-| **Unit Tests**          | *               |               |                   | *           |
+| **Unit Tests**          |                 |               |                   | *           |
 | **Testbench & debugging**|                |               |                   | *           |              
 | **F1.s**                | *               |               |                   | *           |
 
