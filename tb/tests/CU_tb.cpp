@@ -222,11 +222,11 @@ TEST_F(CU_Testbench, SRLI){
     top->op = 0b010011;
     top->stall_in = 0b0;
     top->Flush = 0b0;
-    top->funct3 = 0b000;
+    top->funct3 = 0b101;
     top->funct7_5 = 0b0; 
     top->eval();
 
-    EXPECT_EQ(top->ALUctrl, 0b1000);
+    EXPECT_EQ(top->ALUctrl, 0b0110);
     EXPECT_EQ(top->ImmSrc, 0b001);
     EXPECT_EQ(top->RegWrite, 0b1);
     EXPECT_EQ(top->ALUSrcB, 0b1);
@@ -237,11 +237,11 @@ TEST_F(CU_Testbench, SRAI){
     top->op = 0b010011;
     top->stall_in = 0b0;
     top->Flush = 0b0;
-    top->funct3 = 0b000;
+    top->funct3 = 0b101;
     top->funct7_5 = 0b1; 
     top->eval();
 
-    EXPECT_EQ(top->ALUctrl, 0b0110);
+    EXPECT_EQ(top->ALUctrl, 0b1000);
     EXPECT_EQ(top->ImmSrc, 0b001);
     EXPECT_EQ(top->RegWrite, 0b1);
     EXPECT_EQ(top->ALUSrcB, 0b1);
@@ -266,7 +266,7 @@ TEST_F(CU_Testbench, SLTIU){
     top->op = 0b010011;
     top->stall_in = 0b0;
     top->Flush = 0b0;
-    top->funct3 = 0b000;
+    top->funct3 = 0b011;
     top->funct7_5 = 0b0; //do i need this line explicitily mentioned
     top->eval();
 
@@ -281,24 +281,18 @@ TEST_F(CU_Testbench, LoadInstruction) {
     top->op = 0b0000011;
     top->stall_in = 0b0;
     top->Flush = 0b0;
-    top->funct3 = 0b000; //do i need this line mentioned
-    top->funct7_5 = 0b0; //do i need this line explicitily mentioned
     top->eval();
 
     EXPECT_EQ(top->ALUctrl, 0b0000);
     EXPECT_EQ(top->ALUSrcB, 0b1);
-    EXPECT_EQ(top->ImmSrc, 0b010);
-    EXPECT_EQ(top->MemWrite, 0b1);
+    EXPECT_EQ(top->ImmSrc, 0b000);
 
 }
-
 
 TEST_F(CU_Testbench, StoreInstruction){
     top->op = 0b0100011;
     top->stall_in = 0b0;
     top->Flush = 0b0;
-    top->funct3 = 0b000; //do i need this line mentioned
-    top->funct7_5 = 0b0; //do i need this line explicitily mentioned
     top->eval();
 
     EXPECT_EQ(top->ALUctrl, 0b0000);
