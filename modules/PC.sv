@@ -31,4 +31,10 @@ PCreg PCreg(
     .PC         (PC_out)
 );
 
+branchprediction BPU(
+    .clk        (clk),
+    .rst        (rst),
+    .
+)
+
 endmodule

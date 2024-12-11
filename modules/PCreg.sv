@@ -1,9 +1,11 @@
 //let new PC instruction be stored within registers and be implemented within next clock cycle
 module PCreg (
     input logic [31:0]          next_PC,        //next program counter value
+    input logic [31:0]          corrected_PC    //correct PC after misprediction
     input logic                 rst,            //rst
     input logic                 clk,            //clock signal
     input logic                 Stall,
+    input logic                 Flush,
     output logic [31:0]         PC              //output current PC stored in reg
 );
 
