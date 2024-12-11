@@ -88,8 +88,8 @@ setascacheL1state L1 (
     .L2_writeback               (L2_writeback),
     .L2_WB_DATA                 (L2_WB_DATA),
     .L2_WB_ADDR                 (L2_WB_ADDR),
-    .Read                       () // ???  idk abraham much love pls fix :)d
-);
+    .Read                       (ResultSrcM)
+    );
 
 setascacheL2 L2 (
     .clk                        (clk),
