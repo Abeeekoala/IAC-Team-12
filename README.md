@@ -64,14 +64,9 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 
 The CPU diagrams as seen in the following document were designed by Abraham.
 
-Note that as team members all frequently met up together, the above table and commits do not accurately represent the individual contribution of team members as:
-
- - When working together, pushes were often committed from one laptop to avoid issues with git, and to have tests and diagrams open on others. As such, some commits are a combined effort of 2 or more members
-- Some commits may be small mistakes which have taken hours to debug, as a combined effort of 2 or more team members, especially when it came to implementation
-- Certain commits were overwritten by members having to upload a new file in its place due to issues with Git
-
-Note, the diagrams of the CPU in this document were designed by Abraham.
-
+It is to be noted that when looking at the commit history:
+- Shreeya had an issue with her github where when she commited she came up as root - all root commits belong to Shreeya.
+- Charolette had accidentally contributed from multiple accounts - there are two accounts from which Charolette commited not just one.
 
 For Lab 4 information, see [Lab_4](./Specifications//Lab_4.md).
 
