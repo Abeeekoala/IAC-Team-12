@@ -8,7 +8,7 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 
 | Name   | Personal Statements |    
 |------------|-----------------|
-| Abraham Lin - Git Master | add link |      
+| Abraham Lin - Repo Master | add link |      
 | Charlotte Maxwell | add link|
 | Shravan Kumar     |add link |
 | Shreeya Agarwal   |add link |
