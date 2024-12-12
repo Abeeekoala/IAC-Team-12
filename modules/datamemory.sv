@@ -11,6 +11,12 @@ module datamemory #(
     output logic [DATA_WIDTH-1:0] RD    // Data read from memory
 );
 
+
+    typedef enum {IDLE, MMIO_requested, MMIO_recieved} MMIO_state;
+    MMIO_state current_state, next_state;
+    logic MMIO_access;
+    assign MMIO_access = (A == 32'h000000FC);
+
     // Memory array: 2^17 locations 0x00000000 to 0x0001FFFF, each MEM_WIDTH bits wide
     logic [MEM_WIDTH-1:0] mem [0:2**17-1];
 
@@ -23,11 +29,18 @@ module datamemory #(
         $display("mem[3] = %h", mem[32'h00010003]);
     end
 
-    // Read logic for load instructions
     always_comb begin
-        if (A == 32'h000000FC) begin
-            // MMIO read from trigger address
-            RD = {31'b0, trigger};  // Return trigger in LSB
+        //MMIO FSM next_state logic
+        case(current_state)
+            IDLE: next_state = MMIO_access ? MMIO_requested : IDLE;
+            MMIO_requested: next_state = trigger ? MMIO_recieved : MMIO_requested;
+            MMIO_recieved: next_state = MMIO_access ? IDLE : MMIO_recieved;
+        endcase
+
+        // Read logic for load instructions
+        RD = '0;
+        if (MMIO_access && (current_state == MMIO_recieved)) begin
+            RD = 32'h00000001;
         end 
         else begin
             // Regular memory read 
@@ -59,6 +72,8 @@ module datamemory #(
                 end
             endcase
         end
+        // MMIO_FSM state transition logic
+        current_state <= next_state;
     end
 
 endmodule
