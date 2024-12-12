@@ -21,13 +21,12 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 |-------------------------|-----------------|---------------|-------------------|-------------|
 | **PC**                  | *               | *             |                   | *           |
 | **ALU**                 |                 | *             | *                 | *           |
-| **Register File**       | *               |               |                   |             |
+| **Register File**       | *               |               | *                 |             |
 | **Instruction Memory**  |                 | *             |                   |             |
 | **Control Unit**        |                 | *             |                   | *           |
 | **Sign Extend**         | *               | *             |                   | *           |
 | **Data Path**           |                 |               | *                 | *           |
 | **Data Memory**         |                 |               | *                 |             |
-| **Datapath**            |                 |               | *                 | *           |
 | **Top Level Assembly**  | *               |               | *                 | *           |
 | **Unit Tests**          |                 |               |                   | *           |
 | **Testbench & debugging**|                |               |                   | *           |              
