@@ -21,10 +21,14 @@ For the DataMemory module, I implemented the logic for handling Load and Store i
 datapath module which acted as a part of top.sv to help implement the overall logic of the processor.
 
 ## Cache: 
-
+### 2-way set
 I began designing a Direct-Mapped Cache module but shifted my focus to a Two-Way Set-Associative Cache to prioritize its implementation. My design was guided by class lecture notes and the recommended textbook. Initially, I instantiated DataMemory directly within the cache file, but this was later refined by creating a dedicated Memory Top module to house all memory components by Shreeya.
+![WhatsApp Image 2024-12-06 at 13 52 31_d64e2fe9](https://github.com/user-attachments/assets/119e061b-1ee0-435e-a7f7-713fa51674af)
+### L1 L2
 To improve performance and align with hierarchical memory design principles, I started the development of a bigger L2 cache. This cache was designed to exploit spatial locality and improve hit rates compared to the initial L1-only setup. Implementing this required creating a robust replacement and eviction policy to handle the writeback process from L1 to L2 and, ultimately, to main memory. This aspect of the design was particularly challenging and required adapting to statemachine logic to coherently implement the different states of the memory module.
-Below my designs for both set-associative and L1/L2 cache can be seen 
+
+![WhatsApp Image 2024-12-11 at 01 50 46_290c75ea](https://github.com/user-attachments/assets/9c0aeaf6-5a59-4e00-bb27-3db7623e392c)
+
 
 
 ## What I have learnt:
