@@ -78,11 +78,6 @@ For Lab 4 information, see [Lab_4](./Specifications//Lab_4.md).
 
 See the following videos, for the F1 program, and the 4 waveform PDF programs.
 
-| Dataset        | Gaussian |  Triangle |  Sine | Noisy | 
-|--------|------------|------------|------------|--------------|
-| **Graphs**|  ![alt text](./images/gaussian.png)         | ![alt text](triangle.png)          | ![alt text](./images/sine.png)          |![alt text](./images/noisy.png)
-| 
-
 ### Video Evidence
 
 **F1 Lights**
