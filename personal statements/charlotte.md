@@ -70,7 +70,7 @@ To improve performance and align with hierarchical memory design principles, I s
 
 ## What I have learnt:
 I found this project incredibly useful to apply what we had learnt from lectures and consolidate that knowledge, in fact I feel this helped me to fully grasp and understand the content. Before this project I had not worked collaboratively using GitHub before so there was a slight learning curve with branches git push and pull where my teammates were incredibly patient and helped explain everything to me. Our teamwork and communication was fantastic throughout the project and we set achievable timelines which we stuck to allowing us to explore further opportunities for learning and growth such as implementing the L1 L2 cache.
-Mistakes I have made:
+### Mistakes I have made:
 As I was primarily responsible for memory-related components, my learning and focus were concentrated in that area. If I were to undertake the project again, I would:
 -	Take on responsibilities related to pipelining, as I had limited involvement in this aspect.
 -	Contribute more to writing testbench code and debugging to increase my overall technical contributions.
