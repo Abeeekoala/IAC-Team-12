@@ -3,8 +3,8 @@ module ALU #(
 ) (
     input logic     [DATA_WIDTH-1:0]    ALUop1,
     input logic     [DATA_WIDTH-1:0]    ALUop2,
-    input logic     [3:0]               ALUctrl,
-    output logic    [DATA_WIDTH-1:0]    ALUout   
+    input logic     [7:0]               ALUctrl,
+    output logic    [DATA_WIDTH-1:0]    ALUout
 );
 
 always_comb begin
@@ -24,7 +24,65 @@ always_comb begin
         default: begin
             ALUout = 32'b0;
         end
-    endcase
+    endcase 
+
+    //zero = 1'b1;
+    //negative = 1'b0;
+
+    /* case (ALUctrl)
+        8'b0000_0000: begin
+            ALUoutA = ALUop1A + ALUop1B;   // ADD
+            ALUoutB = ALUop2A + ALUop2B;
+        end
+        8'b0001_0001: begin
+            ALUoutA = ALUop1A - ALUop1B;   // SUB
+            ALUoutB = ALUop2A - ALUop2B;
+        end
+        8'b0010_0010: begin
+            ALUoutA = ALUop1A & ALUop1B;   // AND
+            ALUoutB = ALUop2A & ALUop2B;
+        end
+        8'b0011_0011: begin
+            ALUoutA = ALUop1A | ALUop1B;   // OR
+            ALUoutB = ALUop2A | ALUop2B;
+        end
+        8'b0100_0100: begin
+            ALUoutA = ALUop1A ^ ALUop1B;   // XOR
+            ALUoutB = ALUop2A ^ ALUop2B;
+        end
+        8'b0101_0101: begin
+            ALUoutA = ALUop1A << ALUop1B[4:0];  // LSL
+            ALUoutB = ALUop2A << ALUop2B[4:0];
+        end
+        8'b0110_0110: begin
+            ALUoutA = ALUop1A >> ALUop1B[4:0];  // LSR
+            ALUoutB = ALUop2A >> ALUop2B[4:0];
+        end
+        8'b0111_0111: begin
+            ALUoutA = ALUop1A >>> ALUop1B[4:0];  // ASR for ALUop1A
+            ALUoutB = ALUop2A >>> ALUop2B[4:0];  // ASR for ALUop1B
+        end
+        8'b1000_1000: begin
+            ALUoutA = ALUop1A >>> ALUop1B[4:0];  // ASR for Imm
+            ALUoutB = ALUop2A >>> ALUop2B[4:0];  // ASR for Imm
+        end
+        8'b1001_1001: begin
+            ALUoutA = ($signed(ALUop1A) < $signed(ALUop1B)) ? 32'd1 : 32'd0; // SLT
+            ALUoutB = ($signed(ALUop2A) < $signed(ALUop2B)) ? 32'd1 : 32'd0;
+        end
+        8'b1010_1010: begin
+            ALUoutA = (ALUop1A < ALUop1B) ? 32'd1 : 32'd0; // SLTU
+            ALUoutB = (ALUop2A < ALUop2B) ? 32'd1 : 32'd0;
+        end
+        8'b1011_1011: begin
+            ALUoutA = ALUop1B;  // MOV
+            ALUoutB = ALUop2B;  // MOV
+        end
+        default: begin
+            ALUoutA = 32'b0;
+            ALUoutB = 32'b0;
+        end 
+    endcase */
 
 end
 
