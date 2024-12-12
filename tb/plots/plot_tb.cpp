@@ -10,7 +10,6 @@ int main(int argc, char **argv, char **env){
     int clk;
 
     Verilated::commandArgs(argc, argv);
-    Verilated::commandArgs(argc, argv);
     // init top verilog instance
     Vtop* top = new Vtop;
 
