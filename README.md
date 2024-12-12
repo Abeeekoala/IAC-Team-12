@@ -11,7 +11,7 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 | Abraham Lin - Repo Master | add link |      
 | Charlotte Maxwell | add link|
 | Shravan Kumar     |add link |
-| Shreeya Agarwal   |add link |
+| Shreeya Agarwal   |[shreeya.md](./personal%20statements/shreeya.md) |
 
 
 ### Team Contributions
@@ -61,11 +61,16 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 | **Unit Tests**                            | *               | *             |                   | *           |
 | **Testbench and debugging**               |                 |               |                   | *           |
 
+#### Going above and beyond
+Please refer to everyone's individual personal statements to read up on the extra work done by the team.
+
 The CPU diagrams as seen in the following document were designed by Abraham.
 
 It is to be noted that when looking at the commit history:
 - Shreeya had an issue with her github where when she commited she came up as root - all root commits belong to Shreeya.
-- Charolette had accidentally contributed from multiple accounts - there are two accounts from which Charolette commited not just one.
+- Charlotte had accidentally contributed from multiple accounts - there are two accounts from which Charlotte commited not just one.
+- Members often met up to discuss the project, and as a group we showed good team spirit in order to work together and help ensure everyone was on track with tasks, and that everyone learns from this project, and about all the components within it.
+- Some small looking changes may have taken hours to debug and correct; this is evident in the quality of our work
 
 For Lab 4 information, see [Lab_4](./Specifications//Lab_4.md).
 
@@ -75,7 +80,7 @@ See the following videos, for the F1 program, and the 4 waveform PDF programs.
 
 | Dataset        | Gaussian |  Triangle |  Sine | Noisy | 
 |--------|------------|------------|------------|--------------|
-| **Graphs**|  pic1         | pic2          | pic3          |pic4
+| **Graphs**|  ![alt text](./images/gaussian.png)         | ![alt text](triangle.png)          | ![alt text](./images/sine.png)          |![alt text](./images/noisy.png)
 | 
 
 ### Video Evidence
