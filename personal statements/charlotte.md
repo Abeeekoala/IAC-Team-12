@@ -1,0 +1,41 @@
+- Name: Charlotte Maxwell
+- CID : 02391539
+- Github username: SharlotteMaxswell + smthing else
+
+# Summary of Project Contributions:
+
+**1. Single Cycle Processor:**
+-	Developed the initial ALU(Lab4) and DataMemory modules.
+-	Implemented aspects of the control unit functionality, specifically the Load and Store instructions within the DataMemory module.
+-	Created the datapath, and it's constituent compoonents, and top-level file containing the integration logic for the processor.
+
+ **2.	Cache Design:**
+- Initiated the design of a Direct-Mapped Cache module.
+- Designed and implemented a Two-Way Set-Associative Cache.
+- Created a hierarchical memory system by developing L1 and L2 cache modules, incorporating spatial locality logic in the L2 cache aiming to improve the hit rate.
+Contributions:
+
+## Single Cycle:
+In the single-cycle processor design, I focused on memory handling and memory instructions. My contributions included building the ALU in an early lab assignment (Lab 4). Initially, the ALU had limited functionality but was later expanded by Shravan to support the full RISC-V instruction set.
+For the DataMemory module, I implemented the logic for handling Load and Store instructions by passing the func3 control signal into the module. Initially, I incorrectly attempted to compute the memory address within the module itself. After recognizing this issue, I adjusted the design to accept a pre-computed memory address (A) as input, streamlining the module’s operation. I also created the
+datapath module which acted as a part of top.sv to help implement the overall logic of the processor.
+
+## Cache: 
+
+I began designing a Direct-Mapped Cache module but shifted my focus to a Two-Way Set-Associative Cache to prioritize its implementation. My design was guided by class lecture notes and the recommended textbook. Initially, I instantiated DataMemory directly within the cache file, but this was later refined by creating a dedicated Memory Top module to house all memory components by Shreeya.
+To improve performance and align with hierarchical memory design principles, I started the development of a bigger L2 cache. This cache was designed to exploit spatial locality and improve hit rates compared to the initial L1-only setup. Implementing this required creating a robust replacement and eviction policy to handle the writeback process from L1 to L2 and, ultimately, to main memory. This aspect of the design was particularly challenging and required adapting to statemachine logic to coherently implement the different states of the memory module.
+Below my designs for both set-associative and L1/L2 cache can be seen 
+
+
+## What I have learnt:
+I found this project incredibly useful to apply what we had learnt from lectures and consolidate that knowledge, in fact I feel this helped me to fully grasp and understand the content. Before this project I had not worked collaboratively using GitHub before so there was a slight learning curve with branches git push and pull where my teammates were incredibly patient and helped explain everything to me. Our teamwork and communication was fantastic throughout the project and we set achievable timelines which we stuck to allowing us to explore further opportunities for learning and growth such as implementing the L1 L2 cache.
+Mistakes I have made:
+As I was primarily responsible for memory-related components, my learning and focus were concentrated in that area. If I were to undertake the project again, I would:
+-	Take on responsibilities related to pipelining, as I had limited involvement in this aspect.
+-	Contribute more to writing testbench code and debugging to increase my overall technical contributions.
+
+Overall, I believe we worked effectively as a team and successfully achieved our project goals. While some modules were challenging to work on collaboratively, any imbalance in workload was quickly addressed, ensuring consistent progress.
+
+
+
+
