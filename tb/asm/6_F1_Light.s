@@ -5,8 +5,8 @@ main:
     li s0, 1                    # s0 store LFSR-7 value
 
     # Wait for trigger to start
-trigger_wait:
     li t0, 0x00000FC            # MMIO address of trigger input
+trigger_wait:
     lw x11, 0(t0)               # Load trigger value into x11 (a1)
     beq x11, zero, lfsr_continue 
 
