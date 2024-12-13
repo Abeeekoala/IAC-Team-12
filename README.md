@@ -17,7 +17,7 @@ This image outlines the followin acrhitecture.
 
 This could mainly follow our single cycle CPU design with additional modifications, as outlined in Shreeya's personal statement.
 
-## Simulatoin and Testing
+## Simulation and Testing
 
 Due to time constraints, we weren't able to fully implement and test this model. Furture work will ensure on rigorous simulation and testing to see if we achieved our desired perfromance and improvements.
 
