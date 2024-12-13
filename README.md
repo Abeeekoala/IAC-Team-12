@@ -6,12 +6,12 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 
 ### Team 12 members:
 
-| Name   | Personal Statements |    
-|------------|-----------------|
-| Abraham Lin - Repo Master | ADD LINK |      
-| Charlotte Maxwell |[charlotte.md](./personal%20statements/charlotte.md)|
-| Shravan Kumar     |[shravan_kumar.md](./personal%20statements/shravan_kumar.md) |
-| Shreeya Agarwal   |[shreeya.md](./personal%20statements/shreeya.md) |
+| Name   | Personal Statements | F1 Score (ms) |   
+|------------|-----------------|---------------|
+| Abraham Lin - Repo Master | ADD LINK | 162 |   
+| Charlotte Maxwell |[charlotte.md](./personal%20statements/charlotte.md)| 207 |
+| Shravan Kumar     |[shravan_kumar.md](./personal%20statements/shravan_kumar.md) | 304 |
+| Shreeya Agarwal   |[shreeya.md](./personal%20statements/shreeya.md) | 277 | 
 
 
 ### Team Contributions
