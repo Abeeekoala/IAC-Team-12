@@ -13,6 +13,7 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 | Shravan Kumar     |add link |
 | Shreeya Agarwal   |add link |
 
+The overall CPU (single-cycle / pipelined) was designed by Abraham.
 
 ### Team Contributions
 
@@ -20,16 +21,17 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 | Component               | Shreeya Agarwal | Shravan Kumar | Charlotte Maxwell | Abraham Lin |
 |-------------------------|-----------------|---------------|-------------------|-------------|
 | **PC**                  | *               | *             | *                 | *           |
-| **ALU**                 |                 |               |                   | *           |
 | **Register File**       | *               |               |                   |             |
 | **Instruction Memory**  |                 | *             |                   |             |
 | **Control Unit**        |                 | *             |                   |             |
 | **Sign Extend**         | *               |               |                   | *           |
 | **Data Path**           |                 | *             | *                 | *           |
+| **ALU**                 |                 |               |                   | *           |
+| **Comparator**          |                 |               |                   | *           |
 | **Data Memory**         |                 |               | *                 |             |
 | **Datapath**            |                 | *             | *                 | *           |
 | **Top Level Assembly**  | *               | *             | *                 | *           |
-| **Testbenches**         |                 |               |                   | *           |
+| **Testbenches & Debug** |                 |               |                   | *           |
 | **F1.s**                | *               |               |                   | *           |
 
 ---
@@ -48,7 +50,7 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 | **Memory Implementation**     |                 | *             |                   |             |
 | **WriteBack Implementation**  |                 | *             |                   |             |
 | **Top Implementation**        |                 | *             |                   | *           |
-| **Testbench**                 |                 |               |                   | *           |
+| **Testbench  & Debug**        |                 |               |                   | *           |
 
 ---
 
@@ -105,7 +107,7 @@ The textbook and lecture slides recommended to use the following diagram:
 
 We adapted this to the following diagram. The main changes made was the addition of a comparator, and the inputs to the following modules (insert) to implement (insert the following changes)
 
-![alt text](images/pipelinedesign.jpg)
+![alt text](images/RISCVsingle_cycle_final.png)
 
 Following the project brief after lab 4, the main requirements we had were:
 
