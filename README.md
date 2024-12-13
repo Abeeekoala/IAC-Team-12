@@ -2,6 +2,10 @@
 
 ## Introduction
 This repo contains our fully verified RISC-V, full 32i base instruction compatible CPU with pipelining and cache.
+- `main` contains the verified Pipelined CPU with 2-way set associated Cache.
+- `SingleCycle` contains the verified single-cycle CPU.
+- `Pipelined` contains the verified Pipelined CPU with hazard unit.
+- `Pipelinedw/L1L2`, `Superscalar`, and `Branch-prediction` are still works in progress.
 
 ### Table of Contents
  - The Team
@@ -143,7 +147,7 @@ The textbook and lecture slides recommended to use the following diagram:
 
 Following the project brief after lab 4, the main requirements we had were:
 
- - Changes in the control unit to implement all the instructions in the control unit (e.g. JAL, Load, Store)
+ - Changes in the control unit to implement all the instructions for the RISC-V 32I instruction set (e.g. JAL, Load, Store)
  - Determining the machine code to implement the F1 light cycle
  - Adding a Data Memory and a Multiplexor, and the logic for adding
 
@@ -242,13 +246,17 @@ This code generates control signals for a RISC-V processor based on the instruct
 
  ### Simulation and Testing
 
- For our single cycle, we wrote unit testbenches to ensure all the modules were working accurately, and to isolate errors for easier debugging.
+ For our single cycle, we wrote unit tests to ensure the modules worked accurately and to isolate errors for easier debugging.
 
+ To run the individual unit test, follow these commands
+ ```bash
+ git checkout SingleCycle
+ cd tb
+ bash -x ./doit.sh ./tests/<testbench_to_run> #Forexample ./tests/sign_ext_tb.cpp
+```
  This allowed us to check the expected behaviour of each control/data path signal in a module.
 
- The definition of the feedback can be found in the `doit.sh` file. 
-
- The bash scripts (what are they called? compile and doit?) help compile and assemble the `c` and `asm` tests in the testbench. (add any extra details)
+ To run the test for single cycle
 
  # Pipelined Version
 
