@@ -23,9 +23,9 @@ This repo contains our fully verified RISC-V, full 32i base instruction compatib
 
 ### Team 12 members:
 
-| Name   | Personal Statements | F1 Score (ms) |   
+| Name   | Personal Statements | F1 High Score (ms) |   
 |------------|-----------------|---------------|
-| Abraham Lin - Repo Master | ADD LINK | 162 |   
+| Abraham Lin - Repo Master | [Abraham.md](./personal%20statements/Abraham.md) | 162 |   
 | Charlotte Maxwell |[charlotte.md](./personal%20statements/charlotte.md)| 207 |
 | Shravan Kumar     |[shravan_kumar.md](./personal%20statements/shravan_kumar.md) | 304 |
 | Shreeya Agarwal   |[shreeya.md](./personal%20statements/shreeya.md) | 277 | 
@@ -107,6 +107,8 @@ See the following videos, for the F1 program, and the 4 waveform PDF programs.
 ### Video Evidence
 
 **F1 Lights**
+
+https://github.com/user-attachments/assets/a40a0c21-246a-42cc-8067-61821052536d
 
 **Gaussian**
 
