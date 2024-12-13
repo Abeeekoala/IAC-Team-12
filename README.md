@@ -63,14 +63,13 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 
 #### Going above and beyond
 Please refer to everyone's individual personal statements to read up on the extra work done by the team.
-
 The CPU diagrams as seen in the following document were designed by Abraham.
 
 It is to be noted that when looking at the commit history:
 - Shreeya had an issue with her github where when she commited she came up as root - all root commits belong to Shreeya.
 - Charlotte had accidentally contributed from multiple accounts - there are two accounts from which Charlotte commited not just one.
 - Members often met up to discuss the project, and as a group we showed good team spirit in order to work together and help ensure everyone was on track with tasks, and that everyone learns from this project, and about all the components within it.
-- Some small looking changes may have taken hours to debug and correct; this is evident in the quality of our work
+- Some small looking changes may have taken hours to debug and correct; this is evident in the quality of our work.
 
 For Lab 4 information, see [Lab_4](./Specifications//Lab_4.md).
 
@@ -116,7 +115,7 @@ The textbook and lecture slides recommended to use the following diagram:
 Following the project brief after lab 4, the main requirements we had were:
 
  - Changes in the control unit to implement all the instructions in the control unit (e.g. JAL, Load, Store)
- - coming up with the machine code to implement the F1 light cycle
+ - Determining the machine code to implement the F1 light cycle
  - Adding a Data Memory and a Multiplexor, and the logic for adding
 
  (add in any other relevant changes and sections on datamem/cu)
@@ -202,13 +201,7 @@ always_ff @(posedge clk) begin
 We see the memory writes are only performed if `WE` signal is active, and the `case` statement determines how to write data to the memory (`WD`) based on `funct3`.
 
 
- ### Control Unit
-
- **Control unit**:
- 
- ![alt text](images/image-2.png)
-
-**Instruction list implemented**:
+**Full RSICV 32I Instruction list implemented**
  ![alt text](images/image-3.png)
 
 The *CU* generates control signals based on:
