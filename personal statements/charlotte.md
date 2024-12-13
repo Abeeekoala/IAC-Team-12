@@ -50,12 +50,13 @@ For the DataMemory module, I implemented the logic for handling Load and Store i
     end
 ```
 Initially, I incorrectly attempted to compute the memory address within the module itself. After recognizing this issue, I adjusted the design to accept a pre-computed memory address (A) as input, streamlining the module’s operation. 
-I also created the datapath module which acted as a part of top.sv to help implement the overall logic of the processor.
+I also created the datapath module, containing the ALU ALU mux Datamemory and another Mux, which acted as a part of top.sv to help implement the overall logic of the processor whilst simplifying the logic in top.sv and increasing readabiltiy.
 
 ## Cache: 
 ### 2-way set
 I began designing a Direct-Mapped Cache module but shifted my focus to a Two-Way Set-Associative Cache to prioritize its implementation. My design was guided by class lecture notes and the recommended textbook. The most challanging part of this was dealing with Cache writeback logic and I found this quite confusing to get my head round and I eneded up drastically simplifying the datamemory module, this resulted in quite a complex cache file though as the instruction procesing which was previously handled in datamemory was now handled in cache. Initially, I instantiated DataMemory directly within the cache file, but this was later refined by creating a dedicated Memory Top module to house all memory components by Shreeya.
 ![WhatsApp Image 2024-12-06 at 13 52 31_d64e2fe9](https://github.com/user-attachments/assets/119e061b-1ee0-435e-a7f7-713fa51674af)
+This is the inital diagram which i designed to implement the cache logic. 
 ### L1 L2
 To improve performance and align with hierarchical memory design principles, I started the development of a bigger L2 cache. This cache was designed to exploit spatial locality and improve hit rates compared to the initial L1-only setup. Implementing this required creating a robust replacement and eviction policy to handle the writeback process from L1 to L2 and, ultimately, to main memory. This aspect of the design was particularly challenging and required adapting to statemachine logic to coherently implement the different states of the memory module.
 ```systemverilog     // State machine states
