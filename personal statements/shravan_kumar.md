@@ -1,25 +1,30 @@
-----
+---
+
 # Contents
 
 ---
 
-1. [[#Single Cycle Work]]
-	a) [[#Instruction Memory]]
-	b) [[#Sign Extend]]
-	c) [[#ALU]]
-	d) [[#Control Unit and Top Level]]
+1. [Single Cycle Work](#single-cycle-work)
 
-2. [[#Pipelined work]]
-	a) [[#Flip Flops]]
-	b) [[#Top Level]]
-	c) [[#Hazard Unit Implementation]]
+   a) [Instruction Memory](#instruction-memory)  
+   b) [Sign Extend](#sign-extend)  
+   c) [ALU](#alu)  
+   d) [Control Unit and Top Level](#control-unit-and-top-level)
 
-3. [[#Testing Work]]
-	a) [[#Hazard Unit Test]]
+2. [Pipelined Work](#pipelined-work)
 
-4. [[#Conclusion]]
+   a) [Flip Flops](#flip-flops)  
+   b) [Top Level](#top-level)  
+   c) [Hazard Unit Implementation](#hazard-unit-implementation)
+
+3. [Testing Work](#testing-work)
+
+   a) [Hazard Unit Test](#hazard-unit-test)
+
+4. [Conclusion](#conclusion)
 
 ---
+
 # Single Cycle Work
 
 ---
