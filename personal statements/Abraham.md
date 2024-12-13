@@ -498,7 +498,7 @@ obj_dir/Vtop
 ```
 To run this program, follow the following commands.
 ```bash
-git checkout Pipelinedw/Cache
+git checkout Pipelinedw/Cache # Can run on all verified branch
 cd tb/F1_Light
 bash -x ./doit_F1.sh
 ```
