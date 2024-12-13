@@ -126,7 +126,7 @@ For instance:
 
 - The PDF test consistently failed. Upon close investigation, I realized that the base address to load the `pdf_data` was not set correctly according to the memory map.
 - Before implementing the new `PCTarget` logic, I added a mux to select inputs between `rs1` or `PC` for `PCTarget`, which allowed the `JALR` instruction to behave as expected.
-- TestPDF can not pass until I realize that `RET` is actually attempting to write to `ZERO` and there should be no action for this. Yet, our regfile did not inpose this restriction. So this fix had been critical for us. (1 line = 3+ hours starring at the GTKWave).
+- The TestPDF case could not pass until I realized that RET was actually attempting to write to `ZERO`. There should have been no action for this, but our register file did not impose that restriction. Fixing this one line took more than three hours of staring at GTKWave.
 
 These are just two examples of the many errors and bugs I encountered during the project. Each issue required careful debugging, investigation, and iterative fixes to ensure the CPU functioned as expected. More examples of the bugs/ errors fixed can be found in this [commit](https://github.com/Abeeekoala/IAC-Team-12/commit/52ca8fb5fd7e75723d944415bbf97a599b7b1d56).
 
@@ -396,11 +396,30 @@ case (funct3)
     default: DATA_OUT = 32'b0;                        // Default case
 endcase
 ```
-This passed 7/9 test passed. The next main challenge was how to incorporate the `stall` signal from cache with the `stall` from hazard unit. This two type of `stall` are different; one is to stall only the fetching and decoding stage for data to be ready at writeback stage; the other is to stall the whole pipelined for fetching data in datamemory. I worked out the logic and sent the signal to approprate components. 
+This passed 7/9 test passed. The next main challenge was how to incorporate the `stall` signal from cache with the `stall` from hazard unit. This two types of `stall` are different; one is to stall only the fetching and decoding stage for data to be ready at writeback stage; the other is to stall the whole pipelined for fetching data in datamemory. I worked out the logic and sent the signal to approprate components. 
 
 Finally with the fix on `store` instructions, and added a register for fetch signal to prevent logic feedback and latch, all the tests passed.
-### Proof of Verified Pipelined CPU with Cache:
 
+## Unit Tests
+Unit tests for `Hazard unit` and `CU` are implemented I did some minor fix and verified them.
+- [CU_tb fix](https://github.com/Abeeekoala/IAC-Team-12/commit/9ef76f7cffe34e3bb2edc7e573a3a9d4eea9dfea)
+= [Hazard_unit_tb fix](https://github.com/Abeeekoala/IAC-Team-12/commit/2fac2326a419fa1496394db83d8b571071388a57)
+
+### Relevant Commits
+
+
+### Proof of Verified Pipelined CPU with Cache:
+![alt text](/IAC-Team-12/images/Pipelined_cache_tests_passed.png)
+
+ To reproduce the test results, follow these command:
+
+```bash
+git checkout Pipelinedw/Cache
+cd tb
+bash -x ./doit.sh
+```
+
+When executing the plotting program on this CPU, I realized that when there was cache miss the CPU will actually write a wrong value, `0`, to the desinated register. This did not show up in the test because it get overwrite the next cycle with correct data from datamemory. Yet I modify the logic for RegWrite when stall to prevent this unwanted write to `regfile`.
 
 ### Relevant Commits
 - [Cache debugging](https://github.com/Abeeekoala/IAC-Team-12/commit/d94de3b3e09da1618af6f9a4020221cad87739ba#diff-b2adac2aa9dda6c0ae891d38720759f014af7c02900145b9992541ff78bd4133)
@@ -408,4 +427,77 @@ Finally with the fix on `store` instructions, and added a register for fetch sig
 - [Fix byte-addressing for Pipelined](https://github.com/Abeeekoala/IAC-Team-12/commit/92804d6929bdb76c16136c05da8ab16c151c7e9f)
 - [Fix byte-addressing + 7/9 tests passed](https://github.com/Abeeekoala/IAC-Team-12/commit/f55ca295b494453c31b338cdc6d54e99bc4409e9#diff-b2adac2aa9dda6c0ae891d38720759f014af7c02900145b9992541ff78bd4133)
 - [Fetch register + 9/9 test passed](https://github.com/Abeeekoala/IAC-Team-12/commit/197c252a446eeaf2a0428517e251799679bae9f2#diff-b2adac2aa9dda6c0ae891d38720759f014af7c02900145b9992541ff78bd4133)
+- [Fix RegWrite logic when stall](https://github.com/Abeeekoala/IAC-Team-12/commit/e3db1ac755b862be06607e47d3e963c54a889a99)
 
+# F1 Light on Vbuddy
+As mentioned above `trigger` signal is nearly imporssible to be fired at the exact cycle we try to load the corresponding address. This was resolved by implement a MMIO FSM in datamemory. 
+The FSM has the state defined below.
+```SystemVerilog
+typedef enum {IDLE, MMIO_requested, MMIO_recieved} MMIO_state;
+```
+And the next state logic is determined by `MMIO_access`, meaning that the CPU requested a MMIO input, and `trigger`.
+```SystemVerilog
+always_comb begin
+    //MMIO FSM next_state logic
+    case(current_state)
+        IDLE: next_state = MMIO_access ? MMIO_requested : IDLE;
+        MMIO_requested: next_state = trigger ? MMIO_recieved : MMIO_requested;
+        MMIO_recieved: next_state = MMIO_access ? IDLE : MMIO_recieved;
+    endcase
+```
+In `F1_tb.cpp`, the reaction time of the user/player was obtained through `vbdElapsed()` and display in digits by `intToBCD()` function
+```cpp
+if (top->a0 == 0 && timing){
+    vbdInitWatch();
+    while (timing){
+        if (vbdFlag()){
+            time = intToBCD(vbdElapsed());
+            timing = 0;
+        } 
+    }
+    vbdHex(4, (int(time)>>16) & 0xF);
+    vbdHex(3, (int(time)>>8) & 0xF);
+    vbdHex(2, (int(time)>>4) & 0xF);
+    vbdHex(1, int(time) & 0xF);
+}
+```
+I also made the doit_F1.sh script to execute the program.
+```bash
+#!/bin/bash
+# This script display the pdf build from different signals
+# Usage: ./doit.sh signal_name
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
+RTL_FOLDER="$SCRIPT_DIR/../../modules"
+chmod +w "$SCRIPT_DIR"
+rm -rf obj_dir
+rm -f top.vcd
+cd $SCRIPT_DIR
+name="top"
+verilator   -Wall --trace \
+            -cc ${RTL_FOLDER}/top.sv \
+            --exe F1_tb.cpp \
+            -y ${RTL_FOLDER}
+# Create default empty file for data memory
+touch data.hex
+touch program.hex
+cp "$SCRIPT_DIR/F1_Light.hex" "$SCRIPT_DIR/program.hex"
+#build C++ project via make automatically generated by Verilator
+make -j -C obj_dir/ -f Vtop.mk Vtop
+#run executable simulation file
+obj_dir/Vtop
+```
+To run this program, follow the following commands.
+```bash
+git checkout Pipelinedw/Cache
+cd tb/F1_Light
+bash -x ./doit_F1.sh
+```
+### Relavent Commit
+- [MMIO FSM + F1 light on vbuddy](https://github.com/Abeeekoala/IAC-Team-12/commit/2e89862b8989782025f32211b6051a7f951e628d#diff-86fa51c0cb8f46be970cb7ec76d0e58aeafb3fa9223d0ebd0ad5722b51f0fbb7R6)
+
+# Reflections
+Throughout the project, I focused on designing, integrating, debugging, and creating testbenches for individual components as well as the overall top-level module. This experience was invaluable because it allowed me to see how my designs behaved in a practical setting, and it forced me to identify and correct flaws through rigorous verification and debugging processes. By overcoming these challenges, I not only deepened my understanding of various RISC-V implementations but also gained experience in building them in system verilog.
+
+If time had permitted, I would have liked to analyze the cache hit rate and compare performance against a hierarchical cache structure incorporating both L1 and L2 caches. Such an investigation could provide insights into performance improvements and further optimization opportunities.
+
+Additionally, I learned the importance of effective teamwork and how to distribute tasks among team members for efficient development. This project demonstrated that collaboration and clearly defined responsibilities can significantly improve both productivity and overall project quality.
