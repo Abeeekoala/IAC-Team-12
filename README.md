@@ -1,99 +1,11 @@
-# RISC-V RV32I Processor
+# Pipelined with L1 L2 Cache implementation 
 
 ## Introduction
-This repo contains our RISC-V CPU, for single cycle implementation, pipelined, and pipelined with cache. The CPU passes the test cases.
+This Repo contains our Pipelined RISC-V Processor with and L1 L2 implementation of cache instead of the set-associative cache.
 
+### This was mainly implemented by Charlotte with debugging by Abraham 
 
-### Team 12 members:
-
-| Name   | Personal Statements |    
-|------------|-----------------|
-| Abraham Lin - Git Master | add link |      
-| Charlotte Maxwell | add link|
-| Shravan Kumar     |add link |
-| Shreeya Agarwal   |add link |
-
-The overall CPU (single-cycle / pipelined) was designed by Abraham.
-
-### Team Contributions
-
-#### Single Cycle
-| Component               | Shreeya Agarwal | Shravan Kumar | Charlotte Maxwell | Abraham Lin |
-|-------------------------|-----------------|---------------|-------------------|-------------|
-| **PC**                  | *               | *             | *                 | *           |
-| **Register File**       | *               |               |                   |             |
-| **Instruction Memory**  |                 | *             |                   |             |
-| **Control Unit**        |                 | *             |                   |             |
-| **Sign Extend**         | *               |               |                   | *           |
-| **Data Path**           |                 | *             | *                 | *           |
-| **ALU**                 |                 |               |                   | *           |
-| **Comparator**          |                 |               |                   | *           |
-| **Data Memory**         |                 |               | *                 |             |
-| **Datapath**            |                 | *             | *                 | *           |
-| **Top Level Assembly**  | *               | *             | *                 | *           |
-| **Testbenches & Debug** |                 |               |                   | *           |
-| **F1.s**                | *               |               |                   | *           |
-
----
-
-#### Pipelining
-| Component                     | Shreeya Agarwal | Shravan Kumar | Charlotte Maxwell | Abraham Lin |
-|-------------------------      |-----------------|---------------|-------------------|-------------|
-| **FF1**                       | *               | *             |                   | *           |
-| **FF2**                       | *               | *             |                   | *           |
-| **FF3**                       | *               | *             |                   | *           |
-| **FF4**                       | *               | *             |                   |             |
-| **Hazard Unit**               | *               |               |                   | *           |
-| **Fetch Implementation**      |                 | *             |                   |             |
-| **Decode Implementation**     |                 | *             |                   |             |
-| **Execute Implementation**    |                 | *             |                   |             |
-| **Memory Implementation**     |                 | *             |                   |             |
-| **WriteBack Implementation**  |                 | *             |                   |             |
-| **Top Implementation**        |                 | *             |                   | *           |
-| **Testbench  & Debug**        |                 |               |                   | *           |
-
----
-
-#### Pipelining with Cache
-| Component                       | Shreeya Agarwal | Shravan Kumar | Charlotte Maxwell | Abraham Lin |
-|---------------------------------|-----------------|---------------|-------------------|-------------|
-| **Direct Mapped Cache**         |                 |               | *                 |             |
-| **2-Way Set Associative Cache** |                 |               | *                 | *           |
-
-Note that as team members all frequently met up together, the above table and commits do not accurately represent the individual contribution of team members as:
-
- - When working together, pushes were often committed from one laptop to avoid issues with git, and to have tests and diagrams open on others. As such, some commits are a combined effort of 2 or more members
-- Some commits may be small mistakes which have taken hours to debug, as a combined effort of 2 or more team members, especially when it came to implementation
-- Certain commits were overwritten by members having to upload a new file in its place due to issues with Git
-
-
-For Lab 4 information, see [Lab_4](./Specifications//Lab_4.md).
-
-### Evidence of a Working Processor
-
-See the following videos, for the F1 program, and the 4 waveform PDF programs.
-
-| Dataset        | Gaussian |  Triangle |  Sine | Noisy | 
-|--------|------------|------------|------------|--------------|
-| **Graphs**|  pic1         | pic2          | pic3          |pic4
-| 
-
-### Video Evidence
-
-**F1 Lights**
-
-**Gaussian**
-
-**Sine**
-
-**Triangle**
-
-**Noisy**
-
-=======
-
-
-# Single Cycle Version
+This was mainly implemented by Charlotte with debugging by Abraham 
 
 ## Introduction
 
@@ -101,41 +13,12 @@ Building up on lab 4, we implemented the single cycle version. The main challeng
 
 ## Design Specification
 
-The textbook and lecture slides recommended to use the following diagram: 
-
-![alt text](images/image.png)
-
-We adapted this to the following diagram. The main changes made was the addition of a comparator, and the inputs to the following modules (insert) to implement (insert the following changes)
-
-![alt text](images/RISCVsingle_cycle_final.png)
-
-Following the project brief after lab 4, the main requirements we had were:
-
- - Changes in the control unit to implement all the instructions
- - coming up with the machine code to implement the F1 light cycle
-
- (add in any other relevant changes and sections on datamem/cu)
+Using Hierarchical Design principals we de
 
  ### Data Memory
-
- ![alt text](images/image-1.png)
-
-The memory map shows that the data memory goes from 0x01000 to 0x1FFFF, so we needed 17 addresses leading to the initialisation of our data memory.
-
- ### Control Unit
-
- Control unit:
- ![alt text](images/image-2.png)
-
-Instruction list implemented:
- ![alt text](images/image-3.png)
+ 
+There were little changes to the data memory module as the writeback principal that we opted for meant that it functiojned the same as in the regular cache however the writeback signals were replaced by writeback signals from L2.
 
  ### Simulation and Testing
 
- For our single cycle, we wrote unit testbenches (link) to ensure all the modules were working accurately.
-
- (did we also use industry standard GTest?)
-
- This allowed us to check the expected behaviour of each control/data path signal in a module. (insert picture of it passing)
-
- This was all ran through a doit.sh file.
+ We did not have the time to fully test and implement this design so in terms of improvement this would definitely be the next step in improving our processor. 
