@@ -52,7 +52,7 @@ Building on the sign extend module from Lab 4, I expanded its logic to handle al
 |100     | U-type           |
 |101     | J-type           |
 
-### Relavent commits
+### Relevant commits
 - [Sign extend for all 32I instruction](https://github.com/Abeeekoala/IAC-Team-12/commit/877a310d032e2fc0b94aab24850477324624b92e#diff-a28e30ae4cad19732102578375f8939620ba125c881f050ec0501424f7a73b0aL16)
 ## Arithmetic Logic Unit / Comparator
 
@@ -74,7 +74,7 @@ always_comb begin
 end
 ```
 The above code snippet shows how the comparator handle comparison based on `funct3`.
-### Relavent commits
+### Relevant commits
 - [Added SLTI/SLTI U instructions; Comparison logic](https://github.com/Abeeekoala/IAC-Team-12/commit/62b34422980566354b90ddf21d19ce2b20ec6bbb#diff-73e85aef537eb0410e90d7b7ef538e7244f12d7d0bd9b8063e2d57ff2c80554b) 
 - [Comparator initial design](https://github.com/Abeeekoala/IAC-Team-12/commit/01dacff5090e9f0ca77a48c43ef18c4d8aeccb0a#diff-7beba9f39da0b99d0fee641d5dacb8625b8e9f476d9715df43c29c8b73c3b5f6)
 - [New Comparator logic with funct3 input](https://github.com/Abeeekoala/IAC-Team-12/commit/7296d792b20b9bce0a2376c0898651cc3a152e24#diff-7beba9f39da0b99d0fee641d5dacb8625b8e9f476d9715df43c29c8b73c3b5f6)
@@ -196,7 +196,7 @@ void waitForOutput(uint8_t currentState, uint8_t expectedNextState, int maxCycle
             << " after " << cycles << " cycles.";
     }
 ```
-This help me implement the test for F1 light ensuring neat and readibility.
+This helps me implement the test for F1 light ensuring neat and readability.
 ```cpp
 TEST_F(CpuTestbench, TestLightSequence) {
     // Run simulation with trigger signal
@@ -220,7 +220,7 @@ TEST_F(CpuTestbench, TestLightSequence) {
 }
 ```
 ### Unit Tests
-Unit tests for Single Cycle CPU includes `mux`, `PCreg`, and `sign_ext`. In `sign_extend_tb.cpp`, I tested all type of the instructions to make sure the outputs were desired and consistent with the specification of RISCV.
+Unit tests for Single Cycle CPU include `mux`, `PCreg`, and `sign_ext`. In `sign_extend_tb.cpp`, I tested all types of instructions to make sure the outputs were desired and consistent with the specification of RISCV.
 To run a particular testbench execute the following commands.
 ```bash
 git checkout SingleCycle
@@ -259,7 +259,7 @@ _loop3:                         # repeat
     addi    a1, a1, 1           #   incr 
     BNE     a1, a2, _loop3      # until end of pdf array
 ```
-With that we know that the next `a0` value will be the value we should plot on the Vbuddy. 205 is chosen because none of the values in the array calculated by the `build` will exceed 200.
+With that, we know that the next `a0` value will be the value we should plot on the Vbuddy. 205 is chosen because none of the values in the array calculated by the `build` will exceed 200.
 This led to the following logic inside `plot_tb.cpp`.
 ```cpp
 if (plot == 0 && top->a0 == 205)
@@ -306,7 +306,7 @@ In order to test it I made a test `0_no_hazard` by insert `nop` between instruct
 - [No Hazard Test](https://github.com/Abeeekoala/IAC-Team-12/commit/c01edbe9594b69afa7e35c4fee66c63945a2a546#diff-f8e1e8f7115869fc54e3b265957459888043164b8c6da0b34f86534904ae768f)
 
 ## Hazard Unit
-I helped to implement the logic for forwarding, stall, and flush logic in hazard unit. Initially I had the stall signal when the ALU inputs needs the output from the data memory. Yet later on when I am debuging, I realized that it will be too late to stall the pipeline. We need to stall it when that instruction is in the decode stage and the executing stage is a loading instruction. Therefore I change the `LoadM` input to `LoadE` and added the `Rs1D` and `Rs2D` inputs. 
+I helped to implement the logic for forwarding, stall, and flush logic in the hazard unit. Initially, I had the stall signal when the ALU inputs needed the output from the data memory. Yet later on, when I was debugging, I realized that it would be too late to stall the pipeline. We need to stall it when that instruction is in the decode stage and the executing stage is a loading instruction. Therefore I changed the `LoadM` input to `LoadE` and added the `Rs1D` and `Rs2D` inputs. 
 
 Also I added the logic for hazard unit to set `Flush` signal when there is a `rst` and not to forward the attempt to write into `ZERO`. An additional test was made to verified these changes.
 
@@ -321,7 +321,7 @@ Also I added the logic for hazard unit to set `Flush` signal when there is a `rs
 
  ![alt text](../images/Pipeline_Debugging.png)
 
- In the above example, The issue was that we were writing to the `regfile` on the posedge of `clk` and at the decode stage, it can't fetch the updated `regfile` value because it was only updated on the next cycle. Thus the solution was to write to `regfile` on the negedge. I did the same thing for every failed case.
+ In the above example, The issue was that we were writing to the `regfile` on the posedge of `clk` and at the decode stage, it couldn't fetch the updated `regfile` value because it was only updated on the next cycle. Thus the solution was to write to `regfile` on the negedge. I did the same thing for every failed case.
  
  ### Proof of Verified Pipelined CPU:
  ![alt text](../images/Pipelined_tests_passed.png)
@@ -356,9 +356,9 @@ always_ff @(posedge clk or posedge rst) begin
             end
         end
 ```
-This set the validity flags to `0` and reset the tags preventing wrongful hit and loading. Also, set the dirty bits to `0` to avoid wrong enviction and writeback. 
+This set the validity flags to `0` and reset the tags preventing wrongful hit and loading. Also, set the dirty bits to `0` to avoid wrong eviction and writeback. 
 
-I also added in the MMIO access for trigger input, moved the loading hit update for `LRU` flag to clocked logic to prevent clocked and combinaional dual assignment. 
+I also added in the MMIO access for trigger input, and moved the loading hit update for `LRU` flag to clocked logic to prevent clocked and combinational dual assignment. 
 
 ### Relavant Commits
 - [Writeback policy & handle `rst`](https://github.com/Abeeekoala/IAC-Team-12/commit/d1590e0b52b53423fc1ecac8238f01311c9dfa85#diff-b2adac2aa9dda6c0ae891d38720759f014af7c02900145b9992541ff78bd4133)
@@ -366,9 +366,9 @@ I also added in the MMIO access for trigger input, moved the loading hit update 
 
 ## Testbench & Debug for Pipelined CPU with 2-way set associative cache
 
-After some minor debugs across files, I came across the issue that our datamemory were not byte-addressed. Which will lead to wrong writeback and wrong loading address. So I changed all the datamemory on all the branches to byte-addressing, and reverified them. 
+After some minor debugs across files, I came across the issue that our datamemory were not byte-addressed. Which will lead to wrong writeback and wrong loading address. So I changed all the datamemory on all the branches to byte-addressing and reverified them. 
 
-With the byte-addressing data memory I modified the cache `ReadData` output.
+With the byte-addressing data memory, I modified the cache `ReadData` output.
 ```SystemVerilog
 case (funct3)
     3'b000: begin                                           // lb
@@ -407,7 +407,7 @@ case (funct3)
     default: DATA_OUT = 32'b0;                        // Default case
 endcase
 ```
-This passed 7/9 test passed. The next main challenge was how to incorporate the `stall` signal from cache with the `stall` from hazard unit. This two types of `stall` are different; one is to stall only the fetching and decoding stage for data to be ready at writeback stage; the other is to stall the whole pipelined for fetching data in datamemory. I worked out the logic and sent the signal to approprate components. 
+This passed 7/9 test passed. The next main challenge was how to incorporate the `stall` signal from cache with the `stall` from hazard unit. These two types of `stall` are different; one is to stall only the fetching and decoding stage for data to be ready at writeback stage; the other is to stall the whole pipeline for fetching data in data memory. I worked out the logic and sent the signal to approprate components. 
 
 Finally with the fix on `store` instructions, and added a register for fetch signal to prevent logic feedback and latch, all the tests passed.
 
@@ -421,7 +421,7 @@ Unit tests for `Hazard unit` and `CU` are implemented I did some minor fix and v
 ### Proof of Verified Pipelined CPU with Cache:
 ![alt text](../images/Pipelined_cache_tests_passed.png)
 
- To reproduce the test results, follow these command:
+ To reproduce the test results, follow these commands:
 
 ```bash
 git checkout Pipelinedw/Cache
@@ -445,7 +445,7 @@ The FSM has the state defined below.
 ```SystemVerilog
 typedef enum {IDLE, MMIO_requested, MMIO_recieved} MMIO_state;
 ```
-And the next state logic is determined by `MMIO_access`, meaning that the CPU requested a MMIO input, and `trigger`.
+And the next state logic is determined by `MMIO_access`, meaning that the CPU requested an MMIO input, and `trigger`.
 ```SystemVerilog
 always_comb begin
     //MMIO FSM next_state logic
@@ -455,7 +455,7 @@ always_comb begin
         MMIO_recieved: next_state = MMIO_access ? IDLE : MMIO_recieved;
     endcase
 ```
-In `F1_tb.cpp`, the reaction time of the user/player was obtained through `vbdElapsed()` and display in digits by `intToBCD()` function
+In `F1_tb.cpp`, the reaction time of the user/player was obtained through `vbdElapsed()` and displayed in digits by `intToBCD()` function
 ```cpp
 if (top->a0 == 0 && timing){
     vbdInitWatch();
@@ -502,11 +502,11 @@ git checkout Pipelinedw/Cache # Can run on all verified branch
 cd tb/F1_Light
 bash -x ./doit_F1.sh
 ```
-### Relavent Commit
+### Relevant Commit
 - [MMIO FSM + F1 light on vbuddy](https://github.com/Abeeekoala/IAC-Team-12/commit/2e89862b8989782025f32211b6051a7f951e628d#diff-86fa51c0cb8f46be970cb7ec76d0e58aeafb3fa9223d0ebd0ad5722b51f0fbb7R6)
 
 # Reflections
-Throughout the project, I focused on designing, integrating, debugging, and creating testbenches for individual components as well as the overall top-level module. This experience was invaluable because it allowed me to see how my designs behaved in a practical setting, and it forced me to identify and correct flaws through rigorous verification and debugging processes. By overcoming these challenges, I not only deepened my understanding of various RISC-V implementations but also gained experience in building them in system verilog.
+Throughout the project, I focused on designing, integrating, debugging, and creating testbenches for individual components as well as the overall top-level module. This experience was invaluable because it allowed me to see how my designs behaved in a practical setting, and it forced me to identify and correct flaws through rigorous verification and debugging processes. By overcoming these challenges, I not only deepened my understanding of various RISC-V implementations but also gained experience in building them in System Verilog.
 
 If time had permitted, I would have liked to analyze the cache hit rate and compare performance against a hierarchical cache structure incorporating both L1 and L2 caches. That was the reason behind outputting hit as a output for the `top`. Such an investigation could provide insights into performance improvements and further optimization opportunities.
 
