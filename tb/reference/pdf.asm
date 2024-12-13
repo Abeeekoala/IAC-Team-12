@@ -51,19 +51,20 @@ bfc0005c:	0ff00613          	addi	a2,zero,255
 
 bfc00060 <_loop3> (File Offset: 0x1060):
 _loop3():
-bfc00060:	1005c503          	lbu	a0,256(a1) # 10100 <base_data+0x100> (File Offset: 0xffffffff40411100)
-bfc00064:	00158593          	addi	a1,a1,1
-bfc00068:	fec59ce3          	bne	a1,a2,bfc00060 <_loop3> (File Offset: 0x1060)
-bfc0006c:	00008067          	jalr	zero,0(ra)
+bfc00060:	0cd00513          	addi	a0,zero,205
+bfc00064:	1005c503          	lbu	a0,256(a1) # 10100 <base_data+0x100> (File Offset: 0xffffffff40411100)
+bfc00068:	00158593          	addi	a1,a1,1
+bfc0006c:	fec59ae3          	bne	a1,a2,bfc00060 <_loop3> (File Offset: 0x1060)
+bfc00070:	00008067          	jalr	zero,0(ra)
 
 Disassembly of section .riscv.attributes:
 
-00000000 <.riscv.attributes> (File Offset: 0x1070):
+00000000 <.riscv.attributes> (File Offset: 0x1074):
    0:	1e41                	.2byte	0x1e41
    2:	0000                	.2byte	0x0
    4:	7200                	.2byte	0x7200
    6:	7369                	.2byte	0x7369
-   8:	01007663          	bgeu	zero,a6,14 <max_count-0xb4> (File Offset: 0x1084)
+   8:	01007663          	bgeu	zero,a6,14 <max_count-0xb4> (File Offset: 0x1088)
    c:	0014                	.2byte	0x14
    e:	0000                	.2byte	0x0
   10:	7205                	.2byte	0x7205

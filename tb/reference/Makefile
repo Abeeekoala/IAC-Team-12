@@ -1,6 +1,7 @@
 # Make file to assembly RISC-V assembly language program(s) in myprog folder
 #   ... relocate instruction to start at 0xBFC00000
 #   ... output hex file ready to be read into instruction memory
+SHELL := /bin/bash
 
 clean:
 	@rm -f *.hex *.asm *.out *.bin

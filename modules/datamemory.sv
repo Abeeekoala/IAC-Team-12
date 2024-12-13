@@ -1,17 +1,25 @@
 module datamemory #(
-    parameter DATA_WIDTH = 32
+    parameter DATA_WIDTH = 32,
+              MEM_WIDTH  = 8  
 ) (
-    input logic trigger,                // Input trigger (MMIO)
     input logic clk,                    // Clock signal
-    input logic WE,                     // Write enable for store instructions
-    input logic [DATA_WIDTH-1:0] A,     // Memory address (calculated by ALU)
-    input logic [DATA_WIDTH-1:0] WD,    // Data to write into memory
-    input logic [2:0] funct3,           // Instruction's funct3 field
-    output logic [DATA_WIDTH-1:0] RD    // Data read from memory
+    input logic trigger,
+    input logic fetch,                  // Fetch data from main memory
+    input logic writeback,              // Write-back from cache to main memory
+    input logic [DATA_WIDTH-1:0] A,     // Memory read address
+    input logic [DATA_WIDTH-1:0] WB_addr,
+    input logic [DATA_WIDTH-1:0] WB_DATA, // Data to write back to memory
+    output logic [DATA_WIDTH-1:0] RD    // Read data output
 );
 
-    // Memory array: 2^18 locations 0x00000000 to 0x0001FFFF, each DATA_WIDTH bits wide
-    logic [DATA_WIDTH-1:0] mem [0:2**18-1];
+
+    typedef enum {IDLE, MMIO_requested, MMIO_recieved} MMIO_state;
+    MMIO_state current_state, next_state;
+    logic MMIO_access;
+    assign MMIO_access = (A == 32'h000000FC);
+
+    // Memory array: 2^17 locations, each DATA_WIDTH bits wide
+    logic [MEM_WIDTH-1:0] mem [0:2**17-1];
 
     initial begin
         $readmemh("data.hex", mem, 32'h00010000);
@@ -22,34 +30,35 @@ module datamemory #(
         $display("mem[3] = %h", mem[32'h00010003]);
     end
 
-    // Read logic for load instructions
     always_comb begin
-        if (A == 32'h000000FC) begin
-            // MMIO read from trigger address
-            RD = {31'b0, trigger};  // Return trigger in LSB
+        //MMIO FSM next_state logic
+        case(current_state)
+            IDLE: next_state = MMIO_access ? MMIO_requested : IDLE;
+            MMIO_requested: next_state = trigger ? MMIO_recieved : MMIO_requested;
+            MMIO_recieved: next_state = MMIO_access ? IDLE : MMIO_recieved;
+        endcase
+
+        // Read logic for load instructions
+        RD = '0;
+        if (MMIO_access && (current_state == MMIO_recieved)) begin
+            RD = 32'h00000001;
         end 
-        else begin
-            // Regular memory read 
-            case (funct3)
-                3'b000: RD = {{24{mem[A][7]}}, mem[A][7:0]};    // lb
-                3'b001: RD = {{16{mem[A][15]}}, mem[A][15:0]};  // lh
-                3'b010: RD = mem[A];                            // lw
-                3'b100: RD = {24'b0, mem[A][7:0]};              // lbu
-                3'b101: RD = {16'b0, mem[A][15:0]};             // lhu
-                default: RD = 32'b0;                            // Default case
-            endcase
+        else if (fetch) begin
+            RD = {mem[{A[16:2], 2'b11}], mem[{A[16:2], 2'b10}], mem[{A[16:2], 2'b01}], mem[{A[16:2], 2'b00}]};  // Make sure we always fetch the whole data for cache
         end
     end
 
-    // Write logic for store instructions
+    
     always_ff @(posedge clk) begin
-        if (WE) begin // Store instruction
-            case (funct3)
-                3'b000: mem[A][7:0] <= WD[7:0];    // sb
-                3'b001: mem[A][15:0] <= WD[15:0];  // sh
-                3'b010: mem[A] <= WD;              // sw
-            endcase
+        // Write logic for store and write-back instructions
+        if (writeback) begin
+            mem[WB_addr + 3] <= WB_DATA[31:24];
+            mem[WB_addr + 2] <= WB_DATA[23:16];
+            mem[WB_addr + 1] <= WB_DATA[15:8];
+            mem[WB_addr] <= WB_DATA[7:0];
         end
+        // MMIO_FSM state transition logic
+        current_state <= next_state;
     end
 
 endmodule

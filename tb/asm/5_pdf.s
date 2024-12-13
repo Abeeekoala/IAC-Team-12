@@ -26,12 +26,12 @@ build:      # function to build prob dist func (pdf)
     LI      a3, base_pdf        # a3 = base address of pdf array
     LI      a4, max_count       # a4 = maximum count to terminate
 _loop2:                         # repeat
-    ADD     a5, a1, a2          #     a5 = data base address + offset
-    LBU     t0, 0(a5)           #     t0 = data value
-    ADD     a6, t0, a3          #     a6 = index into pdf array
-    LBU     t1, 0(a6)           #     t1 = current bin count
-    ADDI    t1, t1, 1           #     increment bin count
-    SB      t1, 0(a6)           #     update bin count
+    ADD     a5, a1, a2          #     a5 = data base address + offset   34
+    LBU     t0, 0(a5)           #     t0 = data value                   38
+    ADD     a6, t0, a3          #     a6 = index into pdf array         3C        
+    LBU     t1, 0(a6)           #     t1 = current bin count            40
+    ADDI    t1, t1, 1           #     increment bin count               44
+    SB      t1, 0(a6)           #     update bin count                  48
     ADDI    a2, a2, 1           #     point to next data in array
     BNE     t1, a4, _loop2      # until bin count reaches max
     RET

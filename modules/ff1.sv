@@ -3,8 +3,7 @@ module ff1 (
     input logic [31:0]      InstrF,
     input logic [31:0]      PCF,
     input logic [31:0]      inc_PCF,
-    input logic             Stall,
-    input logic             Flush,
+    input logic             stall_in,
     
     output logic [31:0]     InstrD,
     output logic [31:0]     PCD,
@@ -13,8 +12,8 @@ module ff1 (
 
 always_ff @ (posedge clk)
     begin
-        if (!Stall) begin
-            InstrD <= (Flush) ? 32'b0 : InstrF; //Faulty instruction effectively nop --> can use 0x00_00_00_13 (real nop) as well
+        if (!stall_in) begin
+            InstrD <= InstrF; 
             PCD <= PCF;
             inc_PCD <= inc_PCF;
         end

@@ -2,59 +2,75 @@ module top(
     input   logic           clk,
     input   logic           rst,
     input   logic           trigger,
+    output  logic           hit,
     output  logic [31:0]    a0
 );
 
 // transcending multiple regions signals
-logic                       PCSrc;
-logic [4:0]                 RdW;
-logic                       RegWriteW;
-logic [31:0]                ResultW;
-logic [31:0]                PCTarget;
+wire                        PCSrc;
+wire [4:0]                  RdW;
+wire                        RegWriteW;
+wire [31:0]                 ResultW;
+wire [31:0]                 PCTarget;
+wire                        Stall;
+wire                        Flush;
+wire [1:0]                  ForwardA;
+wire [1:0]                  ForwardB;
+wire [4:0]                  Rs1D;
+wire [4:0]                  Rs2D;
+wire [4:0]                  Rs1E;
+wire [4:0]                  Rs2E;
+
 
 //  fetch to decode signals
-logic [31:0]                InstrD;
-logic [31:0]                PCD;
-logic [31:0]                inc_PCD;
+wire [31:0]                 InstrD;
+wire [31:0]                 PCD;
+wire [31:0]                 inc_PCD;
 
 // decode to execute signals
-logic                       JumpE;
-logic                       BranchE;
-logic                       RegWriteE;
-logic [1:0]                 ResultSrcE;
-logic                       MemWriteE;
-logic [3:0]                 ALUCtrlE;
-logic                       ALUSrcAE;
-logic                       ALUSrcBE;
-logic [31:0]                rs1E;
-logic [31:0]                rs2E;
-logic [31:0]                ImmExtE;
-logic [31:0]                PCE;
-logic [2:0]                 funct3E;
-logic [4:0]                 RdE;
-logic [31:0]                inc_PCE;
+wire                        JumpE;
+wire                        BranchE;
+wire                        RegWriteE;
+wire [1:0]                  ResultSrcE;
+wire                        MemWriteE;
+wire [3:0]                  ALUCtrlE;
+wire                        ALUSrcAE;
+wire                        ALUSrcBE;
+wire [31:0]                 RD1E;
+wire [31:0]                 RD2E;
+wire [31:0]                 ImmExtE;
+wire [31:0]                 PCE;
+wire [2:0]                  funct3E;
+wire [4:0]                  RdE;
+wire [31:0]                 inc_PCE;
 
 // execute to memory signals
-logic                       RegWriteM;
-logic [1:0]                 ResultSrcM;
-logic                       MemWriteM;
-logic [31:0]                rs2M;
-logic [31:0]                ALUoutM;
-logic [2:0]                 funct3M;
-logic [4:0]                 RdM;
-logic [31:0]                inc_PCM;
+wire                        RegWriteM;
+wire [1:0]                  ResultSrcM;
+wire                        MemWriteM;
+wire [31:0]                 ALUoutM;
+wire [31:0]                 Rd2M;
+wire [2:0]                  funct3M;
+wire [4:0]                  RdM;
+wire [31:0]                 inc_PCM;
 
 // memory to writeback signals
-logic [1:0]                 ResultSrcW;
-logic [31:0]                ALUoutW;
-logic [31:0]                ReadDataW;
-logic [31:0]                inc_PCW;
+wire [1:0]                  ResultSrcW;
+wire [31:0]                 ALUoutW;
+wire [31:0]                 ReadDataW;
+wire [31:0]                 inc_PCW;
 
+//stall signal OR between Stall (from hazarrd Unit) and stall (from cache)
+wire                        stall_in;
+wire                        stall_cache;
+assign stall_in = (stall_cache || Stall);
 fetch fetch(
     .clk                    (clk),
     .rst                    (rst),
     .PCSrc                  (PCSrc),
     .PCTarget               (PCTarget),
+    .stall_in               (stall_in),
+    .Flush                  (Flush),
     .InstrD                 (InstrD),
     .PCD                    (PCD),
     .inc_PCD                (inc_PCD)
@@ -68,6 +84,9 @@ decode decode(
     .RegWriteW              (RegWriteW),
     .RdW                    (RdW),
     .ResultW                (ResultW),
+    .stall_in               (stall_in),
+    .stall_cache            (stall_cache),
+    .Flush                  (Flush),
     .JumpE                  (JumpE),
     .BranchE                (BranchE),
     .RegWriteE              (RegWriteE),
@@ -76,11 +95,15 @@ decode decode(
     .ALUCtrlE               (ALUCtrlE),
     .ALUSrcAE               (ALUSrcAE),
     .ALUSrcBE               (ALUSrcBE),
-    .rs1E                   (rs1E),
-    .rs2E                   (rs2E),
+    .RD1E                   (RD1E),
+    .RD2E                   (RD2E),
     .ImmExtE                (ImmExtE),
     .PCE                    (PCE),
-    .funct3E                 (funct3E),
+    .funct3E                (funct3E),
+    .Rs1D                   (Rs1D),
+    .Rs2D                   (Rs2D),
+    .Rs1E                   (Rs1E),
+    .Rs2E                   (Rs2E),
     .RdE                    (RdE),
     .inc_PCE                (inc_PCE),
     .a0                     (a0)
@@ -96,21 +119,26 @@ execute exectue(
     .ALUCtrlE               (ALUCtrlE),
     .ALUSrcAE               (ALUSrcAE),
     .ALUSrcBE               (ALUSrcBE),
-    .rs1E                   (rs1E),
-    .rs2E                   (rs2E),
+    .RD1E                   (RD1E),
+    .RD2E                   (RD2E),
     .ImmExtE                (ImmExtE),
     .PCE                    (PCE),
     .funct3E                (funct3E),
     .RdE                    (RdE),
     .inc_PCE                (inc_PCE),
+    .ForwardA               (ForwardA),
+    .ForwardB               (ForwardB),
+    .ResultW                (ResultW),
+    .ALUoutM_i              (ALUoutM),
+    .stall_cache            (stall_cache),
     .PCTarget               (PCTarget),
     .PCSrc                  (PCSrc),
     .RegWriteM              (RegWriteM),
     .ResultSrcM             (ResultSrcM),
     .MemWriteM              (MemWriteM),
-    .rs2M                   (rs2M),
-    .ALUoutM                (ALUoutM),
+    .ALUoutM_o              (ALUoutM),
     .funct3M                (funct3M),
+    .Rd2M                   (Rd2M),
     .RdM                    (RdM),
     .inc_PCM                (inc_PCM)
 );
@@ -120,8 +148,8 @@ memory memory(
     .RegWriteM              (RegWriteM),
     .ResultSrcM             (ResultSrcM),
     .MemWriteM              (MemWriteM),
-    .ALUoutM                (ALUoutM),
-    .rs2M                   (rs2M),
+    .ALUoutM_i              (ALUoutM),
+    .Rd2M                   (Rd2M),
     .funct3M                (funct3M),
     .RdM                    (RdM),
     .inc_PCM                (inc_PCM),
@@ -131,7 +159,10 @@ memory memory(
     .ALUoutW                (ALUoutW),
     .ReadDataW              (ReadDataW),
     .RdW                    (RdW),
-    .inc_PCW                (inc_PCW)
+    .inc_PCW                (inc_PCW),
+    .stall_cache            (stall_cache),
+    .hit                    (hit),  
+    .rst                    (rst)
 );
 
 writeback writeback(
@@ -142,5 +173,23 @@ writeback writeback(
     .ResultW                (ResultW)
 );
 
+hazard_unit hazard_unit(
+    .rst                    (rst),
+    .Rs1D                   (Rs1D),
+    .Rs2D                   (Rs2D),
+    .Rs1E                   (Rs1E),
+    .Rs2E                   (Rs2E),
+    .RdE                    (RdE),
+    .RdM                    (RdM),
+    .RdW                    (RdW),
+    .RegWriteM              (RegWriteM),
+    .RegWriteW              (RegWriteW),
+    .LoadE                  (ResultSrcE[0]),
+    .PCSrc                  (PCSrc),
+    .ForwardA               (ForwardA),
+    .ForwardB               (ForwardB),
+    .Stall                  (Stall),
+    .Flush                  (Flush)
+);
 
 endmodule

@@ -38,6 +38,10 @@ for file in "${files[@]}"; do
         name="top"
     fi
 
+    if [ $name == "hazardunit" ]; then
+        name="hazard_unit"
+    fi
+
     # Translate Verilog -> C++ including testbench
     verilator   -Wall --trace \
                 -cc ${RTL_FOLDER}/${name}.sv \

@@ -30,3 +30,7 @@ main:
     nop
     nop
     add    a0, a0, s6       # a0 = 30 + 9 = 39
+    bne     a0, zero, finish    # enter finish state
+
+finish:     # expected result is 39
+    bne     a0, zero, finish     # loop forever
