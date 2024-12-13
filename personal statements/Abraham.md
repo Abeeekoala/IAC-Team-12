@@ -6,21 +6,27 @@
 
 ### Overview
 
-- Git Instructions
-- Design Diagram
-- Sign Extension Unit
-- Instruction Memory
-- Data Memory
-- Jump Instructions
-- F1 Program
-  - SLLI Instruction
-  - Program
-- Reference Program
-  - Features Added
-  - Testing
-  - Pipelining
-  - Results
-- Additional Comments
+- [Git Instructions](#Git-Instructions)
+- CPU Design Diagram
+- Single Cycle
+    - Sign Extension Unit
+    - Arithmetic Logic Unit / Comparator
+    - Control Unit
+    - Data Path
+    - Top Module for Single Cycle
+    - Testbench & Debug for Single Cycle
+    - F1_Light.s
+    - Plotting PDF on Vbuddy
+- Pipelined
+    - Hazard Unit
+    - Testbench & Debug for Pipelined CPU
+- Pipelined with Cache
+    - 2-way Set Associative Cache
+    - Testbench & Debug for Pipelined CPU with 2-way Set Associative Cache
+    - Unit Tests
+- F1 Light on Vbuddy
+
+- Reflections
 
 ---
 ## Git Instructions
