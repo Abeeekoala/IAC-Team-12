@@ -135,9 +135,9 @@ https://github.com/user-attachments/assets/6c381404-3fc8-4263-a685-0c605065dd6f
 # Quick Start for Testbench and Vbuddy Programs
 
 ## Run the verification for each specific version of the CPU
-First refer to the brnch details [here](#introduction)
+First, refer to the branch details [here](#introduction)
 
-Next follow the following commands to run the tests
+Next, follow the following commands to run the tests
 ```bash
 git checkout <target-branch>
 git cd tb/
@@ -146,7 +146,7 @@ chmod +x assemble.sh # Ensure that assemble.sh is added executable permission
 bash -x ./doit.sh <Optional: files name> # For example ./tests/verify.cpp
 ```
 
-## Run the Vbuddy Plotting (can run on all three verified branch)
+## Run the Vbuddy Plotting (can run on all three verified branches)
 
 Ensure that Vbuddy is connected correctly
 This command might be helpful
@@ -165,10 +165,10 @@ git cd tb/plots/
 
 bash -x ./doit_plot.sh <Optional signal name> # Default is Gaussian; options also includes sine, noisy, triangle
 ```
-## Run the Vbuddy F1 Light 
+## Run the Vbuddy F1 Light (can run on all three verified branches)
 Also follow the above to ensure that the Vbuddy is connected and configured correctly.
 
-Then follows the below commands.
+Then follow the below commands.
 
 ```
 git checkout Pipelinedw/Cache
