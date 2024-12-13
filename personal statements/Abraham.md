@@ -308,12 +308,104 @@ Also I added the logic for hazard unit to set `Flush` signal when there is a `rs
 
  The debugging for pipelined largely focus on the logic with `Stall` and `Flush` signals, as I detailed above. One interesting debugging technique I cane up with to deal with multiple instruction executing in different stages. 
 
- ![alt text](/IAC-Team-12/images/Pipeline%20Debugging.png)
+ ![alt text](/IAC-Team-12/images/Pipeline_Debugging.png)
 
  In the above example, The issue was that we were writing to the `regfile` on the posedge of `clk` and at the decode stage, it can't fetch the updated `regfile` value because it was only updated on the next cycle. Thus the solution was to write to `regfile` on the negedge. I did the same thing for every failed case.
  
  ### Proof of Verified Pipelined CPU:
+ ![alt text](/IAC-Team-12/images/Pipelined_tests_passed.png)
 
+ To reproduce the test results, follow these steps:
+
+```bash
+git checkout Pipelined
+cd tb
+bash -x ./doit.sh
+```
 ### Relevant Commits
 - [Passed All Test](https://github.com/Abeeekoala/IAC-Team-12/commit/a7e094bcdb5a53e8d9acbf4a5b7ea0cce94983ab)
-- [Additional Data Hazard Test for `ZERO`](https://github.com/Abeeekoala/IAC-Team-12/commit/521e6a65270be6a752ee7b81447a1822252420c9#diff-74e4c4e6ff1c41eabaf5c623494365a0615eb9afecf0d6eaf16f45d7410f9298)
+- [Additional Data Hazard Test with `rst`](https://github.com/Abeeekoala/IAC-Team-12/commit/521e6a65270be6a752ee7b81447a1822252420c9#diff-74e4c4e6ff1c41eabaf5c623494365a0615eb9afecf0d6eaf16f45d7410f9298)
+
+# Pipelined with Cache
+
+## 2-way set associative cache
+For the 2-way set associative cache, I revised the write allocate writeback policy and added in the logic t0 handle `rst`.
+```SystemVerilog
+always_ff @(posedge clk or posedge rst) begin
+        if (rst) begin
+            // Reset all sets in the cache
+            for (int i = 0; i < 4; i++) begin
+                cache[i].U <= 0;
+                cache[i].ValitdityBit0 <= 0;
+                cache[i].ValitdityBit1 <= 0;
+                cache[i].DB0 <= 0;
+                cache[i].DB1 <= 0;
+                cache[i].tag0 <= '0;
+                cache[i].tag1 <= '0;
+            end
+        end
+```
+This set the validity flags to `0` and reset the tags preventing wrongful hit and loading. Also, set the dirty bits to `0` to avoid wrong enviction and writeback. 
+
+I also added in the MMIO access for trigger input, moved the loading hit update for `LRU` flag to clocked logic to prevent clocked and combinaional dual assignment. 
+
+### Relavant Commits
+- [Writeback policy & handle `rst`](https://github.com/Abeeekoala/IAC-Team-12/commit/d1590e0b52b53423fc1ecac8238f01311c9dfa85#diff-b2adac2aa9dda6c0ae891d38720759f014af7c02900145b9992541ff78bd4133)
+- [Trigger Inputs & LRU flags](https://github.com/Abeeekoala/IAC-Team-12/commit/f7df1d904ba4cbbe8ce68d57b220ff532f5b6319#diff-b2adac2aa9dda6c0ae891d38720759f014af7c02900145b9992541ff78bd4133R145)
+
+## Testbench & Debug for Pipelined CPU with 2-way set associative cache
+
+After some minor debugs across files, I came across the issue that our datamemory were not byte-addressed. Which will lead to wrong writeback and wrong loading address. So I changed all the datamemory on all the branches to byte-addressing, and reverified them. 
+
+With the byte-addressing data memory I modified the cache `ReadData` output.
+```SystemVerilog
+case (funct3)
+    3'b000: begin                                           // lb
+        case (A[1:0])
+            2'b00: DATA_OUT = {{24{Data[7]}}, Data[7:0]};
+            2'b01: DATA_OUT = {{24{Data[15]}}, Data[15:8]};
+            2'b10: DATA_OUT = {{24{Data[23]}}, Data[23:16]};
+            2'b11: DATA_OUT = {{24{Data[31]}}, Data[31:24]};      
+        endcase
+    end 
+    3'b001: begin                                           // lh
+        if (A[1]) begin
+            DATA_OUT = {{16{Data[31]}}, Data[31:16]};
+        end 
+        else begin
+            DATA_OUT = {{16{Data[15]}}, Data[15:0]};
+        end
+    end          
+    3'b010: DATA_OUT = Data;                                // lw
+    3'b100: begin
+        case (A[1:0])
+            2'b00: DATA_OUT = {{24{1'b0}}, Data[7:0]};
+            2'b01: DATA_OUT = {{24{1'b0}}, Data[15:8]};
+            2'b10: DATA_OUT = {{24{1'b0}}, Data[23:16]};
+            2'b11: DATA_OUT = {{24{1'b0}}, Data[31:24]};      
+        endcase
+    end
+    3'b101: begin                                           // lhu
+        if (A[1]) begin
+            DATA_OUT = {{16{1'b0}}, Data[31:16]};
+        end 
+        else begin
+            DATA_OUT = {{16{1'b0}}, Data[15:0]};
+        end
+    end           
+    default: DATA_OUT = 32'b0;                        // Default case
+endcase
+```
+This passed 7/9 test passed. The next main challenge was how to incorporate the `stall` signal from cache with the `stall` from hazard unit. This two type of `stall` are different; one is to stall only the fetching and decoding stage for data to be ready at writeback stage; the other is to stall the whole pipelined for fetching data in datamemory. I worked out the logic and sent the signal to approprate components. 
+
+Finally with the fix on `store` instructions, and added a register for fetch signal to prevent logic feedback and latch, all the tests passed.
+### Proof of Verified Pipelined CPU with Cache:
+
+
+### Relevant Commits
+- [Cache debugging](https://github.com/Abeeekoala/IAC-Team-12/commit/d94de3b3e09da1618af6f9a4020221cad87739ba#diff-b2adac2aa9dda6c0ae891d38720759f014af7c02900145b9992541ff78bd4133)
+- [Fix byte-addressing for Single Cycle](https://github.com/Abeeekoala/IAC-Team-12/commit/f35b1f27749d7b1926a0a7103a24b88979478960)
+- [Fix byte-addressing for Pipelined](https://github.com/Abeeekoala/IAC-Team-12/commit/92804d6929bdb76c16136c05da8ab16c151c7e9f)
+- [Fix byte-addressing + 7/9 tests passed](https://github.com/Abeeekoala/IAC-Team-12/commit/f55ca295b494453c31b338cdc6d54e99bc4409e9#diff-b2adac2aa9dda6c0ae891d38720759f014af7c02900145b9992541ff78bd4133)
+- [Fetch register + 9/9 test passed](https://github.com/Abeeekoala/IAC-Team-12/commit/197c252a446eeaf2a0428517e251799679bae9f2#diff-b2adac2aa9dda6c0ae891d38720759f014af7c02900145b9992541ff78bd4133)
+
