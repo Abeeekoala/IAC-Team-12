@@ -132,6 +132,50 @@ https://github.com/user-attachments/assets/6c381404-3fc8-4263-a685-0c605065dd6f
 
 =======
 
+# Quick Start for Testbench and Vbuddy Programs
+
+## Run the verification for each specific version of the CPU
+First refer to the brnch details [here](#introduction)
+
+Next follow the following commands to run the tests
+```bash
+git checkout <target-branch>
+git cd tb/
+
+chmod +x assemble.sh # Ensure that assemble.sh is added executable permission
+bash -x ./doit.sh <Optional: files name> # For example ./tests/verify.cpp
+```
+
+## Run the Vbuddy Plotting (can run on all three verified branch)
+
+Ensure that Vbuddy is connected correctly
+This command might be helpful
+```bash
+~/Documents/iac/lab0-devtools/tools/attach_usb.sh
+```
+Check if the port that Vbuddy is connected to is consistent with `vbuddy.cfg`, setted as `/dev/ttyUSB0`.
+Check by this command.
+```bash
+ls /dev/ttyU*
+```
+Then we can run the plotting program.
+```bash
+git checkout <target-branch>
+git cd tb/plots/
+
+bash -x ./doit_plot.sh <Optional signal name> # Default is Gaussian; options also includes sine, noisy, triangle
+```
+## Run the Vbuddy F1 Light 
+Also follow the above to ensure that the Vbuddy is connected and configured correctly.
+
+Then follows the below commands.
+
+```
+git checkout Pipelinedw/Cache
+cd tb/F1_Light
+
+bash -x ./doit_F1.sh
+```
 
 # Single Cycle Version
 
