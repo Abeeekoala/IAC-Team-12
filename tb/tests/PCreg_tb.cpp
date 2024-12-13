@@ -79,7 +79,7 @@ TEST_F(PCregTestbench, UpdatePCTest)
     top->next_PC = 0x000123EF;
 
     runSimulation();
-
+    runSimulation();
     EXPECT_EQ(top->PC, 0x000123EF);
 }
 
