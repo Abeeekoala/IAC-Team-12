@@ -112,7 +112,7 @@ Another main challenge I faced was how to incorporate the `trigger` input. After
 
 Based on the memory map for pdf.s, I assigned the last address of the reserved data memory as the `trigger` input's address (`0x0000_00FC`).
 
-![alt text](/IAC-Team-12/tb/reference/images/memory_map.jpg)
+![alt text](../tb/reference/images/memory_map.jpg)
 
 With this design:
 ```SystemVerilog
@@ -229,7 +229,7 @@ bash -x ./doit.sh ./tests/<testbench_to_run> #Forexample ./tests/sign_ext_tb.cpp
 ```
 
 ### Proof of Verified CPU
-![alt text](/IAC-Team-12/images/Single_cycle_tests_passed.png)
+![alt text](../images/Single_cycle_tests_passed.png)
 
 To reproduce the test results, follow these steps:
 
@@ -298,7 +298,7 @@ Note: The plotting Program is also implemented on `Pipelined` and `Pipelinedw/Ca
 # Pipelined 
 Initially, we started the Pipelined design without the `Hazard Unit`. I had the following design diagram for it.
 
-![alt text](/IAC-Team-12/images/RISCV_pipelined.png)
+![alt text](../images/RISCV_pipelined.png)
 
 In order to test it I made a test `0_no_hazard` by insert `nop` between instructions to avoid any form of hazards.
 
@@ -319,12 +319,12 @@ Also I added the logic for hazard unit to set `Flush` signal when there is a `rs
 
  The debugging for pipelined largely focus on the logic with `Stall` and `Flush` signals, as I detailed above. One interesting debugging technique I cane up with to deal with multiple instruction executing in different stages. 
 
- ![alt text](/IAC-Team-12/images/Pipeline_Debugging.png)
+ ![alt text](../images/Pipeline_Debugging.png)
 
  In the above example, The issue was that we were writing to the `regfile` on the posedge of `clk` and at the decode stage, it can't fetch the updated `regfile` value because it was only updated on the next cycle. Thus the solution was to write to `regfile` on the negedge. I did the same thing for every failed case.
  
  ### Proof of Verified Pipelined CPU:
- ![alt text](/IAC-Team-12/images/Pipelined_tests_passed.png)
+ ![alt text](../images/Pipelined_tests_passed.png)
 
  To reproduce the test results, follow these steps:
 
@@ -419,7 +419,7 @@ Unit tests for `Hazard unit` and `CU` are implemented I did some minor fix and v
 - [Hazard_unit_tb fix](https://github.com/Abeeekoala/IAC-Team-12/commit/2fac2326a419fa1496394db83d8b571071388a57)
 
 ### Proof of Verified Pipelined CPU with Cache:
-![alt text](/IAC-Team-12/images/Pipelined_cache_tests_passed.png)
+![alt text](../images/Pipelined_cache_tests_passed.png)
 
  To reproduce the test results, follow these command:
 
