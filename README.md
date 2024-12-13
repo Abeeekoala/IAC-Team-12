@@ -1,7 +1,7 @@
 # RISCV full 32I single-cylce CPU 
 
 ## Overview
-This branch contains a pipelined RISC-V processor compatible with all the RISCV 32I instructions apart from ecall and ebrake. The diagram for this 
+This branch contains a pipelined RISC-V processor compatible with all the RISCV 32I instructions apart from ecall and ebrake.
 
 ### Authors
 - **Primary Implementation:** Abraham, Shreeya, Charolette, Shravan
