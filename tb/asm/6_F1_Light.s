@@ -2,18 +2,17 @@
     .globl main
 main:
     # Initialize LFSR-7
-    li s0, 1                    # s0 store LFSR-7 value
-
-    # Wait for trigger to start
+    li s0, 1                    # s0 store LFSR-7 value             0
+    li t0, 0x00000FC            # MMIO address of trigger input     4
+    # Wait for trigger to start                                         
 trigger_wait:
-    li t0, 0x00000FC            # MMIO address of trigger input
-    lw x11, 0(t0)               # Load trigger value into x11 (a1)
-    beq x11, zero, lfsr_continue 
+    lw x11, 0(t0)               # Load trigger value into x11 (a1)  8
+    beq x11, zero, lfsr_continue                                   #C
 
     # Start light sequence
     # State S0: All lights off
-    li a0, 0x0                  # data_out = 0 (all lights off)
-    jal ra, delay               # Random delay
+    li a0, 0x0                  # data_out = 0 (all lights off)     10
+    jal ra, delay               # Random delay                      14
 
     # State S2: Turn on lights 1
     li a0, 0x1

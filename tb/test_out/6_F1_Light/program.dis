@@ -9,9 +9,9 @@ Disassembly of section .text:
 
 bfc00000 <main>:
 bfc00000:	00100413          	li	s0,1
-
-bfc00004 <trigger_wait>:
 bfc00004:	0fc00293          	li	t0,252
+
+bfc00008 <trigger_wait>:
 bfc00008:	0002a583          	lw	a1,0(t0)
 bfc0000c:	04058c63          	beqz	a1,bfc00064 <lfsr_continue>
 bfc00010:	00000513          	li	a0,0
@@ -32,7 +32,7 @@ bfc00048:	07f00513          	li	a0,127
 bfc0004c:	010000ef          	jal	ra,bfc0005c <delay>
 bfc00050:	0ff00513          	li	a0,255
 bfc00054:	008000ef          	jal	ra,bfc0005c <delay>
-bfc00058:	fadff06f          	j	bfc00004 <trigger_wait>
+bfc00058:	fb1ff06f          	j	bfc00008 <trigger_wait>
 
 bfc0005c <delay>:
 bfc0005c:	00041463          	bnez	s0,bfc00064 <lfsr_continue>
@@ -47,7 +47,7 @@ bfc00074:	01eecfb3          	xor	t6,t4,t5
 bfc00078:	00141413          	slli	s0,s0,0x1
 bfc0007c:	01f46433          	or	s0,s0,t6
 bfc00080:	07f47413          	andi	s0,s0,127
-bfc00084:	f80580e3          	beqz	a1,bfc00004 <trigger_wait>
+bfc00084:	f80582e3          	beqz	a1,bfc00008 <trigger_wait>
 bfc00088:	00041463          	bnez	s0,bfc00090 <delay_not_zero>
 bfc0008c:	00100413          	li	s0,1
 

@@ -6,6 +6,8 @@ module decode (
     input logic                 RegWriteW,
     input logic [4:0]           RdW,
     input logic [31:0]          ResultW,
+    input logic                 Flush,
+    input logic                 Stall,
     output logic                JumpE,
     output logic                BranchE,
     output logic                RegWriteE,
@@ -14,12 +16,16 @@ module decode (
     output logic [3:0]          ALUCtrlE,
     output logic                ALUSrcAE,
     output logic                ALUSrcBE,
-    output logic [31:0]         rs1E,
-    output logic [31:0]         rs2E,
+    output logic [31:0]         RD1E,
+    output logic [31:0]         RD2E,
     output logic [31:0]         ImmExtE,
     output logic [31:0]         PCE,
     output logic [2:0]          funct3E,
     output logic [4:0]          RdE,
+    output logic [4:0]          Rs1D,
+    output logic [4:0]          Rs2D,
+    output logic [4:0]          Rs1E,
+    output logic [4:0]          Rs2E,
     output logic [31:0]         inc_PCE,
     output logic [31:0]         a0
 );
@@ -32,15 +38,20 @@ wire                MemWriteD;
 wire [3:0]          ALUCtrlD;
 wire                ALUSrcAD;
 wire                ALUSrcBD;
-wire [31:0]         rs1D;
-wire [31:0]         rs2D;
+wire [31:0]         RD1D;
+wire [31:0]         RD2D;
 wire [31:0]         ImmExtD;
 wire [2:0]          ImmSrc;
+
+assign Rs1D = InstrD[19:15];
+assign Rs2D = InstrD[24:20];
 
 CU control_unit(
     .funct3         (InstrD[14:12]),
     .op             (InstrD[6:0]),
     .funct7_5       (InstrD[30]),
+    .Flush          (Flush),
+    .Stall          (Stall),
     .ImmSrc         (ImmSrc),
     .MemWrite       (MemWriteD),
     .RegWrite       (RegWriteD),
@@ -59,8 +70,8 @@ regfile RegFile(
     .A3             (RdW),
     .WE3            (RegWriteW),
     .WD3            (ResultW),
-    .RD1            (rs1D),
-    .RD2            (rs2D),
+    .RD1            (RD1D),
+    .RD2            (RD2D),
     .a0             (a0)
 );
 
@@ -80,12 +91,14 @@ ff2 DE_FF(
     .ALUCtrlD       (ALUCtrlD),
     .ALUSrcAD       (ALUSrcAD),
     .ALUSrcBD       (ALUSrcBD),
-    .rs1D           (rs1D),
-    .rs2D           (rs2D),
+    .RD1D           (RD1D),
+    .RD2D           (RD2D),
     .ImmExtD        (ImmExtD),
     .PCD            (PCD),
     .funct3D        (InstrD[14:12]),
     .RdD            (InstrD[11:7]),
+    .Rs1D           (InstrD[19:15]),
+    .Rs2D           (InstrD[24:20]),
     .inc_PCD        (inc_PCD),
     
     .JumpE          (JumpE),
@@ -96,12 +109,14 @@ ff2 DE_FF(
     .ALUCtrlE       (ALUCtrlE),
     .ALUSrcAE       (ALUSrcAE),
     .ALUSrcBE       (ALUSrcBE),
-    .rs1E           (rs1E),
-    .rs2E           (rs2E),
+    .RD1E           (RD1E),
+    .RD2E           (RD2E),
     .ImmExtE        (ImmExtE),
     .PCE            (PCE),
     .funct3E        (funct3E),
     .RdE            (RdE),
+    .Rs1E           (Rs1E),
+    .Rs2E           (Rs2E),
     .inc_PCE        (inc_PCE)
 );
 
