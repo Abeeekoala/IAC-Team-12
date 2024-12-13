@@ -8,7 +8,7 @@ This branch contains a pipelined RISC-V processor compatible with all the RISCV 
 - **Debugging and Support:** Abraham
 
 ## Introduction
-The design detials and reasons for the design can be found in the personal statements.
+The design detials and reasons for the design can be found in the personal statements and also in main's read.md.
 
 ## Design Specifications
 ### High-Level Design
