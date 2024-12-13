@@ -508,6 +508,6 @@ bash -x ./doit_F1.sh
 # Reflections
 Throughout the project, I focused on designing, integrating, debugging, and creating testbenches for individual components as well as the overall top-level module. This experience was invaluable because it allowed me to see how my designs behaved in a practical setting, and it forced me to identify and correct flaws through rigorous verification and debugging processes. By overcoming these challenges, I not only deepened my understanding of various RISC-V implementations but also gained experience in building them in system verilog.
 
-If time had permitted, I would have liked to analyze the cache hit rate and compare performance against a hierarchical cache structure incorporating both L1 and L2 caches. Such an investigation could provide insights into performance improvements and further optimization opportunities.
+If time had permitted, I would have liked to analyze the cache hit rate and compare performance against a hierarchical cache structure incorporating both L1 and L2 caches. That was the reason behind outputting hit as a output for the `top`. Such an investigation could provide insights into performance improvements and further optimization opportunities.
 
 Additionally, I learned the importance of effective teamwork and how to distribute tasks among team members for efficient development. This project demonstrated that collaboration and clearly defined responsibilities can significantly improve both productivity and overall project quality.
