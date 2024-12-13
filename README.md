@@ -8,9 +8,9 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 
 | Name   | Personal Statements |    
 |------------|-----------------|
-| Abraham Lin - Repo Master | add link |      
-| Charlotte Maxwell | add link|
-| Shravan Kumar     |add link |
+| Abraham Lin - Repo Master | ADD LINK |      
+| Charlotte Maxwell |[charlotte.md](./personal%20statements/charlotte.md)|
+| Shravan Kumar     |[shravan_kumar.md](./personal%20statements/shravan_kumar.md) |
 | Shreeya Agarwal   |[shreeya.md](./personal%20statements/shreeya.md) |
 
 
@@ -25,9 +25,9 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 | **Instruction Memory**  |                 | *             |                   |             |
 | **Control Unit**        |                 | *             |                   | *           |
 | **Sign Extend**         | *               | *             |                   | *           |
-| **Data Path**           |                 |               | *                 | *           |
+| **Data Path**           |                 | *             | *                 | *           |
 | **Data Memory**         |                 |               | *                 |             |
-| **Top Level Assembly**  | *               |               | *                 | *           |
+| **Top Level Assembly**  | *               | *             | *                 | *           |
 | **Unit Tests**          |                 |               |                   | *           |
 | **Testbench & debugging**|                |               |                   | *           |              
 | **F1.s**                | *               |               |                   | *           |
