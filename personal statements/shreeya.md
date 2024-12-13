@@ -348,7 +348,7 @@ The main benefit of the superscalar model would've been the faster processing of
 
 I decided to work on a single cycle design, implementing the basic ALU instructions. In the intial design I made, aided through the *Harris and Harris* textbook, the first changes to implement were doubling the number of *read* and *write* ports, and understanding which signals from the *control unit* controlled what.
 
-![alt text](./images/supersclar.png)
+![alt text](./images/superscalar.png)
 
 Initially in the design, I wanted to just double up the number of bits of each signal, and each mux. However, this proved to be difficult to keep track of upon implementation, so I decided to keep the signals the same width as before and just double the number of signals.
 
@@ -471,11 +471,11 @@ To improve on this, I would've been more structured in the implementation of the
 
 All final files can be found on the [superscalar branch](https://github.com/Abeeekoala/IAC-Team-12/tree/Superscalar)
 
-### Additional Comments
+### Final Comments
 
 I took on the role of writing the bulk of the team statement, as I enjoy and want to develop my technical writing skills further. This ensured we could document the overall CPU's progress in an orderly fashion, save my teammates time and have it aid their personal statements. Since I spoke in enough detail aboout the process and components in the initial commit, it ensured I had a working understanding of all parts of the CPU and its architecture - something I was keen on doing as I wanted to understand components I didn't have major contribution to either (e.g. components in the memory stage). 
 
-I enjoyed working with my team, and on this project, and can confidently say I learnt a good amount about RISC-V, SystemVerilog and hardware design. There are lots of transferrable skills to take forward, and I liked how this built up on my knowledge from *EEP1 Assembler* in 1st year, and the labs and lectures from the IAC module itself. From the team members themselves, I also learnt a lot about their thought processes, and how I can better myself as an Engineer. My Git skills were non existent before - I look forward to working collaboratively on this platform again.
+I enjoyed working with my team, and on this project, and can confidently say I learnt a good amount about RISC-V, SystemVerilog and hardware design. There are lots of transferrable skills to take forward, and I liked how this built up on my knowledge from *EEP1 Assembler* in 1st year, and the labs and lectures from the IAC module itself. From the team members themselves, I also learnt a lot about their thought processes, and how I can better myself as an engineer. My Git skills were non existent before - I look forward to working collaboratively on this platform again.
 
 To improve, I would've encouraged clearer communication from myself on wanting to work more on top level implementation (in the pace of working to finish, I feel others took on the role due to more initiative).
 

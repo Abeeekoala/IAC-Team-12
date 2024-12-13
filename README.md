@@ -1,7 +1,24 @@
 # RISC-V RV32I Processor
 
 ## Introduction
-This repo contains our RISC-V CPU, for single cycle implementation, pipelined, and pipelined with cache. The CPU passes the test cases.
+This repo contains our fully verified RISC-V, full 32i base instruction compatible CPU with pipelining and cache.
+
+### Table of Contents
+ - The Team
+   - Links to [personal statements](./personal%20statements/)
+   - Contribution Table
+   
+- Single Cycle
+  - The instruction set and CPU design
+  - Basic explanation of our logic and implementation
+  
+
+- Pipelined
+  - CPU design
+  - Basic explanation of logic and implementation 
+
+- Data Cache
+  - Basic explanation of logic and implementation 
 
 
 ### Team 12 members:
@@ -57,18 +74,28 @@ This repo contains our RISC-V CPU, for single cycle implementation, pipelined, a
 |-------------------------------------------|-----------------|---------------|-------------------|-------------|
 | **Direct Mapped Cache**                   |                 |               | *                 |             |
 | **2-Way Set Associative Cache**           |                 |               | *                 | *           |
-| **Memory and top update for 2 way cache** | *               |               |                   |             |
+| **Memory and Top implementation** | *               |               |                   |             |
 | **Unit Tests**                            | *               | *             |                   | *           |
 | **Testbench and debugging**               |                 |               |                   | *           |
 
 #### Going above and beyond
 Please refer to everyone's individual personal statements to read up on the extra work done by the team.
-The CPU diagrams as seen in the following document were designed by Abraham.
+ 
+ **The Aims**
+
+ - Branch Prediction
+ - L1/L2 Cache
+ - Single Cycle SuperScalar model 
+
+
+The CPU diagrams as seen in this following document were designed by Abraham.
 
 It is to be noted that when looking at the commit history:
 - Shreeya had an issue with her github where when she commited she came up as root - all root commits belong to Shreeya.
 - Charlotte had accidentally contributed from multiple accounts - there are two accounts from which Charlotte commited not just one.
-- Members often met up to discuss the project, and as a group we showed good team spirit in order to work together and help ensure everyone was on track with tasks, and that everyone learns from this project, and about all the components within it.
+- Members often met up to discuss the project, and as a group we showed good team spirit in order to work together and ensure everyone 
+  - Was on track with tasks
+  - Learns from this project, and about all the components within it.
 - Some small looking changes may have taken hours to debug and correct; this is evident in the quality of our work.
 
 For Lab 4 information, see [Lab_4](./Specifications//Lab_4.md).
@@ -118,21 +145,18 @@ Following the project brief after lab 4, the main requirements we had were:
  - Determining the machine code to implement the F1 light cycle
  - Adding a Data Memory and a Multiplexor, and the logic for adding
 
- (add in any other relevant changes and sections on datamem/cu)
-
  We adapted this to the following diagram. The main changes made was:
 
  - addition of a comparator
+ - The trigger input into DataMem
 - *ALU*: adding the load immediate instruction to the ALU
 - *Top Level module checks and testing*: Ensuring Variable names are consistent, debugging, and simulating on GTKWave to check the machine code works and was implemented properly.
- 
- and the inputs to the following modules (insert) to implement (insert the following changes)
 
 ![alt text](images/RISCVsingle_cycle_final.png)
 
  ### Data Memory
 
- ![alt text](images/image-1.png)
+ ![alt text](./images/datamap.png)
 
 The memory map shows that the data memory goes from 0x01000 to 0x1FFFF, so we needed ${2^{17}}$ addresses leading to the initialisation of our data memory.
 
@@ -216,11 +240,9 @@ This code generates control signals for a RISC-V processor based on the instruct
 
  ### Simulation and Testing
 
- For our single cycle, we wrote unit testbenches (link) to ensure all the modules were working accurately, and to isolate errors for easier debugging.
+ For our single cycle, we wrote unit testbenches to ensure all the modules were working accurately, and to isolate errors for easier debugging.
 
- (did we also use industry standard GTest?)
-
- This allowed us to check the expected behaviour of each control/data path signal in a module. (insert picture of it passing)
+ This allowed us to check the expected behaviour of each control/data path signal in a module.
 
  The definition of the feedback can be found in the `doit.sh` file. 
 
@@ -241,13 +263,12 @@ We adapted this to the following diagram. The main changes we implemented were:
  - The addition of 4 flip flops
  - Hazard Unit to implement flush and stall logic for instructions
  - splitting up the implementation into the 4 stages (`fetch`, `decode`, `memory`, `execute`) and then adapting the `top.sv` file to combine the logic
- - A trigger signal coming into the Data Memory
 
  ![alt text](images/RISCV_pipelined_hazard_final.png)
 
  Since the control unit needed no major adaptations following single cycle, implementation of pipelining was smooth, especially as tackling it in 4 separate stages and combining it in the `top` file made debugging and keeping track of all the inputs and outputs easier.
 
- In the `Hazard Unit` we had to implement methods to combat `RAW dependency hazard`, `LW dependency hazard`, and `control hazards` which were caused by branch and jumping.
+ In the `Hazard Unit` we had to implement methods to combat *RAW dependency hazard*, *LW dependency hazard*, and *control hazards* which were caused by branch and jumping.
 
  ## Data Hazard Detection
 
@@ -299,7 +320,7 @@ Cache was introduced to have a faster access to memory with limited storage acce
 ## Direct Mapped Cache
 ![alt text](images/directcache.png).
 
-We first implemented a direct-mapped cache by following the recommended structure of the textbook; this contained a cache line of 60 bits.
+We first made a direct-mapped cache by following the recommended structure of the textbook; this contained a cache line of 60 bits.
 
 - 32 (LSB) assigned to `DATA`
 - 27 (NSB) assigned to `TAG`
@@ -425,10 +446,3 @@ The cache handles MMIO accesses, where the address `0x000000FC` is specifically 
 **Reset Functionality**
 
 On the `rst`, all cache entries are cleared, and the validity bits and dirty bits are reset to their default values.
-
-(if we want a shorter summary for this)
-Address Breakdown: The input address is parsed to determine the cache set and tag.
-Cache Access: The system checks both ways in the selected set to see if the requested data is present. If not, it triggers a stall and handles cache miss logic (write-back or fetch).
-Write-back & LRU Update: When writing or evicting data, the LRU bit (U) is updated to track the most recently used way. If the cache is full, the least recently used way is evicted.
-Cache Read and Write Handling: The system handles different load and store operations (e.g., byte, halfword, word), managing the data accordingly.
-MMIO Access: Specific memory-mapped I/O addresses bypass the cache and provide direct memory access.
