@@ -38,7 +38,7 @@
 To ensure a smooth workflow for our team, as the repository master, I created this [Git_instruction.md](/IAC-Team-12/Git_instructions.md). This file includes the basic instructions for team members to push their work to the repository.
 
 ## CPU design diagram
-I was mainly responsible for designing the overall architecture and top-level structure of the CPU. To help my teammates understand our design and implement individual components accordingly, I created three top-level design diagrams that detail the wiring, inputs, outputs, and signal logic for the [Single-cycle](/IAC-Team-12/images/RISCVsingle_cycle_final.png), [Pipelined](/IAC-Team-12/images/RISCV_pipelined_hazard_final.png), and [Pipelined with Cache](/IAC-Team-12/images/RISCV_pipelined_cache_final.png).
+I was mainly responsible for designing the overall architecture and top-level structure of the CPU. To help my teammates understand our design and implement individual components accordingly, I created three top-level design diagrams that detail the wiring, inputs, outputs, and signal logic for the [Single-cycle](../images/RISCVsingle_cycle_final.png), [Pipelined](/../images/RISCV_pipelined_hazard_final.png), and [Pipelined with Cache](../images/RISCV_pipelined_cache_final.png).
 
 # Single Cycle
 ## Sign Extension Unit
