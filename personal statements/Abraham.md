@@ -6,27 +6,32 @@
 
 ### Overview
 
-- [Git Instructions](#Git-Instructions)
-- CPU Design Diagram
-- Single Cycle
-    - Sign Extension Unit
-    - Arithmetic Logic Unit / Comparator
-    - Control Unit
-    - Data Path
-    - Top Module for Single Cycle
-    - Testbench & Debug for Single Cycle
-    - F1_Light.s
-    - Plotting PDF on Vbuddy
-- Pipelined
-    - Hazard Unit
-    - Testbench & Debug for Pipelined CPU
-- Pipelined with Cache
-    - 2-way Set Associative Cache
-    - Testbench & Debug for Pipelined CPU with 2-way Set Associative Cache
-    - Unit Tests
-- F1 Light on Vbuddy
+- [Git Instructions](#git-instructions)
+- [CPU Design Diagram](#cpu-design-diagram)
+- [Single Cycle](#single-cycle)
+    - [Sign Extension Unit](#sign-extension-unit)
+    - [Arithmetic Logic Unit / Comparator](#arithmetic-logic-unit--comparator)
+    - [Control Unit](#control-unit)
+    - [Data Path](#data-path)
+    - [Top Module for Single Cycle](#top-module-for-single-cycle)
+    - [Testbench & Debug for Single Cycle](#testbench--debug-for-single-cycle)
+        - [F1_Light.s](#f1_lights)
+        - [Unit Tests](#unit-tests)
+        - [Proof of Verified CPU](#proof-of-verified-cpu)
+    - [Plotting PDF on Vbuddy](#plotting-pdf-on-vbuddy)
+- [Pipelined](#pipelined)
+    - [Hazard Unit](#hazard-unit)
+    - [Testbench & Debug for Pipelined CPU](#testbench--debug-for-pipelined-cpu)
+        - [Proof of Verified Pipelined CPU](#proof-of-verified-pipelined-cpu)
+- [Pipelined with Cache](#pipelined-with-cache)
+    - [2-way Set Associative Cache]()
+    - [Testbench & Debug for Pipelined CPU with 2-way Set Associative Cache](#testbench--debug-for-pipelined-cpu-with-2-way-set-associative-cache)
+        - [Unit Tests](#unit-tests-1)
+        - [Proof of Verified Pipelined CPU with Cache](#proof-of-verified-pipelined-cpu-with-cache)
+        
+- [F1 Light on Vbuddy](#f1-light-on-vbuddy)
 
-- Reflections
+- [Reflections](#reflections)
 
 ---
 ## Git Instructions
@@ -148,7 +153,7 @@ trigger_wait:
 ```
 This part first access the data memory address assigned to `trigger`, then store that result in `x11`, and finally compare it with `zero` to decide whether to continue to wait for `trigger`. This design is feasible in testing beacuse `trigger` is set to high across cycles, yet however in real life this will mean the user need to fire the `trigger` on the exact cycle CPU read from the `datamemory`. The solution to this is detailed in F1 Light on Vbuddy.
 
-```SytemVerilog
+```SystemVerilog
 lfsr_continue:
     # Compute primitive polynomial (bit3 ^ bit7)
     srli t4, s0, 6            # t4 = s0 >> 6 (bit 7)
@@ -214,7 +219,7 @@ TEST_F(CpuTestbench, TestLightSequence) {
     waitForOutput(0x0,  0x1,  500);  // cycle back
 }
 ```
-## Unit Tests
+### Unit Tests
 Unit tests for Single Cycle CPU includes `mux`, `PCreg`, and `sign_ext`. In `sign_extend_tb.cpp`, I tested all type of the instructions to make sure the outputs were desired and consistent with the specification of RISCV.
 To run a particular testbench execute the following commands.
 ```bash
@@ -223,7 +228,7 @@ cd tb
 bash -x ./doit.sh ./tests/<testbench_to_run> #Forexample ./tests/sign_ext_tb.cpp
 ```
 
-### Proof of CPU_testbench result:
+### Proof of Verified CPU
 ![alt text](/IAC-Team-12/images/Single_cycle_tests_passed.png)
 
 To reproduce the test results, follow these steps:
@@ -406,13 +411,12 @@ This passed 7/9 test passed. The next main challenge was how to incorporate the 
 
 Finally with the fix on `store` instructions, and added a register for fetch signal to prevent logic feedback and latch, all the tests passed.
 
-## Unit Tests
+### Unit Tests
 Unit tests for `Hazard unit` and `CU` are implemented I did some minor fix and verified them.
+
+#### Relevant Commits
 - [CU_tb fix](https://github.com/Abeeekoala/IAC-Team-12/commit/9ef76f7cffe34e3bb2edc7e573a3a9d4eea9dfea)
-= [Hazard_unit_tb fix](https://github.com/Abeeekoala/IAC-Team-12/commit/2fac2326a419fa1496394db83d8b571071388a57)
-
-### Relevant Commits
-
+- [Hazard_unit_tb fix](https://github.com/Abeeekoala/IAC-Team-12/commit/2fac2326a419fa1496394db83d8b571071388a57)
 
 ### Proof of Verified Pipelined CPU with Cache:
 ![alt text](/IAC-Team-12/images/Pipelined_cache_tests_passed.png)
