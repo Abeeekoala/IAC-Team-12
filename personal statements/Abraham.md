@@ -126,7 +126,7 @@ For instance:
 
 - The PDF test consistently failed. Upon close investigation, I realized that the base address to load the `pdf_data` was not set correctly according to the memory map.
 - Before implementing the new `PCTarget` logic, I added a mux to select inputs between `rs1` or `PC` for `PCTarget`, which allowed the `JALR` instruction to behave as expected.
-- TestPDF can not pass until I realize that `RET` is actually attempting to write to `x0` and there should be no action for this. Yet, our regfile did not inpose this restriction. So this fix had been critical for us. (1 line = 3+ hours starring at the GTKWave).
+- TestPDF can not pass until I realize that `RET` is actually attempting to write to `ZERO` and there should be no action for this. Yet, our regfile did not inpose this restriction. So this fix had been critical for us. (1 line = 3+ hours starring at the GTKWave).
 
 These are just two examples of the many errors and bugs I encountered during the project. Each issue required careful debugging, investigation, and iterative fixes to ensure the CPU functioned as expected. More examples of the bugs/ errors fixed can be found in this [commit](https://github.com/Abeeekoala/IAC-Team-12/commit/52ca8fb5fd7e75723d944415bbf97a599b7b1d56).
 
@@ -232,6 +232,8 @@ bash -x ./doit.sh
 - [`datamemory` address fix](https://github.com/Abeeekoala/IAC-Team-12/commit/7fb178f045a6d8a4795626779db6b037de45ecc8)
 - [Mux for `PC_Target`](https://github.com/Abeeekoala/IAC-Team-12/commit/18c607f5d8e45990e6d4c1f9157ab84f7f2738b4#diff-658b1871d775cef76c9d49597837e74842c2b356e6888e095fcd7a0b8ae49d23R26)
 - [`regfile` fix](https://github.com/Abeeekoala/IAC-Team-12/commit/9b42b7dfab6cf453c7390ec1f06c43549f8e7dfb)
+- [F1 Light ith random delay](https://github.com/Abeeekoala/IAC-Team-12/commit/2d5bc19b69f77c52fd95d66d69022e7940cdab2c)
+- [F1 Light Program + Test](https://github.com/Abeeekoala/IAC-Team-12/commit/b329e71cc80a5dbe796a4716915a516544c3cd0c)
 - [Unit Tests](https://github.com/Abeeekoala/IAC-Team-12/commit/de3ce702def50684b35bff3ebb75db07a7fd2c23)
 - [CPU fully Verified](https://github.com/Abeeekoala/IAC-Team-12/commit/7296d792b20b9bce0a2376c0898651cc3a152e24)
 
@@ -280,10 +282,38 @@ bash -x ./doit_plot.sh <Optional signal name>
 ``` 
 Note: The plotting Program is also implemented on `Pipelined` and `Pipelinedw/Cache` branches, simply navigate to the branch and execute the above commands.
 
+
+
 # Pipelined 
 Initially, we started the Pipelined design without the `Hazard Unit`. I had the following design diagram for it.
 
 ![alt text](/IAC-Team-12/images/RISCV_pipelined.png)
-In order to test it I made a test `0_no_hazard` by insert `nop` between instructions to avoid any form of hazards. I was struggling to get it to pass until I realize
 
-For nop: For instance, I noticed one critical mistake in `RegFile` is that we 
+In order to test it I made a test `0_no_hazard` by insert `nop` between instructions to avoid any form of hazards.
+
+### Relevant commit:
+- [No Hazard Test](https://github.com/Abeeekoala/IAC-Team-12/commit/c01edbe9594b69afa7e35c4fee66c63945a2a546#diff-f8e1e8f7115869fc54e3b265957459888043164b8c6da0b34f86534904ae768f)
+
+## Hazard Unit
+I helped to implement the logic for forwarding, stall, and flush logic in hazard unit. Initially I had the stall signal when the ALU inputs needs the output from the data memory. Yet later on when I am debuging, I realized that it will be too late to stall the pipeline. We need to stall it when that instruction is in the decode stage and the executing stage is a loading instruction. Therefore I change the `LoadM` input to `LoadE` and added the `Rs1D` and `Rs2D` inputs. 
+
+Also I added the logic for hazard unit to set `Flush` signal when there is a `rst` and not to forward the attempt to write into `ZERO`. An additional test was made to verified these changes.
+
+### Relevant commits
+- [Hazard Unit Initial logic](https://github.com/Abeeekoala/IAC-Team-12/commit/97ea56f0cd3670ce42df4efbfb932bd9da8b4dd4#diff-0e44c2f03a2bbd32438ef0083e2a84575f4c41f032c298fb8f2c158c2371aad5)
+- [Hazard Unit Stall logic fixed & CU handling Stall](https://github.com/Abeeekoala/IAC-Team-12/commit/a7e094bcdb5a53e8d9acbf4a5b7ea0cce94983ab#diff-0e44c2f03a2bbd32438ef0083e2a84575f4c41f032c298fb8f2c158c2371aad5)
+- [Hazard Unit Flush + ZERO forwarding issue](https://github.com/Abeeekoala/IAC-Team-12/commit/521e6a65270be6a752ee7b81447a1822252420c9#diff-0e44c2f03a2bbd32438ef0083e2a84575f4c41f032c298fb8f2c158c2371aad5)
+
+ ## Testbench & Debug for Pipelined CPU
+
+ The debugging for pipelined largely focus on the logic with `Stall` and `Flush` signals, as I detailed above. One interesting debugging technique I cane up with to deal with multiple instruction executing in different stages. 
+
+ ![alt text](/IAC-Team-12/images/Pipeline%20Debugging.png)
+
+ In the above example, The issue was that we were writing to the `regfile` on the posedge of `clk` and at the decode stage, it can't fetch the updated `regfile` value because it was only updated on the next cycle. Thus the solution was to write to `regfile` on the negedge. I did the same thing for every failed case.
+ 
+ ### Proof of Verified Pipelined CPU:
+
+### Relevant Commits
+- [Passed All Test](https://github.com/Abeeekoala/IAC-Team-12/commit/a7e094bcdb5a53e8d9acbf4a5b7ea0cce94983ab)
+- [Additional Data Hazard Test for `ZERO`](https://github.com/Abeeekoala/IAC-Team-12/commit/521e6a65270be6a752ee7b81447a1822252420c9#diff-74e4c4e6ff1c41eabaf5c623494365a0615eb9afecf0d6eaf16f45d7410f9298)
