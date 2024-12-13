@@ -29,6 +29,7 @@ To ensure a smooth workflow for our team, as the repository master, I created th
 ## CPU design diagram
 I was mainly responsible for designing the overall architecture and top-level structure of the CPU. To help my teammates understand our design and implement individual components accordingly, I created three top-level design diagrams that detail the wiring, inputs, outputs, and signal logic for the [Single-cycle](/IAC-Team-12/images/RISCVsingle_cycle_final.png), [Pipelined](/IAC-Team-12/images/RISCV_pipelined_hazard_final.png), and [Pipelined with Cache](/IAC-Team-12/images/RISCV_pipelined_cache_final.png).
 
+# Single Cycle
 ## Sign Extension Unit
 Building on the sign extend module from Lab 4, I expanded its logic to handle all instruction types in the `RISCV 32I` instruction set. By assigning the following ImmSrc values to different types of instructions, the unit now accounts for both signed and unsigned extensions:
 | ImmSrc | Type             |
@@ -125,12 +126,98 @@ For instance:
 
 - The PDF test consistently failed. Upon close investigation, I realized that the base address to load the `pdf_data` was not set correctly according to the memory map.
 - Before implementing the new `PCTarget` logic, I added a mux to select inputs between `rs1` or `PC` for `PCTarget`, which allowed the `JALR` instruction to behave as expected.
+- TestPDF can not pass until I realize that `RET` is actually attempting to write to `x0` and there should be no action for this. Yet, our regfile did not inpose this restriction. So this fix had been critical for us. (1 line = 3+ hours starring at the GTKWave).
 
 These are just two examples of the many errors and bugs I encountered during the project. Each issue required careful debugging, investigation, and iterative fixes to ensure the CPU functioned as expected. More examples of the bugs/ errors fixed can be found in this [commit](https://github.com/Abeeekoala/IAC-Team-12/commit/52ca8fb5fd7e75723d944415bbf97a599b7b1d56).
 
-### F1.s
+### F1_Light.s
 
-### Proof of Tests result:
+As part of the testbench, we need to test our CPU with a F1 light program. Building on top of the [F1 program](https://github.com/Abeeekoala/IAC-Team-12/commit/3ab7f30c640d5fbcb227a3180767129bf0baf1bf#diff-b2e855f54fda0f893c59ee4ca6ffa11fe92d2243b9f24ce662fd331f79401f51) my teammate had done. I aimed to implement the following features. First, allows the user to start the lights through `trigger` input, and also make the delay in between the light random. To accomplish these I introduce the `trigger_wait` loop and the `lfsr_continue` subroutine to generate sudo-random delay.
+
+```SystemVerilog
+trigger_wait:
+    li t0, 0x00000FC            # MMIO address of trigger input
+    lw x11, 0(t0)               # Load trigger value into x11 (a1)
+    beq x11, zero, trigger_wait
+```
+This part first access the data memory address assigned to `trigger`, then store that result in `x11`, and finally compare it with `zero` to decide whether to continue to wait for `trigger`. This design is feasible in testing beacuse `trigger` is set to high across cycles, yet however in real life this will mean the user need to fire the `trigger` on the exact cycle CPU read from the `datamemory`. The solution to this is detailed in F1 Light on Vbuddy.
+
+```SytemVerilog
+lfsr_continue:
+    # Compute primitive polynomial (bit3 ^ bit7)
+    srli t4, s0, 6            # t4 = s0 >> 6 (bit 7)
+    andi t4, t4, 1            # t4 = bit 7 value
+    srli t5, s0, 2            # t5 = s0 >> 3 (bit 3)
+    andi t5, t5, 1            # t5 = bit 3 value
+    xor  t6, t4, t5           # t6 = bit7 ^ bit3
+    # Update LFSR value
+    slli s0, s0, 1            # s0 = s0 << 1
+    or   s0, s0, t6           # Insert feedback bit into s0
+    # Ensure delay value is not zero
+    bnez s0, delay_not_zero
+    li s0, 1                  # Reset to 1 if zero
+```
+This is a 7-bit LFSR using primitive polynomial $1 + X^3 + X^7$. The random cycle generated will be store in `s0`, and the last `bnez` is to ensure that we always have at least one cycle of delay.
+The full `F1_Light.s` program can be found [here](https://github.com/Abeeekoala/IAC-Team-12/commit/2d5bc19b69f77c52fd95d66d69022e7940cdab2c#diff-9ca7878b769c5314423b747aecd5cc9c2f2333737db6ef8508cb8b2b4ce16c55). Yet this version of `F1_light.s`
+was not random enough, beacuse the sequence of the delays was hardcoded since we initialize `s0` as 1, so every time we run the program the delays are exactly the same. I would like it to depends on when the user fire `trigger`. The solution was simple, we jumped to `lfsr_continue` subroutine when we did not recieve a `trigger` signal, and then jump back. Full implementation of the `F1_light.s` for testbench is [here](https://github.com/Abeeekoala/IAC-Team-12/blob/SingleCycle/tb/sasm/6_F1_Light.s)
+
+With this design the cycles in between the states will also be random. To test this program, I added a function `waitForOutput`in `cpu_testbench.h` which wait for a state transition based on the current state and return fail if time out or get unexpected state.
+```c
+void waitForOutput(uint8_t currentState, uint8_t expectedNextState, int maxCycles) {
+        int cycles = 0;
+        while (cycles < maxCycles) {
+            // Check if the output matches the expected value
+            if (top_->a0 == expectedNextState) {
+                printf("cycles delayed: %d\n", cycles);
+                return;
+            }   
+            else if (top_->a0 != currentState) {
+                    FAIL() << "Unexpected state transition: Current state 0x" << std::hex << (int)currentState
+                        << ", transitioned to 0x" << (int)top_->a0
+                        << " instead of 0x" << (int)expectedNextState;
+                }
+            runSimulation(1);
+            cycles++;
+        }
+        // Output current state
+        FAIL() << "Timed out waiting for output: Current state 0x" << std::hex << (int)currentState
+            << ", expected transition to state 0x" << (int)expectedNextState
+            << " after " << cycles << " cycles.";
+    }
+```
+This help me implement the test for F1 light ensuring neat and readibility.
+```cpp
+TEST_F(CpuTestbench, TestLightSequence) {
+    // Run simulation with trigger signal
+    setupTest("6_F1_Light");
+    initSimulation();
+    
+    runSimulation(100); //change the cycle to get different delay cycles
+    top_->trigger = 1;
+
+    // Validate light sequence
+    waitForOutput(0x0,  0x1,  500);  // S0 expect S1
+    waitForOutput(0x1,  0x3,  500);  // S1 expect S2
+    waitForOutput(0x3,  0x7,  500);  // S2 expect S3
+    waitForOutput(0x7,  0xF,  500);  // S3 expect S4
+    waitForOutput(0xF,  0x1F, 500);  // S4 expect S5
+    waitForOutput(0x1F, 0x3F, 500);  // S5 expect S6
+    waitForOutput(0x3F, 0x7F, 500);  // S6 expect S7
+    waitForOutput(0x7F, 0xFF, 500);  // S7 expect S8
+    waitForOutput(0xFF, 0x0,  500);  // S8 expect S0
+    waitForOutput(0x0,  0x1,  500);  // cycle back
+}
+```
+## Unit Tests
+Unit tests for Single Cycle CPU includes `mux`, `PCreg`, and `sign_ext`. In `sign_extend_tb.cpp`, I tested all type of the instructions to make sure the outputs were desired and consistent with the specification of RISCV.
+To run a particular testbench execute the following commands.
+```bash
+git checkout SingleCycle
+cd tb
+bash -x ./doit.sh ./tests/<testbench_to_run> #Forexample ./tests/sign_ext_tb.cpp
+```
+
+### Proof of CPU_testbench result:
 ![alt text](/IAC-Team-12/images/Single_cycle_tests_passed.png)
 
 To reproduce the test results, follow these steps:
@@ -143,7 +230,60 @@ bash -x ./doit.sh
 ### Relevant commits:
 - [3/5 Test passed](https://github.com/Abeeekoala/IAC-Team-12/commit/d392764c75df145b6d9c0545c748555a5105d4ef)
 - [`datamemory` address fix](https://github.com/Abeeekoala/IAC-Team-12/commit/7fb178f045a6d8a4795626779db6b037de45ecc8)
-- [Mux for PC_Target](https://github.com/Abeeekoala/IAC-Team-12/commit/18c607f5d8e45990e6d4c1f9157ab84f7f2738b4#diff-658b1871d775cef76c9d49597837e74842c2b356e6888e095fcd7a0b8ae49d23R26)
+- [Mux for `PC_Target`](https://github.com/Abeeekoala/IAC-Team-12/commit/18c607f5d8e45990e6d4c1f9157ab84f7f2738b4#diff-658b1871d775cef76c9d49597837e74842c2b356e6888e095fcd7a0b8ae49d23R26)
+- [`regfile` fix](https://github.com/Abeeekoala/IAC-Team-12/commit/9b42b7dfab6cf453c7390ec1f06c43549f8e7dfb)
+- [Unit Tests](https://github.com/Abeeekoala/IAC-Team-12/commit/de3ce702def50684b35bff3ebb75db07a7fd2c23)
+- [CPU fully Verified](https://github.com/Abeeekoala/IAC-Team-12/commit/7296d792b20b9bce0a2376c0898651cc3a152e24)
 
+## Plotting PDF on Vbuddy
+In the `tb` folder I made a folder `plot` designated for Plotting `PDF`. 
+
+In order to plot the PDF value on Vbuddy I made modification on `pdf.s`. I added an extra line in `_loop3`.
+```bash
+_loop3:                         # repeat
+    LI      a0, 205             # a0 = 205 mark that we will load a value next cycle
+    LBU     a0, base_pdf(a1)    #   a0 = mem[base_pdf+a1)
+    addi    a1, a1, 1           #   incr 
+    BNE     a1, a2, _loop3      # until end of pdf array
+```
+With that we know that the next `a0` value will be the value we should plot on the Vbuddy. 205 is chosen because none of the values in the array calculated by the `build` will exceed 200.
+This led to the following logic inside `plot_tb.cpp`.
+```cpp
+if (plot == 0 && top->a0 == 205)
+        {
+            plot = 1;
+        }
+        if (plot > 256){
+            break;
+        }
+        if (plot > 0){
+            if (top->a0 == 205){
+                to_load = true;
+            }
+            else if (top->a0 != 205 && to_load){
+                to_load = false;
+                plot++;
+                vbdPlot(int(top->a0), 0, 255);
+
+            }
+        }
+```
+This plots the correct values built from the `pdf.s` and terminates when we plotted 256 values.
+
+I also made the `doit_plot.sh` script so that we can test with different signals. This script takes in an optional argument for specifying the signals to test on; options include Gaussian, sine, triangle, and noisy. If nothing is given, the default is Gaussian. Then the scripts copy that `signal.mem` file into `data.hex` and then copy the `pdf.hex` in reference into `program.hex` then compile the `top.sv` and incorporate the `plot_tb.cpp` in simulation.
+
+To run the Plotting program execute the following
+```bash
+git checkout SingleCycle
+cd tb/plots/
+bash -x ./doit_plot.sh <Optional signal name>
+``` 
+Note: The plotting Program is also implemented on `Pipelined` and `Pipelinedw/Cache` branches, simply navigate to the branch and execute the above commands.
+
+# Pipelined 
+Initially, we started the Pipelined design without the `Hazard Unit`. I had the following design diagram for it.
+
+![alt text](/IAC-Team-12/images/RISCV_pipelined.png)
+In order to test it I made a test `0_no_hazard` by insert `nop` between instructions to avoid any form of hazards. I was struggling to get it to pass until I realize
 
 For nop: For instance, I noticed one critical mistake in `RegFile` is that we 
